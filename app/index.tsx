@@ -14,6 +14,9 @@ export default function Page() {
       const { data, error } = await supabase
         .from("game_rounds")
         .select()
+        .order("id", {
+          ascending: false,
+        })
         .overrideTypes<GameRound[]>();
       if (data) {
         setGameData(data);
@@ -30,7 +33,6 @@ export default function Page() {
         data={gameData}
         renderItem={({ item }) => <GameRoundItem gameRound={item} />}
       />
-      <ThemedText>{"Home page"}</ThemedText>
     </View>
   );
 }
