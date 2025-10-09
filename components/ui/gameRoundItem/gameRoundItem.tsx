@@ -15,7 +15,7 @@ const GameRoundItem = ({ gameRound }: Props) => {
   const formattedText = useMemo(() => {
     let text = gameRound.id;
     text = text.replaceAll("_", " ");
-    text = text.substring(20, text.length - 0);
+    text = text.substring(20, text.length);
     text = text.replaceAll("gpm coop", "");
     return text;
   }, [gameRound]);
