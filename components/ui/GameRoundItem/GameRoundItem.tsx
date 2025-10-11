@@ -81,7 +81,7 @@ const GameRoundItem = ({ gameRound }: Props) => {
           style={{
             color: interpolateColor(
               Number(tkkPerMille),
-              [10, 50],
+              [20, 50],
               ["#d1d1d1", "#fb3d3d"],
             ),
           }}

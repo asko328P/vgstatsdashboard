@@ -5,6 +5,7 @@ import {
   SelectedPlayerState,
   useSelectedPlayerStore,
 } from "@/zustand/SelectedPlayerStore";
+import { useMemo } from "react";
 
 export type Message = {
   id: number;
@@ -32,6 +33,16 @@ const ChatItem = ({ message }: Props) => {
     setSelectedPlayer(message.player_id);
   };
 
+  const backgroundColor = useMemo(() => {
+    if (message.text.toLowerCase().startsWith("!r ")) {
+      return "#393118";
+    }
+    if (message.text.toLowerCase().startsWith("!rp ")) {
+      return "#393118";
+    }
+    return "#1b1717";
+  }, [message.text]);
+
   return (
     <TouchableOpacity
       onPress={pressPlayerHandler}
@@ -41,6 +52,7 @@ const ChatItem = ({ message }: Props) => {
           borderWidth: 1,
           borderColor:
             selectedPlayer === message.player_id ? "#bfac49" : "black",
+          backgroundColor: backgroundColor,
         },
       ]}
     >

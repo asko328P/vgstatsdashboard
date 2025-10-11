@@ -94,6 +94,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   contentContainerStyle: {
+    padding: 20,
+    paddingBottom: 200,
     gap: 10,
   },
 });

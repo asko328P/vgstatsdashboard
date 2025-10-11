@@ -11,7 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import GameRoundItem, {
   GameRound,
-} from "@/components/ui/GameRoundItem/gameRoundItem";
+} from "@/components/ui/GameRoundItem/GameRoundItem";
 import KillItem, { Kill } from "@/components/ui/KillItem/KillItem";
 import ChatItem, { Message } from "@/components/ui/ChatItem/ChatItem";
 import { AntDesign } from "@expo/vector-icons";
@@ -21,6 +21,7 @@ import GameRoundPlayerItem, {
 
 export type GameRoundPlayer = {
   id: number;
+  hash: string;
   created_at: string;
   game_round_id: string;
   player_id: string;
