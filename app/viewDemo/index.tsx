@@ -15,8 +15,26 @@ import GameRoundItem, {
 import KillItem, { Kill } from "@/components/ui/KillItem/KillItem";
 import ChatItem, { Message } from "@/components/ui/ChatItem/ChatItem";
 import { AntDesign } from "@expo/vector-icons";
+import GameRoundPlayerItem, {
+  FirstRow,
+} from "@/components/ui/GameRoundPlayerItem/GameRoundPlayerItem";
 
-type GameData = GameRound & { kills: Kill[] } & { chat_messages: Message[] };
+export type GameRoundPlayer = {
+  id: number;
+  created_at: string;
+  game_round_id: string;
+  player_id: string;
+  kills: number;
+  deaths: number;
+  score: number;
+  scoreTW: number;
+  teamkills: number;
+  revivals: number;
+};
+
+type GameData = GameRound & { kills: Kill[] } & { chat_messages: Message[] } & {
+  game_round_player: GameRoundPlayer[];
+};
 
 export default function Page() {
   const router = useRouter();
@@ -31,7 +49,7 @@ export default function Page() {
         .from("game_rounds")
         .select(
           `
-        *, kills!inner(*), chat_messages!inner(*)
+        *, kills!inner(*), chat_messages!inner(*), game_round_player!inner(*)
         `,
         )
         .eq("id", gameRoundId)
@@ -41,6 +59,7 @@ export default function Page() {
         console.log("error", error);
       }
       if (data) {
+        console.log("data", data);
         //@ts-ignore
         setSingleGameData(data);
       }
@@ -80,11 +99,21 @@ export default function Page() {
       </View>
       <View style={styles.allFlatlistsHolder}>
         <View style={styles.singleFlatlistHolder}>
+          <ThemedText>{"Players:"}</ThemedText>
+          <FirstRow />
           <FlatList
             contentContainerStyle={styles.flatlistContainerStyle}
-            data={singleGameData?.kills
-              .filter((kill) => !kill.is_bot_involved)
-              .sort((a, b) => a.id - b.id)}
+            data={singleGameData?.game_round_player
+              .sort((a, b) => a.id - b.id)
+              .filter((item) => !item.player_id.startsWith("[R-BOT]"))}
+            renderItem={({ item }) => <GameRoundPlayerItem item={item} />}
+          />
+        </View>
+        <View style={styles.singleFlatlistHolder}>
+          <ThemedText>{"Kills:"}</ThemedText>
+          <FlatList
+            contentContainerStyle={styles.flatlistContainerStyle}
+            data={singleGameData?.kills.sort((a, b) => a.id - b.id)}
             renderItem={({ item }) => <KillItem kill={item} />}
           />
         </View>
@@ -118,6 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   flatlistContainerStyle: {
+    paddingBottom: 400,
     gap: 4,
   },
   singleFlatlistHolder: {

@@ -1,7 +1,11 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useMemo } from "react";
 import { formatTime } from "@/utils/functions";
+import {
+  SelectedPlayerState,
+  useSelectedPlayerStore,
+} from "@/zustand/SelectedPlayerStore";
 
 export type Kill = {
   id: number;
@@ -30,14 +34,31 @@ const PlayerNameItem = ({ playerId }: { playerId: string }) => {
 };
 
 const KillItem = ({ kill }: Props) => {
+  const setSelectedPlayer = useSelectedPlayerStore(
+    (state) => state.setSelectedPlayer,
+  );
+  const selectedPlayer = useSelectedPlayerStore(
+    (state: SelectedPlayerState) => state.selectedPlayer,
+  );
+
+  const pressPlayerHandler = () => {
+    setSelectedPlayer(kill.killer_player_id);
+  };
+
   return (
-    <View
+    <TouchableOpacity
+      onPress={pressPlayerHandler}
       style={[
         styles.container,
         kill.is_teamkill &&
           !kill.is_bot_involved && {
             backgroundColor: "#552d2d",
           },
+        {
+          borderWidth: 1,
+          borderColor:
+            selectedPlayer === kill.killer_player_id ? "#bfac49" : "black",
+        },
       ]}
     >
       <PlayerNameItem playerId={kill.killer_player_id} />
@@ -46,7 +67,7 @@ const KillItem = ({ kill }: Props) => {
       <ThemedText style={styles.time}>
         {`time: ${formatTime(kill.current_time)}`}
       </ThemedText>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -66,7 +87,7 @@ const styles = StyleSheet.create({
     gap: 5,
     flexDirection: "row",
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 5,
     backgroundColor: "#151313",
   },
 });

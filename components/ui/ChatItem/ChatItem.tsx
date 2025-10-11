@@ -1,6 +1,10 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { formatTime } from "@/utils/functions";
+import {
+  SelectedPlayerState,
+  useSelectedPlayerStore,
+} from "@/zustand/SelectedPlayerStore";
 
 export type Message = {
   id: number;
@@ -17,8 +21,29 @@ type Props = {
 };
 
 const ChatItem = ({ message }: Props) => {
+  const setSelectedPlayer = useSelectedPlayerStore(
+    (state) => state.setSelectedPlayer,
+  );
+  const selectedPlayer = useSelectedPlayerStore(
+    (state: SelectedPlayerState) => state.selectedPlayer,
+  );
+
+  const pressPlayerHandler = () => {
+    setSelectedPlayer(message.player_id);
+  };
+
   return (
-    <View style={[styles.container]}>
+    <TouchableOpacity
+      onPress={pressPlayerHandler}
+      style={[
+        styles.container,
+        {
+          borderWidth: 1,
+          borderColor:
+            selectedPlayer === message.player_id ? "#bfac49" : "black",
+        },
+      ]}
+    >
       <ThemedText style={[styles.playerNameText, {}]}>
         {message.player_id}
         {message.channel === 20 && (
@@ -64,7 +89,7 @@ const ChatItem = ({ message }: Props) => {
       <ThemedText style={styles.time}>
         {`time: ${formatTime(message.current_time)}`}
       </ThemedText>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -89,7 +114,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   container: {
-    backgroundColor: "#151313",
+    backgroundColor: "#1b1717",
     paddingVertical: 3,
     paddingHorizontal: 2,
     borderRadius: 5,
