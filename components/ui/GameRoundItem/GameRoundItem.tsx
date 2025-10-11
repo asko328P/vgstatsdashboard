@@ -14,11 +14,15 @@ type Props = {
 };
 const GameRoundItem = ({ gameRound }: Props) => {
   const router = useRouter();
-  const formattedText = useMemo(() => {
+  const formattedTitle = useMemo(() => {
     let text = gameRound.id;
     text = text.replaceAll("_", " ");
     text = text.substring(20, text.length);
     text = text.replaceAll("gpm coop", "");
+    text = text.replaceAll("16", "-  Infantry");
+    text = text.replaceAll("32", "-  Alternative");
+    text = text.replaceAll("64", "-  Standard");
+    text = text.replaceAll("128", "-  Large");
     return text;
   }, [gameRound]);
 
@@ -50,9 +54,15 @@ const GameRoundItem = ({ gameRound }: Props) => {
 
   return (
     <TouchableOpacity onPress={navigateToViewDemo} style={styles.container}>
-      <ThemedText type={"subtitle"} style={styles.title}>
-        {formattedText}
-      </ThemedText>
+      <View style={styles.titleAndDateHolder}>
+        <ThemedText type={"subtitle"} style={styles.title}>
+          {formattedTitle}
+        </ThemedText>
+        <ThemedText
+          style={styles.date}
+        >{`${date.toLocaleTimeString()} ${date.toLocaleDateString()}`}</ThemedText>
+      </View>
+
       <ThemedText>
         <ThemedText style={{ color: "#e3e3e3" }}>{"kills"}</ThemedText>
         {"/"}
@@ -72,9 +82,6 @@ const GameRoundItem = ({ gameRound }: Props) => {
           }}
         >{`   TK/K ‰: ${tkkPerMille}`}</ThemedText>
       </ThemedText>
-      {/*<ThemedText*/}
-      {/*  style={styles.date}*/}
-      {/*>{`${date.toLocaleTimeString()} ${date.toLocaleDateString()}`}</ThemedText>*/}
     </TouchableOpacity>
   );
 };
@@ -82,6 +89,10 @@ const GameRoundItem = ({ gameRound }: Props) => {
 export default GameRoundItem;
 
 const styles = StyleSheet.create({
+  titleAndDateHolder: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   date: {
     alignSelf: "flex-end",
   },

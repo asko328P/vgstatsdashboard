@@ -11,7 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import GameRoundItem, {
   GameRound,
-} from "@/components/ui/gameRoundItem/gameRoundItem";
+} from "@/components/ui/GameRoundItem/gameRoundItem";
 import KillItem, { Kill } from "@/components/ui/KillItem/KillItem";
 import ChatItem, { Message } from "@/components/ui/ChatItem/ChatItem";
 import { AntDesign } from "@expo/vector-icons";

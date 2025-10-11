@@ -6,6 +6,7 @@ import {
   SelectedPlayerState,
   useSelectedPlayerStore,
 } from "@/zustand/SelectedPlayerStore";
+import { Feather } from "@expo/vector-icons";
 
 type Props = {
   item: GameRoundPlayer;
@@ -59,7 +60,9 @@ const GameRoundPlayerItem = ({ item }: Props) => {
         },
       ]}
     >
-      <View style={{ flex: 1 }}>
+      <View
+        style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8 }}
+      >
         <ThemedText style={[styles.value]}>{item.player_id}</ThemedText>
       </View>
       <View style={styles.cell}>

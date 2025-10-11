@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import GameRoundItem, {
   GameRound,
-} from "@/components/ui/gameRoundItem/gameRoundItem";
+} from "@/components/ui/GameRoundItem/GameRoundItem";
 import { GameRoundPlayer } from "@/app/viewDemo";
 
 const NUMBER_OF_GAMES_TO_SHOW = 10;
