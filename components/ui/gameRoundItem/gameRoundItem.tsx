@@ -2,13 +2,15 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useMemo } from "react";
 import { useRouter } from "expo-router";
+import { GameRoundPlayer } from "@/app/viewDemo";
+import { interpolateColor } from "react-native-reanimated";
 
 export type GameRound = {
   id: string;
   played_at: string;
 };
 type Props = {
-  gameRound: GameRound;
+  gameRound: GameRound & { game_round_player: GameRoundPlayer[] };
 };
 const GameRoundItem = ({ gameRound }: Props) => {
   const router = useRouter();
@@ -30,14 +32,49 @@ const GameRoundItem = ({ gameRound }: Props) => {
       params: { gameRoundId: gameRound.id },
     });
   };
+
+  const summedKills = useMemo(() => {
+    return gameRound.game_round_player.reduce((acc, val) => {
+      return acc + val.kills;
+    }, 0);
+  }, []);
+  const summedTeamKills = useMemo(() => {
+    return gameRound.game_round_player.reduce((acc, val) => {
+      return acc + val.teamkills;
+    }, 0);
+  }, []);
+
+  const tkkPerMille = useMemo(() => {
+    return ((summedTeamKills / summedKills) * 1000).toFixed(2);
+  }, [summedKills, summedTeamKills]);
+
   return (
     <TouchableOpacity onPress={navigateToViewDemo} style={styles.container}>
       <ThemedText type={"subtitle"} style={styles.title}>
         {formattedText}
       </ThemedText>
-      <ThemedText
-        style={styles.title}
-      >{`${date.toLocaleTimeString()} ${date.toLocaleDateString()}`}</ThemedText>
+      <ThemedText>
+        <ThemedText style={{ color: "#e3e3e3" }}>{"kills"}</ThemedText>
+        {"/"}
+        <ThemedText style={{ color: "#cdcdcd" }}>
+          {"teamkills:"}
+        </ThemedText>{" "}
+        <ThemedText style={{ color: "#beefa1" }}>{summedKills}</ThemedText>
+        {"/"}
+        <ThemedText style={{ color: "#efa6a6" }}>{summedTeamKills}</ThemedText>
+        <ThemedText
+          style={{
+            color: interpolateColor(
+              Number(tkkPerMille),
+              [10, 50],
+              ["#d1d1d1", "#fb3d3d"],
+            ),
+          }}
+        >{`   TK/K ‰: ${tkkPerMille}`}</ThemedText>
+      </ThemedText>
+      {/*<ThemedText*/}
+      {/*  style={styles.date}*/}
+      {/*>{`${date.toLocaleTimeString()} ${date.toLocaleDateString()}`}</ThemedText>*/}
     </TouchableOpacity>
   );
 };
@@ -45,13 +82,17 @@ const GameRoundItem = ({ gameRound }: Props) => {
 export default GameRoundItem;
 
 const styles = StyleSheet.create({
+  date: {
+    alignSelf: "flex-end",
+  },
   title: {
     textTransform: "capitalize",
   },
   container: {
+    gap: 5,
     backgroundColor: "#171616",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    // flexDirection: "row",
+    // justifyContent: "space-between",
     padding: 10,
     borderRadius: 10,
   },
