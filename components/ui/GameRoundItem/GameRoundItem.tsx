@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { useRouter } from "expo-router";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { interpolateColor } from "react-native-reanimated";
+import MapImage from "@/components/ui/MapImage/MapImage";
+import { LinearGradient } from "expo-linear-gradient";
 
 export type GameRound = {
   id: string;
@@ -54,6 +56,9 @@ const GameRoundItem = ({ gameRound }: Props) => {
 
   return (
     <TouchableOpacity onPress={navigateToViewDemo} style={styles.container}>
+      <View style={styles.imageHolder}>
+        <MapImage style={{ opacity: 0.6 }} gameRound={gameRound} />
+      </View>
       <View style={styles.titleAndDateHolder}>
         <ThemedText type={"subtitle"} style={styles.title}>
           {formattedTitle}
@@ -89,6 +94,12 @@ const GameRoundItem = ({ gameRound }: Props) => {
 export default GameRoundItem;
 
 const styles = StyleSheet.create({
+  imageHolder: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    height: "100%",
+  },
   titleAndDateHolder: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -106,5 +117,7 @@ const styles = StyleSheet.create({
     // justifyContent: "space-between",
     padding: 10,
     borderRadius: 10,
+    overflow: "hidden",
+    paddingBottom: 50,
   },
 });
