@@ -61,6 +61,7 @@ const AllGameRounds = () => {
 
   return (
     <>
+      <ThemedText>{`Showing games from ${gameRange[0]} to ${gameRange[1]}`}</ThemedText>
       <FlatList
         contentContainerStyle={styles.contentContainerStyle}
         style={{ flex: 1 }}

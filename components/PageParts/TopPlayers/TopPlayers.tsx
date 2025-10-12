@@ -19,7 +19,7 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
     switch (type) {
       case "medic":
         return {
-          containerBackground: "#0b1905",
+          containerBackground: "#071003",
           containerBorderColor: "#41b333",
           labelColor: "#41b333",
           valueColor: "#41b333",
@@ -158,11 +158,21 @@ const TopPlayers = () => {
 
   return (
     <View style={styles.container}>
-      <ThemedText type={"title"}>{"Last 7 days"}</ThemedText>
-      <View style={{ flexDirection: "row", gap: 16 }}>
-        <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
-        <DataHolder label={"Most kills"} value={topKiller} type={"killer"} />
-      </View>
+      <ThemedText type={"subtitle"}>{"Last 7 days"}</ThemedText>
+      {
+        // @ts-ignore
+        gameData?.length > 0 && (
+          <View style={{ flexDirection: "row", gap: 16 }}>
+            <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
+            <DataHolder
+              label={"Most kills"}
+              value={topKiller}
+              type={"killer"}
+            />
+            {/*<DataHolder label={"Veh. destroyer"} value={} type={"destroyer"} />*/}
+          </View>
+        )
+      }
     </View>
   );
 };
@@ -175,7 +185,7 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingTop: 16,
     aspectRatio: 1.2,
-    borderRadius: 16,
+    borderRadius: 10,
     borderWidth: 3,
   },
   container: {
@@ -183,7 +193,7 @@ const styles = StyleSheet.create({
     // flexDirection: "row",
     gap: 16,
     backgroundColor: "#0e0e0e",
-    padding: 20,
+    padding: 16,
     borderRadius: 16,
   },
 });
