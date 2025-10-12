@@ -79,6 +79,11 @@ const AllGameRounds = () => {
           ]}
         >
           <ThemedText>{"previous page"}</ThemedText>
+          {isLoading && (
+            <View style={styles.activityIndicatorHolder}>
+              <ActivityIndicator />
+            </View>
+          )}
         </TouchableOpacity>
         <ThemedText>{`Showing games from ${gameRange[0]} to ${gameRange[1]}`}</ThemedText>
         <TouchableOpacity
@@ -86,13 +91,13 @@ const AllGameRounds = () => {
           style={styles.paginationTouchable}
         >
           <ThemedText>{"Next page"}</ThemedText>
+          {isLoading && (
+            <View style={styles.activityIndicatorHolder}>
+              <ActivityIndicator />
+            </View>
+          )}
         </TouchableOpacity>
       </View>
-      {isLoading && (
-        <View style={styles.activityIndicatorHolder}>
-          <ActivityIndicator />
-        </View>
-      )}
     </>
   );
 };
@@ -101,7 +106,10 @@ export default AllGameRounds;
 
 const styles = StyleSheet.create({
   activityIndicatorHolder: {
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     position: "absolute",
+    left: 0,
+    top: 0,
     height: "100%",
     width: "100%",
     alignItems: "center",
@@ -119,8 +127,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   contentContainerStyle: {
-    padding: 20,
-    paddingBottom: 200,
+    // paddingH: 20,
+    paddingBottom: 50,
     gap: 10,
   },
 });

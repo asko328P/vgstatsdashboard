@@ -73,6 +73,9 @@ export default function Page() {
       return [];
     }
     let messagesCopy = singleGameData.chat_messages;
+    messagesCopy = messagesCopy.filter((message) => {
+      return !message.text.startsWith("!m ");
+    });
     if (filterInputValue) {
       messagesCopy = messagesCopy.filter(
         (message) =>

@@ -87,6 +87,7 @@ const GameRoundItem = ({ gameRound }: Props) => {
           }}
         >{`   TK/K ‰: ${tkkPerMille}`}</ThemedText>
       </ThemedText>
+      <ThemedText>{`Number of players: ${gameRound.game_round_player.length - 40}`}</ThemedText>
     </TouchableOpacity>
   );
 };
