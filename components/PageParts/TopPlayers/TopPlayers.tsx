@@ -4,7 +4,12 @@ import { supabase } from "@/utils/supabase";
 import { GameRound } from "@/components/ui/GameRoundItem/GameRoundItem";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { ThemedText } from "@/components/ui/ThemedText";
-import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  FontAwesome6,
+  Ionicons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
@@ -21,7 +26,7 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
         return {
           containerBackground: "#071003",
           containerBorderColor: "#41b333",
-          labelColor: "#41b333",
+          labelColor: "#399c2d",
           valueColor: "#41b333",
         };
       case "killer":
@@ -29,7 +34,7 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
           containerBackground: "#190505",
           containerBorderColor: "#b33333",
           labelColor: "#b33333",
-          valueColor: "#b33333",
+          valueColor: "#e42f2f",
         };
       default:
         return {
@@ -51,19 +56,19 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
       ]}
     >
       {type === "medic" && (
-        <FontAwesome
+        <Ionicons
           style={{ position: "absolute", right: 8, top: 6 }}
-          name="plus"
+          name="bandage-sharp"
           size={90}
           color={"#122c0e"}
         />
       )}
       {type === "killer" && (
-        <FontAwesome6
+        <SimpleLineIcons
           style={{ position: "absolute", right: 8, top: 6 }}
-          name="crosshairs"
+          name="target"
           size={90}
-          color={"#331010"}
+          color={"#4a1717"}
         />
       )}
       <ThemedText
@@ -73,7 +78,6 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
       >
         {label}
       </ThemedText>
-      <ThemedText />
       <ThemedText style={{ color: colors.valueColor, fontSize: 20 }}>
         {value}
       </ThemedText>
@@ -161,17 +165,11 @@ const TopPlayers = () => {
       <ThemedText type={"subtitle"}>{"Last 7 days"}</ThemedText>
       {
         // @ts-ignore
-        gameData?.length > 0 && (
-          <View style={{ flexDirection: "row", gap: 16 }}>
-            <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
-            <DataHolder
-              label={"Most kills"}
-              value={topKiller}
-              type={"killer"}
-            />
-            {/*<DataHolder label={"Veh. destroyer"} value={} type={"destroyer"} />*/}
-          </View>
-        )
+        <View style={{ flexDirection: "row", gap: 16 }}>
+          <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
+          <DataHolder label={"Most kills"} value={topKiller} type={"killer"} />
+          {/*<DataHolder label={"Veh. destroyer"} value={} type={"destroyer"} />*/}
+        </View>
       }
     </View>
   );
@@ -184,9 +182,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     padding: 10,
     paddingTop: 16,
-    aspectRatio: 1.2,
+    // aspectRatio: 1.2,
     borderRadius: 10,
-    borderWidth: 3,
+    borderWidth: 2,
+    overflow: "hidden",
+    gap: 30,
   },
   container: {
     // padding: 20,

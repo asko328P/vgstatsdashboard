@@ -72,6 +72,8 @@ const obj: MyObject = {
     "https://mapgallery.realitymod.com/images/maps/tadsaeoffensive/tile.jpg",
   kunarprovince:
     "https://mapgallery.realitymod.com/images/maps/kunarprovince-beta/tile.jpg",
+  operationthunder:
+    "https://mapgallery.realitymod.com/images/maps/operationthunder-beta/tile.jpg",
 };
 
 export default obj;
