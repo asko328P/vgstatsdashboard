@@ -17,7 +17,7 @@ type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
 type DataProps = {
   label: string;
   value: any;
-  type?: "medic" | "killer" | "destroyer";
+  type?: "medic" | "killer" | "destroyer" | "player";
 };
 const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
   const colors = useMemo(() => {
@@ -32,9 +32,9 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
       case "destroyer":
         return {
           containerBackground: "#100903",
-          containerBorderColor: "#b37333",
-          labelColor: "#9c702d",
-          valueColor: "#b37333",
+          containerBorderColor: "#cf6b35",
+          labelColor: "#cf6a33",
+          valueColor: "#c15829",
         };
       case "killer":
         return {
@@ -42,6 +42,13 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
           containerBorderColor: "#b33333",
           labelColor: "#b33333",
           valueColor: "#e42f2f",
+        };
+      case "player":
+        return {
+          containerBackground: "#171717",
+          containerBorderColor: "#b5b5b5",
+          labelColor: "#989898",
+          valueColor: "#bdbdbd",
         };
       default:
         return {
@@ -204,6 +211,36 @@ const TopPlayers = () => {
     return `${allDestructorsArray[0]?.player_id}: ${allDestructorsArray[0]?.vehicle_destroyeds} veh. d.`;
   }, [gameData]);
 
+  const mostRounds = useMemo(() => {
+    if (!gameData) return "";
+    const allPlayersRounds: {
+      [key: string]: number;
+    } = {};
+    gameData.forEach((game) => {
+      game.game_round_player.forEach((player) => {
+        if (!allPlayersRounds[player.player_id]) {
+          allPlayersRounds[player.player_id] = 0;
+        }
+        allPlayersRounds[player.player_id] += 1;
+      });
+    });
+
+    let allPlayersArray = [];
+
+    for (const [key, value] of Object.entries(allPlayersRounds)) {
+      if (key.startsWith("[R-BOT]")) {
+        continue;
+      }
+      allPlayersArray.push({
+        player_id: key,
+        rounds: value,
+      });
+    }
+    allPlayersArray = allPlayersArray.sort((a, b) => b.rounds - a.rounds);
+
+    return `${allPlayersArray[0]?.player_id}: ${allPlayersArray[0]?.rounds} rounds`;
+  }, [gameData]);
+
   return (
     <View style={styles.container}>
       <ThemedText type={"subtitle"}>{"Last 7 days"}</ThemedText>
@@ -216,6 +253,11 @@ const TopPlayers = () => {
             label={"Veh. destroyer"}
             value={topDestroyer}
             type={"destroyer"}
+          />
+          <DataHolder
+            label={"Most rounds played"}
+            value={mostRounds}
+            type={"player"}
           />
         </View>
       }
