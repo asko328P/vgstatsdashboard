@@ -31,6 +31,7 @@ export type GameRoundPlayer = {
   scoreTW: number;
   teamkills: number;
   revivals: number;
+  vehicle_destroyeds: number;
 };
 
 type GameData = GameRound & { kills: Kill[] } & { chat_messages: Message[] } & {

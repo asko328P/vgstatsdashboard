@@ -17,7 +17,7 @@ type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
 type DataProps = {
   label: string;
   value: any;
-  type?: "medic" | "killer";
+  type?: "medic" | "killer" | "destroyer";
 };
 const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
   const colors = useMemo(() => {
@@ -28,6 +28,13 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
           containerBorderColor: "#41b333",
           labelColor: "#399c2d",
           valueColor: "#41b333",
+        };
+      case "destroyer":
+        return {
+          containerBackground: "#100903",
+          containerBorderColor: "#b37333",
+          labelColor: "#9c702d",
+          valueColor: "#b37333",
         };
       case "killer":
         return {
@@ -69,6 +76,14 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
           name="target"
           size={90}
           color={"#4a1717"}
+        />
+      )}
+      {type === "destroyer" && (
+        <FontAwesome6
+          name="explosion"
+          style={{ position: "absolute", right: 8, bottom: 24 }}
+          size={60}
+          color={"#4a2c17"}
         />
       )}
       <ThemedText
@@ -160,6 +175,35 @@ const TopPlayers = () => {
     return `${allMedicsArray[0]?.player_id}: ${allMedicsArray[0]?.revivals} rev.`;
   }, [gameData]);
 
+  const topDestroyer = useMemo(() => {
+    if (!gameData) return "";
+    const allPlayersDestructions: {
+      [key: string]: number;
+    } = {};
+    gameData.forEach((game) => {
+      game.game_round_player.forEach((player) => {
+        if (!allPlayersDestructions[player.player_id]) {
+          allPlayersDestructions[player.player_id] = 0;
+        }
+        allPlayersDestructions[player.player_id] += player.vehicle_destroyeds;
+      });
+    });
+
+    let allDestructorsArray = [];
+
+    for (const [key, value] of Object.entries(allPlayersDestructions)) {
+      allDestructorsArray.push({
+        player_id: key,
+        vehicle_destroyeds: value,
+      });
+    }
+    allDestructorsArray = allDestructorsArray.sort(
+      (a, b) => b.vehicle_destroyeds - a.vehicle_destroyeds,
+    );
+
+    return `${allDestructorsArray[0]?.player_id}: ${allDestructorsArray[0]?.vehicle_destroyeds} veh. d.`;
+  }, [gameData]);
+
   return (
     <View style={styles.container}>
       <ThemedText type={"subtitle"}>{"Last 7 days"}</ThemedText>
@@ -168,7 +212,11 @@ const TopPlayers = () => {
         <View style={{ flexDirection: "row", gap: 16 }}>
           <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
           <DataHolder label={"Most kills"} value={topKiller} type={"killer"} />
-          {/*<DataHolder label={"Veh. destroyer"} value={} type={"destroyer"} />*/}
+          <DataHolder
+            label={"Veh. destroyer"}
+            value={topDestroyer}
+            type={"destroyer"}
+          />
         </View>
       }
     </View>

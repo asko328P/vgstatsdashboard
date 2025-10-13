@@ -82,10 +82,10 @@ const GameRoundPlayerItem = ({ item }: Props) => {
           style={[
             styles.value,
             {
-              fontWeight: item.teamkills > 1 ? "900" : "200",
+              fontWeight: item.teamkills > 2 ? "900" : "200",
               color: interpolateColor(
                 item.teamkills,
-                [0, 3],
+                [0, 4],
                 ["#353535", "#fb3d3d"],
               ),
             },

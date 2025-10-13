@@ -57,7 +57,7 @@ const GameRoundItem = ({ gameRound }: Props) => {
   return (
     <TouchableOpacity onPress={navigateToViewDemo} style={styles.container}>
       <View style={styles.imageHolder}>
-        <MapImage style={{ opacity: 0.6 }} gameRound={gameRound} />
+        <MapImage style={{ opacity: 0.9 }} gameRound={gameRound} />
       </View>
       <View style={styles.titleAndDateHolder}>
         <ThemedText type={"subtitle"} style={styles.title}>
