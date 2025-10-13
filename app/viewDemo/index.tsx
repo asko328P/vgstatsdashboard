@@ -18,6 +18,11 @@ import { AntDesign } from "@expo/vector-icons";
 import GameRoundPlayerItem, {
   FirstRow,
 } from "@/components/ui/GameRoundPlayerItem/GameRoundPlayerItem";
+import {
+  SelectedPlayerState,
+  useSelectedPlayerStore,
+} from "@/zustand/SelectedPlayerStore";
+import AliasChecker from "@/components/ui/AliasChecker/AliasChecker";
 
 export type GameRoundPlayer = {
   id: number;
@@ -41,6 +46,13 @@ type GameData = GameRound & { kills: Kill[] } & { chat_messages: Message[] } & {
 export default function Page() {
   const router = useRouter();
   const { gameRoundId } = useLocalSearchParams<{ gameRoundId: string }>();
+
+  const setSelectedPlayer = useSelectedPlayerStore(
+    (state) => state.setSelectedPlayer,
+  );
+  const selectedPlayer = useSelectedPlayerStore(
+    (state: SelectedPlayerState) => state.selectedPlayer,
+  );
 
   const [singleGameData, setSingleGameData] = useState<GameData>();
   const [filterInputValue, setFilterInputValue] = useState("");
@@ -113,6 +125,11 @@ export default function Page() {
               .filter((item) => !item.player_id.startsWith("[R-BOT]"))}
             renderItem={({ item }) => <GameRoundPlayerItem item={item} />}
           />
+          {selectedPlayer && (
+            <View style={{ position: "absolute" }}>
+              <AliasChecker playerName={selectedPlayer} />
+            </View>
+          )}
         </View>
         <View style={styles.singleFlatlistHolder}>
           <ThemedText>{"Kills:"}</ThemedText>

@@ -1,7 +1,5 @@
 import { SplashScreen, Stack } from "expo-router";
 import "react-native-reanimated";
-import { useFonts } from "expo-font";
-import { useEffect } from "react";
 
 export default function RootLayout() {
   return (

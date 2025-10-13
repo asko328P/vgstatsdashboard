@@ -6,6 +6,7 @@ import { GameRoundPlayer } from "@/app/viewDemo";
 import { interpolateColor } from "react-native-reanimated";
 import MapImage from "@/components/ui/MapImage/MapImage";
 import { LinearGradient } from "expo-linear-gradient";
+import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
 
 export type GameRound = {
   id: string;
@@ -16,6 +17,10 @@ type Props = {
 };
 const GameRoundItem = ({ gameRound }: Props) => {
   const router = useRouter();
+  const setSelectedPlayer = useSelectedPlayerStore(
+    (state) => state.setSelectedPlayer,
+  );
+
   const formattedTitle = useMemo(() => {
     let text = gameRound.id;
     text = text.replaceAll("_", " ");
@@ -33,6 +38,7 @@ const GameRoundItem = ({ gameRound }: Props) => {
   }, [gameRound]);
 
   const navigateToViewDemo = () => {
+    setSelectedPlayer("");
     router.push({
       pathname: "/viewDemo",
       params: { gameRoundId: gameRound.id },
