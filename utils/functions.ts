@@ -29,6 +29,18 @@ export function toReadableDate(isoString: string) {
   });
 }
 
+// "2026-08-12T18:44:28.716251+00:00" -> "Aug 12" in the device's local timezone
+export function toReadableDayMonth(isoString: string) {
+  const date = new Date(isoString);
+
+  if (isNaN(date.getTime())) return "";
+
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+}
+
 // "2026-08-12T18:44:28.716251+00:00" -> "3 hours ago"
 export function timeSince(isoString: string) {
   const date = new Date(isoString);
@@ -40,15 +52,13 @@ export function timeSince(isoString: string) {
   if (seconds < 60) return "just now";
 
   const units = [
-    { label: "minute", secs: 60 },
-    { label: "hour", secs: 3600 },
+    { label: "min", secs: 60 },
+    { label: "hr", secs: 3600 },
     { label: "day", secs: 86400 },
   ];
 
   // Pick the largest unit that still yields a whole number
-  const unit = units.reduce((biggest, u) =>
-    seconds >= u.secs ? u : biggest,
-  );
+  const unit = units.reduce((biggest, u) => (seconds >= u.secs ? u : biggest));
 
   const value = Math.floor(seconds / unit.secs);
 

@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { GameRound } from "@/components/ui/GameRoundItem/GameRoundItem";
@@ -10,7 +10,8 @@ import {
   Ionicons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import { toReadableDate, toReadableDayMonth } from "@/utils/functions";
 
 type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
 
@@ -118,6 +119,9 @@ const TopPlayers = () => {
       const { data, error } = await supabase
         .from("game_rounds")
         .select(`*, game_round_player!inner(*)`)
+        .order("played_at", {
+          ascending: true,
+        })
         .gte("played_at", sevenDaysAgo.toISOString())
         .overrideTypes<GameData[]>();
 
@@ -242,7 +246,22 @@ const TopPlayers = () => {
 
   return (
     <View style={styles.container}>
-      <ThemedText type={"subtitle"}>{"Last 7 days"}</ThemedText>
+      <View style={styles.dateAndSeparator}>
+        <ThemedText type={"label"}>{"Last 7 days"}</ThemedText>
+        <View
+          style={{
+            flex: 1,
+            borderTopColor: UnistylesRuntime.getTheme().colors.surface3,
+            borderTopWidth: 1,
+          }}
+        />
+        {gameData && (
+          <ThemedText
+            style={styles.rounds}
+            type={"log"}
+          >{`${toReadableDayMonth(gameData.at(0)?.played_at!)} - ${toReadableDayMonth(gameData.at(-1)?.played_at!)} · ${gameData.length} rounds`}</ThemedText>
+        )}
+      </View>
       {
         // @ts-ignore
         <View style={{ flexDirection: "row", gap: 16 }}>
@@ -266,7 +285,15 @@ const TopPlayers = () => {
 
 export default TopPlayers;
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
+  rounds: {
+    color: theme.colors.textMuted,
+  },
+  dateAndSeparator: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.margins.xl,
+  },
   dataHolder: {
     justifyContent: "space-around",
     padding: 10,
@@ -281,8 +308,8 @@ const styles = StyleSheet.create({
     // padding: 20,
     // flexDirection: "row",
     gap: 16,
-    backgroundColor: "#0e0e0e",
-    padding: 16,
+    backgroundColor: theme.colors.surfaceBase,
+    paddingVertical: 16,
     borderRadius: 16,
   },
-});
+}));

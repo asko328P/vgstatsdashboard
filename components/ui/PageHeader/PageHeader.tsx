@@ -45,7 +45,9 @@ const PageHeader = ({}: Props) => {
         </ThemedText>
       </View>
       <ThemedText style={styles.text}>
-        {`Last synced: ${toReadableDate(syncDate)} · `}
+        {UnistylesRuntime.orientation === "landscape"
+          ? `Last synced: ${toReadableDate(syncDate)} · `
+          : ""}
         <ThemedText
           style={[{ color: accentMedic }, styles.text]}
         >{`${timeSince(syncDate)}`}</ThemedText>
