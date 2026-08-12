@@ -115,7 +115,7 @@ const TopPlayers = () => {
       const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
       const now = new Date();
       const sevenDaysAgo = new Date(now.getTime() - sevenDaysInMs);
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("game_rounds")
         .select(`*, game_round_player!inner(*)`)
         .gte("played_at", sevenDaysAgo.toISOString())

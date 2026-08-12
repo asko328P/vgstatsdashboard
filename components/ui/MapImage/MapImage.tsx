@@ -21,8 +21,6 @@ const MapImage = ({ gameRound, style }: Props) => {
     text = text.replaceAll("128", "");
     text = text.replaceAll(" ", "");
 
-    console.log(text);
-
     if (mapNameToImageUrl[text]) {
       return mapNameToImageUrl[text];
     }
