@@ -44,10 +44,10 @@ const PageHeader = ({}: Props) => {
           </ThemedText>
         </ThemedText>
       </View>
-      <ThemedText>
+      <ThemedText style={styles.text}>
         {`Last synced: ${toReadableDate(syncDate)} · `}
         <ThemedText
-          style={{ color: accentMedic }}
+          style={[{ color: accentMedic }, styles.text]}
         >{`${timeSince(syncDate)}`}</ThemedText>
       </ThemedText>
     </View>
@@ -57,12 +57,16 @@ const PageHeader = ({}: Props) => {
 export default PageHeader;
 
 const styles = StyleSheet.create((theme) => ({
+  text: {
+    textTransform: "uppercase",
+  },
   container: {
+    backgroundColor: theme.colors.surface1,
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
-    paddingHorizontal: 30,
-    paddingVertical: 30,
+    paddingHorizontal: 25,
+    paddingVertical: 25,
     borderBottomColor: "#1d1f22",
     borderBottomWidth: 2,
   },
