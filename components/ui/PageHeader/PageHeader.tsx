@@ -1,9 +1,9 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
-import { UnistylesRuntime } from "react-native-unistyles";
 import { timeSince, toReadableDate } from "@/utils/functions";
+import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 
 type Props = {};
 
@@ -56,7 +56,7 @@ const PageHeader = ({}: Props) => {
 
 export default PageHeader;
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
   container: {
     justifyContent: "space-between",
     alignItems: "center",
@@ -66,4 +66,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#1d1f22",
     borderBottomWidth: 2,
   },
-});
+}));

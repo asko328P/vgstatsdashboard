@@ -36,7 +36,6 @@ const AllGameRounds = () => {
         .range(gameRange[0], gameRange[1])
         .overrideTypes<GameData[]>();
       if (data) {
-        console.log(data);
         setGameData(data);
       }
       setIsLoading(false);

@@ -122,7 +122,6 @@ const TopPlayers = () => {
         .overrideTypes<GameData[]>();
 
       setGameData(data);
-      console.log("data", data);
     };
 
     fetchData();
