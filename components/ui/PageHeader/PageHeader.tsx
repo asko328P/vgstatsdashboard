@@ -2,6 +2,8 @@ import { StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
+import { UnistylesRuntime } from "react-native-unistyles";
+import { timeSince, toReadableDate } from "@/utils/functions";
 
 type Props = {};
 
@@ -12,27 +14,41 @@ const PageHeader = ({}: Props) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await supabase.from("sync_time").select(`created_at`);
+      const { data } = await supabase
+        .from("sync_time")
+        .select(`created_at`)
+        .order("id", {
+          ascending: false,
+        })
+        .limit(1)
+        .overrideTypes<[{ created_at: string }]>();
 
-      console.log("sync data", data);
+      if (data) {
+        setSyncDate(data[0]?.created_at);
+      }
     };
 
     fetchData();
   }, []);
+
+  const primary = UnistylesRuntime.getTheme().colors.primary;
+  const accentMedic = UnistylesRuntime.getTheme().colors.accentMedic;
   return (
     <View style={styles.container}>
       <View>
-        <ThemedText style={{ fontSize: FONT_SIZE }}>
-          {"["}
-          <ThemedText style={{ color: "#dba900", fontSize: FONT_SIZE }}>
-            {"VG.STATS"}
+        <ThemedText type={"title"} style={{ color: primary }}>
+          {"[ "}
+          <ThemedText type={"title"}>{"VG.STATS"}</ThemedText>
+          <ThemedText type={"title"} style={{ color: primary }}>
+            {" ]"}
           </ThemedText>
-          <ThemedText style={{ fontSize: FONT_SIZE }}>{"]"}</ThemedText>
         </ThemedText>
       </View>
       <ThemedText>
-        {"Last synced: Aug 11, 2026, 2:41 PM · "}
-        <ThemedText style={{ color: "#94e85a" }}>{"2h ago"}</ThemedText>
+        {`Last synced: ${toReadableDate(syncDate)} · `}
+        <ThemedText
+          style={{ color: accentMedic }}
+        >{`${timeSince(syncDate)}`}</ThemedText>
       </ThemedText>
     </View>
   );
