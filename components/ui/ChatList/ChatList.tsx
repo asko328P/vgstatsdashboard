@@ -70,7 +70,7 @@ const ChatList = ({
       {isExpanded && (
         <FlatList
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 20 }}
           data={messages}
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (

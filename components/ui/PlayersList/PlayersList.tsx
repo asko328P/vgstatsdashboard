@@ -71,7 +71,7 @@ const PlayersList = ({
       {isExpanded && (
         <FlatList
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 20 }}
           data={players}
           keyExtractor={(item) => String(item.id)}
           ListHeaderComponent={ListHeader}

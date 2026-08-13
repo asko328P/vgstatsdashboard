@@ -1,9 +1,7 @@
 import { FlatList, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { Kill } from "@/components/ui/KillItem/KillItem";
-import KillItem2, {
-  killRowStyles,
-} from "@/components/ui/KillItem2/KillItem2";
+import KillItem2, { killRowStyles } from "@/components/ui/KillItem2/KillItem2";
 import {
   StyleSheet,
   UnistylesRuntime,
@@ -64,7 +62,7 @@ const TeamkillList = ({
           )}
           {"TEAMKILLS"}
         </ThemedText>
-        <ThemedText type={"cell"} style={styles.count}>
+        <ThemedText type={"cell"} style={styles.count(kills.length)}>
           {kills.length}
         </ThemedText>
       </TouchableOpacity>
@@ -72,7 +70,7 @@ const TeamkillList = ({
       {isExpanded && (
         <FlatList
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 20 }}
           data={kills}
           keyExtractor={(item) => String(item.id)}
           ListHeaderComponent={ListHeader}
@@ -101,9 +99,14 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.margins.lg,
     paddingVertical: theme.margins.md,
   },
-  count: {
-    color: theme.colors.textMuted,
-  },
+  count: (count: number) => ({
+    color:
+      count > 30
+        ? theme.colors.accentWarn
+        : count > 40
+          ? theme.colors.accentKill
+          : theme.colors.textMuted,
+  }),
   header: {
     backgroundColor: theme.colors.surface2,
     borderBottomWidth: 1,
