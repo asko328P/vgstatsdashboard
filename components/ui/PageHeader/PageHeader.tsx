@@ -1,14 +1,44 @@
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "expo-router";
 import { supabase } from "@/utils/supabase";
 import { timeSince, toReadableDate } from "@/utils/functions";
-import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import {
+  StyleSheet,
+  UnistylesRuntime,
+  useUnistyles,
+} from "react-native-unistyles";
+
+type PageButtonProps = {
+  name: string;
+  currentPath: string;
+};
+export const PageButton = ({ name, currentPath }: PageButtonProps) => {
+  const router = useRouter();
+  const path = `/${name.toLowerCase()}`;
+  console.log(currentPath);
+  const isActive =
+    currentPath === path || (currentPath === "/" && name === "ROUNDS");
+
+  return (
+    <TouchableOpacity
+      // onPress={() => router.push(path)}
+      style={styles.pageButton(isActive)}
+    >
+      <ThemedText type={"label"}>{name}</ThemedText>
+    </TouchableOpacity>
+  );
+};
 
 type Props = {};
 
 const PageHeader = ({}: Props) => {
   const [syncDate, setSyncDate] = useState("");
+  const currentPath = usePathname();
+  // The full timestamp is the first thing to go once the header gets tight.
+  const { rt } = useUnistyles();
+  const showFullSyncDate = rt.breakpoint !== "xs" && rt.breakpoint !== "sm";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +63,7 @@ const PageHeader = ({}: Props) => {
   const accentMedic = UnistylesRuntime.getTheme().colors.accentMedic;
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.brandAndNav}>
         <ThemedText type={"title"} style={{ color: primary }}>
           {"[ "}
           <ThemedText type={"title"}>{"VG.STATS"}</ThemedText>
@@ -41,11 +71,14 @@ const PageHeader = ({}: Props) => {
             {" ]"}
           </ThemedText>
         </ThemedText>
+        <View style={styles.nav}>
+          <PageButton name={"ROUNDS"} currentPath={currentPath} />
+          <PageButton name={"PLAYERS"} currentPath={currentPath} />
+          <PageButton name={"MAPS"} currentPath={currentPath} />
+        </View>
       </View>
-      <ThemedText style={styles.text}>
-        {UnistylesRuntime.orientation === "landscape"
-          ? `Last synced: ${toReadableDate(syncDate)} · `
-          : ""}
+      <ThemedText style={styles.text} numberOfLines={1}>
+        {showFullSyncDate ? `Last synced: ${toReadableDate(syncDate)} · ` : ""}
         <ThemedText
           style={[{ color: accentMedic }, styles.text]}
         >{`${timeSince(syncDate)}`}</ThemedText>
@@ -57,6 +90,25 @@ const PageHeader = ({}: Props) => {
 export default PageHeader;
 
 const styles = StyleSheet.create((theme) => ({
+  brandAndNav: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: theme.margins.xl,
+    flexShrink: 1,
+  },
+  nav: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  pageButton: (isActive: boolean) => ({
+    backgroundColor: isActive ? theme.colors.surface3 : theme.colors.surface1,
+    borderColor: isActive ? theme.colors.borderStrong : theme.colors.surface1,
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: theme.margins.lg,
+    paddingVertical: theme.margins.sm,
+  }),
   text: {
     textTransform: "uppercase",
   },

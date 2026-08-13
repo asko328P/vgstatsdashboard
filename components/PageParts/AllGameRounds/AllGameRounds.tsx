@@ -103,8 +103,22 @@ const AllGameRounds = () => {
   return (
     <View style={styles.container}>
       <View style={styles.dateAndSeparator}>
-        <ThemedText type={"label"}>{"Rounds"}</ThemedText>
-        <ThemedText type={"micro"}>{`${gameRoundCount} recorded`}</ThemedText>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            flexShrink: 1,
+          }}
+        >
+          <View>
+            <ThemedText type={"label"}>{"Rounds"}</ThemedText>
+          </View>
+          <View style={{ flexShrink: 1 }}>
+            <ThemedText
+              type={"micro"}
+            >{`${gameRoundCount} recorded`}</ThemedText>
+          </View>
+        </View>
         <View
           style={{
             flex: 1,
