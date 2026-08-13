@@ -32,14 +32,23 @@ const AllGameRounds = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [gameRange, setGameRange] = useState([]);
+  const [gameRange, setGameRange] = useState<number[]>([]);
 
   useEffect(() => {
     if (!measuredRectangle || !dummyRectangle) return;
-    setGameRange([
-      0,
-      Math.floor(measuredRectangle.height / dummyRectangle.height),
-    ]);
+    setGameRange((prevState) => {
+      if (prevState.length !== 0) {
+        return prevState;
+      } else {
+        return [
+          0,
+          Math.max(
+            3,
+            Math.floor(measuredRectangle.height / dummyRectangle.height),
+          ),
+        ];
+      }
+    });
   }, [measuredRectangle, dummyRectangle]);
 
   useEffect(() => {

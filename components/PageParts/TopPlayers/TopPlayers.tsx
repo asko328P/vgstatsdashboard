@@ -257,23 +257,20 @@ const TopPlayers = () => {
           >{`${toReadableDayMonth(gameData.at(0)?.played_at!)} - ${toReadableDayMonth(gameData.at(-1)?.played_at!)} · ${gameData.length} rounds`}</ThemedText>
         )}
       </View>
-      {
-        // @ts-ignore
-        <View style={{ flexDirection: "row", gap: 16 }}>
-          <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
-          <DataHolder label={"Most kills"} value={topKiller} type={"killer"} />
-          <DataHolder
-            label={"Vehicle destroyer"}
-            value={topDestroyer}
-            type={"destroyer"}
-          />
-          <DataHolder
-            label={"Most rounds played"}
-            value={mostRounds}
-            type={"player"}
-          />
-        </View>
-      }
+      <View style={styles.dataHolderRow}>
+        <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
+        <DataHolder label={"Most kills"} value={topKiller} type={"killer"} />
+        <DataHolder
+          label={"Vehicle destroyer"}
+          value={topDestroyer}
+          type={"destroyer"}
+        />
+        <DataHolder
+          label={"Most rounds played"}
+          value={mostRounds}
+          type={"player"}
+        />
+      </View>
     </View>
   );
 };
@@ -289,8 +286,16 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     gap: theme.margins.xl,
   },
+  dataHolderRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+  },
   dataHolder: {
-    flex: 1,
+    // Grow to share the row, but never below minWidth — that's what forces a wrap.
+    flexGrow: 1,
+    flexBasis: 220,
+    minWidth: 220,
     backgroundColor: theme.colors.surface1,
     justifyContent: "space-around",
     padding: 10,
