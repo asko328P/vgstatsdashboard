@@ -129,17 +129,6 @@ export default function Page() {
   const isListExpanded = (list: string) =>
     expandAllLists || expandedList === list;
 
-  const onDemoLinkPress = async () => {
-    const link = singleGameData?.download_link;
-    if (!link) {
-      return;
-    }
-    const canOpen = await Linking.canOpenURL(link);
-    if (canOpen) {
-      await Linking.openURL(link);
-    }
-  };
-
   const onBackPress = () => {
     if (router.canGoBack()) {
       router.back();
@@ -159,17 +148,8 @@ export default function Page() {
         mapType={formatRoundTitle(gameRoundId).split(" ").pop()}
         bottomLabel={`${toTimestamp(singleGameData?.played_at ?? "")} • ${formatDuration(singleGameData?.length ?? 0)}`}
         selectedPlayer={selectedPlayer}
+        download_link={singleGameData?.download_link}
       />
-      {!!singleGameData?.download_link && (
-        <TouchableOpacity onPress={onDemoLinkPress} style={styles.demoButton}>
-          <Feather
-            name={"download"}
-            size={14}
-            color={UnistylesRuntime.getTheme().colors.textPrimary}
-          />
-          <ThemedText type={"label"}>{"DOWNLOAD DEMO"}</ThemedText>
-        </TouchableOpacity>
-      )}
       <View
         style={[
           styles.allFlatlistsHolder,
@@ -249,19 +229,6 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create((theme) => ({
-  demoButton: {
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.margins.md,
-    backgroundColor: theme.colors.surface3,
-    borderWidth: 1,
-    borderColor: theme.colors.borderStrong,
-    borderRadius: 4,
-    paddingHorizontal: theme.margins.lg,
-    paddingVertical: theme.margins.lg,
-    marginHorizontal: theme.margins.lg,
-  },
   chatTextInput: {
     margin: 5,
     padding: 5,

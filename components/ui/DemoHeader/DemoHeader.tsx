@@ -1,6 +1,6 @@
-import { TouchableOpacity, View } from "react-native";
+import { Linking, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import {
   SelectedPlayerState,
@@ -12,6 +12,7 @@ type Props = {
   mapType?: string;
   bottomLabel?: string;
   selectedPlayer?: string;
+  download_link?: string;
   onBackPress?: () => void;
 };
 
@@ -20,6 +21,7 @@ const DemoHeader = ({
   mapType,
   bottomLabel,
   selectedPlayer,
+  download_link,
   onBackPress,
 }: Props) => {
   const textPrimary = UnistylesRuntime.getTheme().colors.textPrimary;
@@ -30,6 +32,16 @@ const DemoHeader = ({
   );
   const closePlayer = () => {
     setSelectedPlayer("");
+  };
+
+  const onDemoLinkPress = async () => {
+    if (!download_link) {
+      return;
+    }
+    const canOpen = await Linking.canOpenURL(download_link);
+    if (canOpen) {
+      await Linking.openURL(download_link);
+    }
   };
 
   return (
@@ -53,6 +65,13 @@ const DemoHeader = ({
         <View style={styles.mapType}>
           <ThemedText type={"cell"}>{mapType}</ThemedText>
         </View>
+      )}
+
+      {!!download_link && (
+        <TouchableOpacity onPress={onDemoLinkPress} style={styles.demoButton}>
+          <Feather name={"download"} size={14} color={textPrimary} />
+          <ThemedText type={"label"}>{"DOWNLOAD DEMO"}</ThemedText>
+        </TouchableOpacity>
       )}
 
       <View style={styles.spacer} />
@@ -89,6 +108,9 @@ const styles = StyleSheet.create((theme) => ({
   titleHolder: {
     gap: 2,
     flexShrink: 1,
+    // Keeps the title on the first row with the back button rather than
+    // letting a long map name push everything else onto its own line.
+    minWidth: 120,
   },
   title: {
     textTransform: "uppercase",
@@ -108,7 +130,20 @@ const styles = StyleSheet.create((theme) => ({
     paddingVertical: theme.margins.sm,
     // paddingBottom: 2,
   },
+  demoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.margins.md,
+    backgroundColor: theme.colors.surface3,
+    borderWidth: 1,
+    borderColor: theme.colors.borderStrong,
+    borderRadius: 4,
+    paddingHorizontal: theme.margins.lg,
+    paddingVertical: theme.margins.md,
+  },
+  // A flexing spacer would claim a whole row once the header wraps.
   spacer: {
+    display: { xs: "none", md: "flex" },
     flex: 1,
   },
   selectedPlayer: {
@@ -129,8 +164,9 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.surface1,
     alignItems: "center",
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: theme.margins.lg,
-    paddingHorizontal: 25,
+    paddingHorizontal: { xs: theme.margins.lg, md: 25 },
     paddingVertical: 15,
     borderBottomColor: "#1d1f22",
     borderBottomWidth: 2,

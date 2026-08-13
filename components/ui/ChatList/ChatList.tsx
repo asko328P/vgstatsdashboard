@@ -1,7 +1,11 @@
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { FlatList, TextInput, TouchableOpacity, View } from "react-native";
+import { useMemo, useState } from "react";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { Message } from "@/components/ui/ChatItem/ChatItem";
-import ChatItem2, { chatRowStyles } from "@/components/ui/ChatItem2/ChatItem2";
+import ChatItem2, {
+  chatRowStyles,
+  isCommand,
+} from "@/components/ui/ChatItem2/ChatItem2";
 import {
   StyleSheet,
   UnistylesRuntime,
@@ -49,6 +53,25 @@ const ChatList = ({
     rt.breakpoint !== "md" &&
     rt.breakpoint !== "lg";
 
+  const [searchInput, setSearchInput] = useState("");
+
+  const searchedMessages = useMemo(() => {
+    if (!searchInput) {
+      return messages;
+    }
+    if (searchInput.toLowerCase() === "!commands") {
+      return messages.filter((message) => {
+        return isCommand(message.text);
+      });
+    }
+    const search = searchInput.toLowerCase();
+    return messages.filter(
+      (message) =>
+        message.player_id.toLowerCase().includes(search) ||
+        message.text.toLowerCase().includes(search),
+    );
+  }, [messages, searchInput]);
+
   return (
     <View style={{ flex: 1 }}>
       <TouchableOpacity onPress={onExpandPress} style={styles.toggle}>
@@ -63,15 +86,27 @@ const ChatList = ({
           {"CHAT"}
         </ThemedText>
         <ThemedText type={"cell"} style={styles.count}>
-          {messages.length}
+          {searchedMessages.length}
         </ThemedText>
       </TouchableOpacity>
+
+      {isExpanded && (
+        <View style={styles.textInputHolder}>
+          <TextInput
+            value={searchInput}
+            onChangeText={setSearchInput}
+            placeholder={"Filter messages, players, !commands"}
+            placeholderTextColor={UnistylesRuntime.getTheme().colors.textMuted}
+            style={styles.searchInput}
+          />
+        </View>
+      )}
 
       {isExpanded && (
         <FlatList
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 20 }}
-          data={messages}
+          data={searchedMessages}
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <ChatItem2 message={item} onPress={onPlayerPress} />
@@ -85,6 +120,10 @@ const ChatList = ({
 export default ChatList;
 
 const styles = StyleSheet.create((theme) => ({
+  textInputHolder: {
+    padding: theme.margins.md,
+    backgroundColor: theme.colors.surface1,
+  },
   toggle: {
     flexDirection: "row",
     alignItems: "center",
@@ -99,6 +138,16 @@ const styles = StyleSheet.create((theme) => ({
   },
   count: {
     color: theme.colors.textMuted,
+  },
+  searchInput: {
+    color: theme.colors.textPrimary,
+    backgroundColor: theme.colors.surface2,
+    borderWidth: 1,
+    borderColor: theme.colors.borderHairline,
+    borderRadius: 2,
+    paddingHorizontal: theme.margins.md,
+    paddingVertical: theme.margins.sm,
+    marginTop: theme.margins.sm,
   },
   header: {
     backgroundColor: theme.colors.surface2,

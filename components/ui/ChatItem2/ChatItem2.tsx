@@ -36,7 +36,7 @@ export const chatRowStyles = StyleSheet.create((theme) => ({
 }));
 
 // Admin commands are called out in gold, per the design system.
-const isCommand = (text: string) => {
+export const isCommand = (text: string) => {
   const lower = text.toLowerCase();
   return (
     lower.startsWith("!r ") ||
@@ -107,7 +107,7 @@ const ChatItem2 = ({ message, onPress }: Props) => {
   return (
     <TouchableOpacity
       onPress={pressPlayerHandler}
-      style={[styles.container(isSelected, command)]}
+      style={[styles.container(selectedPlayer, isSelected, command)]}
     >
       <View style={styles.timeHolder}>
         <ThemedText type={"micro"}>
@@ -183,7 +183,12 @@ const styles = StyleSheet.create((theme) => ({
         ? theme.colors.textPrimary
         : theme.colors.textSecondary,
   }),
-  container: (isSelected: boolean, command: boolean) => ({
+  container: (
+    selectedPlayer: string | undefined,
+    isSelected: boolean,
+    command: boolean,
+  ) => ({
+    opacity: selectedPlayer && !isSelected ? 0.9 : 1,
     flexDirection: "row",
     paddingVertical: 10,
     backgroundColor: isSelected
