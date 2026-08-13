@@ -189,6 +189,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   paginationTouchable: {
     padding: 10,
+    paddingVertical: 0,
     backgroundColor: theme.colors.surface3,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,

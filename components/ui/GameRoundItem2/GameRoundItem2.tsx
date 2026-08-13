@@ -15,6 +15,55 @@ import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { formatDuration, toTimestamp } from "@/utils/functions";
 
+type DataHolderProps = {
+  label: string;
+  value: string | number;
+  showBar?: boolean;
+  colorValues?: boolean;
+};
+export const DataHolder = ({
+  label,
+  value,
+  showBar = false,
+  colorValues = false,
+}: DataHolderProps) => {
+  return (
+    <View style={styles.dataHolder}>
+      <ThemedText type={"log"} style={styles.dataHolderLabel}>
+        {label}
+      </ThemedText>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+        {showBar && <TeamKillBar value={Number(value)} />}
+        <ThemedText
+          style={[colorValues && styles.value(Number(value))]}
+          type={"metric"}
+        >
+          {value}
+        </ThemedText>
+      </View>
+    </View>
+  );
+};
+
+// A value of 30 should read as a half-full bar, so the track tops out at 60.
+const TEAM_KILL_BAR_MAX = 60;
+const TEAM_KILL_WARN_AT = 20;
+const TEAM_KILL_DANGER_AT = 55;
+
+type TeamKillBarProps = {
+  value: number;
+};
+export const TeamKillBar = ({ value }: TeamKillBarProps) => {
+  const ratio =
+    Math.min(Math.max(value, 0), TEAM_KILL_BAR_MAX) / TEAM_KILL_BAR_MAX;
+
+  return (
+    <View style={styles.teamKillBarTrack}>
+      <View style={styles.teamKillBarFill(ratio, value)} />
+    </View>
+  );
+};
+
 export type GameRound = {
   id: string;
   played_at: string;
@@ -94,7 +143,7 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
       style={[styles.container, style]}
     >
       <View style={styles.imageHolder}>
-        <MapImage style={{ opacity: 0.7 }} gameRound={gameRound} />
+        <MapImage style={{ opacity: 0.5 }} gameRound={gameRound} />
         <LinearGradient
           colors={[surface1, "transparent"]}
           start={{ x: 0.0, y: 0.5 }}
@@ -119,7 +168,19 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
         >{`${toTimestamp(gameRound?.played_at ?? "")} • ${formatDuration(gameRound?.length ?? 0)}`}</ThemedText>
       </View>
       <View style={styles.rightItems}>
-        <ThemedText>{"asdas"}</ThemedText>
+        <DataHolder label={"KILLS"} value={summedKills} />
+        <DataHolder label={"TEAMKILLS"} value={summedTeamKills} />
+        <DataHolder
+          label={"TK/K ‰"}
+          colorValues={true}
+          value={Math.round(Number(tkkPerMille))}
+          showBar={true}
+        />
+        <View style={styles.verticalSeparator} />
+        <DataHolder
+          label={"PLAYERS"}
+          value={gameRound?.game_round_player.length ?? 40 - 40}
+        />
       </View>
 
       {/*<View style={styles.titleAndDateHolder}>*/}
@@ -158,6 +219,38 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
 export default GameRoundItem2;
 
 const styles = StyleSheet.create((theme) => ({
+  verticalSeparator: {
+    flex: 1,
+    borderLeftWidth: StyleSheet.hairlineWidth,
+    borderLeftColor: theme.colors.borderStrong,
+    marginHorizontal: theme.margins.md,
+  },
+  value: (value: number) => ({
+    color:
+      value >= TEAM_KILL_DANGER_AT
+        ? theme.colors.accentKill
+        : value >= TEAM_KILL_WARN_AT
+          ? theme.colors.accentWarn
+          : theme.colors.textMuted,
+  }),
+  teamKillBarTrack: {
+    width: 50,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: theme.colors.surface3,
+    overflow: "hidden",
+  },
+  teamKillBarFill: (ratio: number, value: number) => ({
+    height: "100%",
+    borderRadius: 2,
+    width: `${ratio * 100}%`,
+    backgroundColor:
+      value >= TEAM_KILL_DANGER_AT
+        ? theme.colors.accentKill
+        : value >= TEAM_KILL_WARN_AT
+          ? theme.colors.accentWarn
+          : theme.colors.textMuted,
+  }),
   mapType: {
     textTransform: "uppercase",
     backgroundColor: theme.colors.surface3,
@@ -170,16 +263,29 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.margins.md,
     paddingBottom: 2,
   },
+  dataHolder: {
+    gap: theme.margins.sm,
+    alignItems: "flex-end",
+  },
+  // No color override — a soft shadow keeps the label legible over the map image.
+  dataHolderLabel: {
+    textShadowColor: theme.colors.surfaceBase,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
   leftItems: {
     gap: theme.margins.md,
   },
-  rightItems: {},
+  rightItems: {
+    flexDirection: "row",
+    gap: theme.margins.xl,
+  },
   imageHolder: {
     position: "absolute",
     right: 0,
     top: 0,
     height: "100%",
-    width: "40%",
+    width: "70%",
   },
   imageFade: {
     position: "absolute",
