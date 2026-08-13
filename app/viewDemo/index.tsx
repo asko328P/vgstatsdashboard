@@ -1,28 +1,14 @@
-import {
-  FlatList,
-  Linking,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { ThemedText } from "@/components/ui/ThemedText";
+import { View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
-import GameRoundItem, {
-  GameRound,
-} from "@/components/ui/GameRoundItem2/GameRoundItem2";
-import KillItem, { Kill } from "@/components/ui/KillItem/KillItem";
-import ChatItem, { Message } from "@/components/ui/ChatItem/ChatItem";
-import { AntDesign, Feather } from "@expo/vector-icons";
-import GameRoundPlayerItem, {
-  FirstRow,
-} from "@/components/ui/GameRoundPlayerItem/GameRoundPlayerItem";
+import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
+import { Kill } from "@/components/ui/KillItem/KillItem";
+import { Message } from "@/components/ui/ChatItem/ChatItem";
 import {
   SelectedPlayerState,
   useSelectedPlayerStore,
 } from "@/zustand/SelectedPlayerStore";
-import AliasChecker from "@/components/ui/AliasChecker/AliasChecker";
 import DemoHeader from "@/components/ui/DemoHeader/DemoHeader";
 import {
   formatDuration,
