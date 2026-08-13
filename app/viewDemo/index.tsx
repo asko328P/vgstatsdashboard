@@ -170,21 +170,6 @@ export default function Page() {
                 .filter((item) => !item.player_id.startsWith("[R-BOT]"))}
             />
           )}
-
-          {/*<ThemedText>{"Players:"}</ThemedText>*/}
-          {/*<FirstRow />*/}
-          {/*<FlatList*/}
-          {/*  contentContainerStyle={styles.flatlistContainerStyle}*/}
-          {/*  data={singleGameData?.game_round_player*/}
-          {/*    .sort((a, b) => a.id - b.id)*/}
-          {/*    .filter((item) => !item.player_id.startsWith("[R-BOT]"))}*/}
-          {/*  renderItem={({ item }) => <GameRoundPlayerItem item={item} />}*/}
-          {/*/>*/}
-          {/*{selectedPlayer && (*/}
-          {/*  <View style={{ position: "absolute" }}>*/}
-          {/*    <AliasChecker playerName={selectedPlayer} />*/}
-          {/*  </View>*/}
-          {/*)}*/}
         </View>
         <View
           style={styles.singleFlatlistHolder(isListExpanded(LISTS.teamkills))}
@@ -208,20 +193,6 @@ export default function Page() {
             messages={filteredMessages}
             isExpanded={isListExpanded(LISTS.chat)}
           />
-
-          {/*<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>*/}
-          {/*  <ThemedText>{"Filter messages:"}</ThemedText>*/}
-          {/*  <TextInput*/}
-          {/*    style={styles.chatTextInput}*/}
-          {/*    onChangeText={setFilterInputValue}*/}
-          {/*  />*/}
-          {/*</View>*/}
-
-          {/*<FlatList*/}
-          {/*  contentContainerStyle={styles.flatlistContainerStyle}*/}
-          {/*  data={filteredMessages}*/}
-          {/*  renderItem={({ item }) => <ChatItem message={item} />}*/}
-          {/*/>*/}
         </View>
       </View>
     </View>
