@@ -72,6 +72,17 @@ const obj: MyObject = {
     "https://mapgallery.realitymod.com/images/maps/tadsaeoffensive/tile.jpg",
   kunarprovince:
     "https://mapgallery.realitymod.com/images/maps/kunarprovince-beta/tile.jpg",
+  carentan: "https://mapgallery.realitymod.org/images/maps/carentan/tile.jpg",
+  battleofiadrang:
+    "https://mapgallery.realitymod.org/images/maps/battleofiadrang/tile.jpg",
+  yamalia: "https://mapgallery.realitymod.org/images/maps/yamalia/tile.jpg",
+  korengal:
+    "https://mapgallery.realitymod.org/images/maps/korengalvalley/tile.jpg",
+  operationsoulrebel:
+    "https://mapgallery.realitymod.org/images/maps/operationsoulrebel/tile.jpg",
+  nuijamaa: "https://mapgallery.realitymod.org/images/maps/nuijamaa/tile.jpg",
+  fieldsofkassel:
+    "https://mapgallery.realitymod.org/images/maps/fieldsofkassel/tile.jpg",
   operationthunder:
     "https://mapgallery.realitymod.com/images/maps/operationthunder-beta/tile.jpg",
 };

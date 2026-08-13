@@ -1,6 +1,6 @@
 import { StyleProp, StyleSheet, View } from "react-native";
 import { Image, ImageStyle } from "expo-image";
-import { GameRound } from "@/components/ui/GameRoundItem/GameRoundItem";
+import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import { useMemo } from "react";
 import mapNameToImageUrl from "@/components/ui/MapImage/mapNameToImageUrl";
 
@@ -24,6 +24,10 @@ const MapImage = ({ gameRound, style }: Props) => {
     text = text.replaceAll("64", "");
     text = text.replaceAll("128", "");
     text = text.replaceAll(" ", "");
+
+    if (!mapNameToImageUrl[text]) {
+      console.log(text);
+    }
 
     if (mapNameToImageUrl[text]) {
       return mapNameToImageUrl[text];
