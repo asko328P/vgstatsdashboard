@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
-import { GameRound } from "@/components/ui/GameRoundItem/GameRoundItem";
+import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { ThemedText } from "@/components/ui/ThemedText";
 import {
