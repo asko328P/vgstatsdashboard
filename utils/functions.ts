@@ -112,3 +112,80 @@ export function timeSince(isoString: string) {
 
   return `${value} ${unit.label}${value === 1 ? "" : "s"} ago`;
 }
+
+export function adjustColorBrightness(hex: string, brighten: number): string {
+  // 1. Normalize the hex string (remove '#' and handle 3-digit hex)
+  let cleanHex = hex.replace("#", "");
+  if (cleanHex.length === 3) {
+    cleanHex = cleanHex
+      .split("")
+      .map((char) => char + char)
+      .join("");
+  }
+
+  // 2. Convert Hex to RGB (values between 0 and 1)
+  const r = parseInt(cleanHex.substring(0, 2), 16) / 255;
+  const g = parseInt(cleanHex.substring(2, 4), 16) / 255;
+  const b = parseInt(cleanHex.substring(4, 6), 16) / 255;
+
+  // 3. Convert RGB to HSL
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  let l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  // 4. Adjust Lightness based on the 'brighten' parameter and clamp it
+  // We divide by 100 because our internal 'l' is on a 0 to 1 scale
+  l = l + brighten / 100;
+  l = Math.max(0, Math.min(1, l)); // Ensures Lightness stays between 0% and 100%
+
+  // 5. Convert HSL back to RGB
+  let rOut: number, gOut: number, bOut: number;
+
+  if (s === 0) {
+    rOut = gOut = bOut = l; // Achromatic (gray)
+  } else {
+    const hueToRgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    rOut = hueToRgb(p, q, h + 1 / 3);
+    gOut = hueToRgb(p, q, h);
+    bOut = hueToRgb(p, q, h - 1 / 3);
+  }
+
+  // 6. Convert RGB back to Hex string
+  const toHex = (x: number) => {
+    const hexStr = Math.round(x * 255).toString(16);
+    return hexStr.length === 1 ? `0${hexStr}` : hexStr;
+  };
+
+  return `#${toHex(rOut)}${toHex(gOut)}${toHex(bOut)}`;
+}

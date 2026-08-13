@@ -27,6 +27,7 @@ import PlayersList from "@/components/ui/PlayersList/PlayersList";
 import { useUnistyles } from "react-native-unistyles";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import TeamkillList from "@/components/ui/TeamkillList/TeamkillList";
+import ChatList from "@/components/ui/ChatList/ChatList";
 
 export type GameRoundPlayer = {
   id: number;
@@ -189,19 +190,27 @@ export default function Page() {
         </View>
 
         <View style={styles.singleFlatlistHolder}>
-          <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-            <ThemedText>{"Filter messages:"}</ThemedText>
-            <TextInput
-              style={styles.chatTextInput}
-              onChangeText={setFilterInputValue}
-            />
-          </View>
-
-          <FlatList
-            contentContainerStyle={styles.flatlistContainerStyle}
-            data={filteredMessages}
-            renderItem={({ item }) => <ChatItem message={item} />}
+          <ChatList
+            onExpandPress={() => {
+              setExpandedList(LISTS.chat);
+            }}
+            messages={filteredMessages}
+            isExpanded={expandAllLists ? true : expandedList === LISTS.chat}
           />
+
+          {/*<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>*/}
+          {/*  <ThemedText>{"Filter messages:"}</ThemedText>*/}
+          {/*  <TextInput*/}
+          {/*    style={styles.chatTextInput}*/}
+          {/*    onChangeText={setFilterInputValue}*/}
+          {/*  />*/}
+          {/*</View>*/}
+
+          {/*<FlatList*/}
+          {/*  contentContainerStyle={styles.flatlistContainerStyle}*/}
+          {/*  data={filteredMessages}*/}
+          {/*  renderItem={({ item }) => <ChatItem message={item} />}*/}
+          {/*/>*/}
         </View>
       </View>
     </View>

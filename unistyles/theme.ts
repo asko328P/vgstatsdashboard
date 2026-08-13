@@ -29,8 +29,8 @@ export const lightTheme = {
     selectBackground: "#27251d",
     playerHuman: "#0F1419",
     playerBot: "#3F6C88",
-    chanTeam1: "#1F6FBF",
-    chanTeam2: "#7B3FBF",
+    chanTeam2: "#1F6FBF",
+    chanTeam1: "#7B3FBF",
     chanSquad: "#12796A",
   },
   margins: {
@@ -67,8 +67,8 @@ export const darkTheme = {
     selectBackground: "#27251d",
     playerHuman: "#E8EDF2",
     playerBot: "#5E8CA8",
-    chanTeam1: "#4C9BE8",
-    chanTeam2: "#B37FEA",
+    chanTeam2: "#4C9BE8",
+    chanTeam1: "#B37FEA",
     chanSquad: "#57C7B0",
   },
   margins: {

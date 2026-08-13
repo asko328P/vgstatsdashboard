@@ -116,7 +116,7 @@ const AllGameRounds = () => {
           <View style={{ flexShrink: 1 }}>
             <ThemedText
               type={"micro"}
-            >{`${gameRoundCount} recorded`}</ThemedText>
+            >{` ${gameRoundCount} recorded`}</ThemedText>
           </View>
         </View>
         <View
