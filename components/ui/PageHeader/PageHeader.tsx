@@ -17,7 +17,6 @@ type PageButtonProps = {
 export const PageButton = ({ name, currentPath }: PageButtonProps) => {
   const router = useRouter();
   const path = `/${name.toLowerCase()}`;
-  console.log(currentPath);
   const isActive =
     currentPath === path || (currentPath === "/" && name === "ROUNDS");
 
