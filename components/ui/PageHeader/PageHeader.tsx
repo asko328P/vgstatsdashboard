@@ -7,8 +7,6 @@ import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 
 type Props = {};
 
-const FONT_SIZE = 26;
-
 const PageHeader = ({}: Props) => {
   const [syncDate, setSyncDate] = useState("");
 

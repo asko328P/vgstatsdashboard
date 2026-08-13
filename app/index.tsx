@@ -10,11 +10,13 @@ export default function Page() {
       style={{ flex: 1 }}
       contentContainerStyle={{
         gap: 20,
+        flex: 1,
       }}
     >
       <PageHeader />
       <View
         style={{
+          flex: 1,
           paddingHorizontal:
             UnistylesRuntime.orientation === "landscape"
               ? UnistylesRuntime.getTheme().margins.xl

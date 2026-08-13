@@ -5,12 +5,16 @@ import { useMemo } from "react";
 import mapNameToImageUrl from "@/components/ui/MapImage/mapNameToImageUrl";
 
 type Props = {
-  gameRound: GameRound;
+  gameRound?: GameRound;
   style?: ImageStyle;
 };
 
 const MapImage = ({ gameRound, style }: Props) => {
   const imageUri = useMemo(() => {
+    if (!gameRound) {
+      return "";
+    }
+    // @ts-ignore
     let text = gameRound.id;
     text = text.replaceAll("_", " ");
     text = text.substring(20, text.length);
@@ -28,7 +32,13 @@ const MapImage = ({ gameRound, style }: Props) => {
   }, [gameRound]);
 
   if (imageUri) {
-    return <Image style={[styles.image, style]} source={{ uri: imageUri }} />;
+    return (
+      <Image
+        blurRadius={2}
+        style={[styles.image, style]}
+        source={{ uri: imageUri }}
+      />
+    );
   }
   return <View></View>;
 };
@@ -38,6 +48,6 @@ export default MapImage;
 const styles = StyleSheet.create({
   image: {
     height: "100%",
-    aspectRatio: 300 / 200,
+    // aspectRatio: 300 / 200,
   },
 });

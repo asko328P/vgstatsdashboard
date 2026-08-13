@@ -21,42 +21,28 @@ type DataProps = {
   type?: "medic" | "killer" | "destroyer" | "player";
 };
 const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
+  const valuesArray = value.split(" ");
   const colors = useMemo(() => {
     switch (type) {
       case "medic":
         return {
-          containerBackground: "#071003",
-          containerBorderColor: "#41b333",
-          labelColor: "#399c2d",
-          valueColor: "#41b333",
+          typeColor: UnistylesRuntime.getTheme().colors.accentMedic,
         };
       case "destroyer":
         return {
-          containerBackground: "#100903",
-          containerBorderColor: "#cf6b35",
-          labelColor: "#cf6a33",
-          valueColor: "#c15829",
+          typeColor: UnistylesRuntime.getTheme().colors.accentVehicle,
         };
       case "killer":
         return {
-          containerBackground: "#190505",
-          containerBorderColor: "#b33333",
-          labelColor: "#b33333",
-          valueColor: "#e42f2f",
+          typeColor: UnistylesRuntime.getTheme().colors.accentKill,
         };
       case "player":
         return {
-          containerBackground: "#171717",
-          containerBorderColor: "#b5b5b5",
-          labelColor: "#989898",
-          valueColor: "#bdbdbd",
+          typeColor: UnistylesRuntime.getTheme().colors.accentSelect,
         };
       default:
         return {
-          containerBackground: "#131313",
-          containerBorderColor: "#FFFFFF",
-          labelColor: "#FFFFFF",
-          valueColor: "#FFFFFF",
+          typeColor: UnistylesRuntime.getTheme().colors.accentMedic,
         };
     }
   }, [type]);
@@ -65,44 +51,53 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
       style={[
         styles.dataHolder,
         {
-          backgroundColor: colors.containerBackground,
-          borderColor: colors.containerBorderColor,
+          borderColor: colors.typeColor,
         },
       ]}
     >
       {type === "medic" && (
         <Ionicons
-          style={{ position: "absolute", right: 8, top: 6 }}
+          style={{ position: "absolute", right: 8, top: 6, opacity: 0.2 }}
           name="bandage-sharp"
           size={90}
-          color={"#122c0e"}
+          color={UnistylesRuntime.getTheme().colors.accentMedic}
         />
       )}
       {type === "killer" && (
         <SimpleLineIcons
-          style={{ position: "absolute", right: 8, top: 6 }}
+          style={{ position: "absolute", right: 8, top: 6, opacity: 0.2 }}
           name="target"
           size={90}
-          color={"#4a1717"}
+          color={UnistylesRuntime.getTheme().colors.accentKill}
         />
       )}
       {type === "destroyer" && (
         <FontAwesome6
           name="explosion"
-          style={{ position: "absolute", right: 8, bottom: 24 }}
+          style={{ position: "absolute", right: 8, bottom: 24, opacity: 0.2 }}
           size={60}
-          color={"#4a2c17"}
+          color={UnistylesRuntime.getTheme().colors.accentVehicle}
         />
       )}
       <ThemedText
+        type={"log"}
         style={{
-          color: colors.labelColor,
+          color: colors.typeColor,
         }}
       >
-        {label}
+        {`• ${label}`}
       </ThemedText>
-      <ThemedText style={{ color: colors.valueColor, fontSize: 20 }}>
-        {value}
+      <ThemedText type={"name"} style={{ fontSize: 20 }}>
+        {valuesArray.at(1)}
+      </ThemedText>
+      <ThemedText
+        style={{
+          color: colors.typeColor,
+        }}
+        type={"stat"}
+      >
+        {valuesArray.at(2)}
+        <ThemedText type={"label"}>{` ${valuesArray.at(3)}`}</ThemedText>
       </ThemedText>
     </View>
   );
@@ -155,7 +150,7 @@ const TopPlayers = () => {
     }
     allKillsArray = allKillsArray.sort((a, b) => b.revivals - a.revivals);
 
-    return `${allKillsArray[0]?.player_id}: ${allKillsArray[0]?.revivals} kills`;
+    return `${allKillsArray[0]?.player_id} ${allKillsArray[0]?.revivals} kills`;
   }, [gameData]);
 
   const topMedic = useMemo(() => {
@@ -182,7 +177,7 @@ const TopPlayers = () => {
     }
     allMedicsArray = allMedicsArray.sort((a, b) => b.revivals - a.revivals);
 
-    return `${allMedicsArray[0]?.player_id}: ${allMedicsArray[0]?.revivals} rev.`;
+    return `${allMedicsArray[0]?.player_id} ${allMedicsArray[0]?.revivals} revives`;
   }, [gameData]);
 
   const topDestroyer = useMemo(() => {
@@ -211,7 +206,7 @@ const TopPlayers = () => {
       (a, b) => b.vehicle_destroyeds - a.vehicle_destroyeds,
     );
 
-    return `${allDestructorsArray[0]?.player_id}: ${allDestructorsArray[0]?.vehicle_destroyeds} veh. d.`;
+    return `${allDestructorsArray[0]?.player_id} ${allDestructorsArray[0]?.vehicle_destroyeds} assets`;
   }, [gameData]);
 
   const mostRounds = useMemo(() => {
@@ -241,7 +236,7 @@ const TopPlayers = () => {
     }
     allPlayersArray = allPlayersArray.sort((a, b) => b.rounds - a.rounds);
 
-    return `${allPlayersArray[0]?.player_id}: ${allPlayersArray[0]?.rounds} rounds`;
+    return `${allPlayersArray[0]?.player_id} ${allPlayersArray[0]?.rounds} rounds`;
   }, [gameData]);
 
   return (
@@ -268,7 +263,7 @@ const TopPlayers = () => {
           <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
           <DataHolder label={"Most kills"} value={topKiller} type={"killer"} />
           <DataHolder
-            label={"Veh. destroyer"}
+            label={"Vehicle destroyer"}
             value={topDestroyer}
             type={"destroyer"}
           />
@@ -295,14 +290,17 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.margins.xl,
   },
   dataHolder: {
+    flex: 1,
+    backgroundColor: theme.colors.surface1,
     justifyContent: "space-around",
     padding: 10,
-    paddingTop: 16,
+    paddingTop: 10,
+    paddingBottom: 0,
     // aspectRatio: 1.2,
-    borderRadius: 10,
-    borderWidth: 2,
+    // borderRadius: 10,
+    borderTopWidth: 2,
     overflow: "hidden",
-    gap: 30,
+    gap: 20,
   },
   container: {
     // padding: 20,
