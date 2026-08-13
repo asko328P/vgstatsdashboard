@@ -26,6 +26,7 @@ import {
 import PlayersList from "@/components/ui/PlayersList/PlayersList";
 import { useUnistyles } from "react-native-unistyles";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import TeamkillList from "@/components/ui/TeamkillList/TeamkillList";
 
 export type GameRoundPlayer = {
   id: number;
@@ -174,12 +175,17 @@ export default function Page() {
           {/*)}*/}
         </View>
         <View style={styles.singleFlatlistHolder}>
-          <ThemedText>{"Kills:"}</ThemedText>
-          <FlatList
-            contentContainerStyle={styles.flatlistContainerStyle}
-            data={singleGameData?.kills.sort((a, b) => a.id - b.id)}
-            renderItem={({ item }) => <KillItem kill={item} />}
-          />
+          {singleGameData && (
+            <TeamkillList
+              onExpandPress={() => {
+                setExpandedList(LISTS.teamkills);
+              }}
+              kills={singleGameData?.kills.sort((a, b) => a.id - b.id)}
+              isExpanded={
+                expandAllLists ? true : expandedList === LISTS.teamkills
+              }
+            />
+          )}
         </View>
 
         <View style={styles.singleFlatlistHolder}>
