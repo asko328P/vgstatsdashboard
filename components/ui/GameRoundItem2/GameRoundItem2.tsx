@@ -72,6 +72,7 @@ export type GameRound = {
   id: string;
   played_at: string;
   length: number;
+  download_link?: string;
 };
 type Props = {
   gameRound?: GameRound & { game_round_player: GameRoundPlayer[] };
@@ -177,7 +178,7 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
         <DataHolder
           label={"TK/K ‰"}
           colorValues={true}
-          value={Math.round(Number(tkkPerMille))}
+          value={Number(tkkPerMille).toFixed(1)}
           showBar={true}
         />
         <View style={styles.verticalSeparator} />

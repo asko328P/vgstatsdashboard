@@ -85,7 +85,6 @@ type Props = {
 };
 
 const ChatItem2 = ({ message, onPress }: Props) => {
-  console.log("message", message);
   const setSelectedPlayer = useSelectedPlayerStore(
     (state) => state.setSelectedPlayer,
   );
