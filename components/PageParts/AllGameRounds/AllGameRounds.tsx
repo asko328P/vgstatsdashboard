@@ -126,7 +126,7 @@ const AllGameRounds = () => {
             <ThemedText>{"◀ PREV"}</ThemedText>
             {isLoading && (
               <View style={styles.activityIndicatorHolder}>
-                <ActivityIndicator />
+                <ActivityIndicator style={{ opacity: 0.2 }} />
               </View>
             )}
           </TouchableOpacity>
@@ -138,7 +138,7 @@ const AllGameRounds = () => {
             <ThemedText>{"NEXT ▶"}</ThemedText>
             {isLoading && (
               <View style={styles.activityIndicatorHolder}>
-                <ActivityIndicator />
+                <ActivityIndicator style={{ opacity: 0.2 }} />
               </View>
             )}
           </TouchableOpacity>
