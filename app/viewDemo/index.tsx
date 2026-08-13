@@ -1,10 +1,4 @@
-import {
-  FlatList,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, TextInput, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
@@ -29,6 +23,9 @@ import {
   formatRoundTitle,
   toTimestamp,
 } from "@/utils/functions";
+import PlayersList from "@/components/ui/PlayersList/PlayersList";
+import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 
 export type GameRoundPlayer = {
   id: number;
@@ -45,12 +42,24 @@ export type GameRoundPlayer = {
   vehicle_destroyeds: number;
 };
 
+const LISTS = {
+  players: "PLAYERS",
+  teamkills: "TEAMKILLS",
+  chat: "CHAT",
+};
+
 type GameData = GameRound & { kills: Kill[] } & { chat_messages: Message[] } & {
   game_round_player: GameRoundPlayer[];
 };
 
 export default function Page() {
   const router = useRouter();
+  const { rt } = useUnistyles();
+  const expandAllLists =
+    rt.breakpoint !== "xs" &&
+    rt.breakpoint !== "sm" &&
+    rt.breakpoint !== "md" &&
+    rt.breakpoint !== "lg";
   const { gameRoundId } = useLocalSearchParams<{ gameRoundId: string }>();
 
   const setSelectedPlayer = useSelectedPlayerStore(
@@ -62,6 +71,7 @@ export default function Page() {
 
   const [singleGameData, setSingleGameData] = useState<GameData>();
   const [filterInputValue, setFilterInputValue] = useState("");
+  const [expandedList, setExpandedList] = useState(LISTS.players);
 
   useEffect(() => {
     const getData = async () => {
@@ -127,34 +137,41 @@ export default function Page() {
         bottomLabel={`${toTimestamp(singleGameData?.played_at ?? "")} • ${formatDuration(singleGameData?.length ?? 0)}`}
         selectedPlayer={selectedPlayer}
       />
-      <View style={styles.topHolder}>
-        <TouchableOpacity
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <AntDesign name="arrow-left" size={24} color="white" />
-        </TouchableOpacity>
-        <ThemedText
-          type={"subtitle"}
-        >{`Viewing demo: ${gameRoundId}`}</ThemedText>
-      </View>
-      <View style={styles.allFlatlistsHolder}>
+      <View
+        style={[
+          styles.allFlatlistsHolder,
+          !expandAllLists && { flexDirection: "column" },
+        ]}
+      >
         <View style={styles.singleFlatlistHolder}>
-          <ThemedText>{"Players:"}</ThemedText>
-          <FirstRow />
-          <FlatList
-            contentContainerStyle={styles.flatlistContainerStyle}
-            data={singleGameData?.game_round_player
-              .sort((a, b) => a.id - b.id)
-              .filter((item) => !item.player_id.startsWith("[R-BOT]"))}
-            renderItem={({ item }) => <GameRoundPlayerItem item={item} />}
-          />
-          {selectedPlayer && (
-            <View style={{ position: "absolute" }}>
-              <AliasChecker playerName={selectedPlayer} />
-            </View>
+          {singleGameData && (
+            <PlayersList
+              isExpanded={
+                expandAllLists ? true : expandedList === LISTS.players
+              }
+              onExpandPress={() => {
+                setExpandedList(LISTS.players);
+              }}
+              players={singleGameData?.game_round_player
+                .sort((a, b) => a.id - b.id)
+                .filter((item) => !item.player_id.startsWith("[R-BOT]"))}
+            />
           )}
+
+          {/*<ThemedText>{"Players:"}</ThemedText>*/}
+          {/*<FirstRow />*/}
+          {/*<FlatList*/}
+          {/*  contentContainerStyle={styles.flatlistContainerStyle}*/}
+          {/*  data={singleGameData?.game_round_player*/}
+          {/*    .sort((a, b) => a.id - b.id)*/}
+          {/*    .filter((item) => !item.player_id.startsWith("[R-BOT]"))}*/}
+          {/*  renderItem={({ item }) => <GameRoundPlayerItem item={item} />}*/}
+          {/*/>*/}
+          {/*{selectedPlayer && (*/}
+          {/*  <View style={{ position: "absolute" }}>*/}
+          {/*    <AliasChecker playerName={selectedPlayer} />*/}
+          {/*  </View>*/}
+          {/*)}*/}
         </View>
         <View style={styles.singleFlatlistHolder}>
           <ThemedText>{"Kills:"}</ThemedText>
@@ -185,7 +202,7 @@ export default function Page() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
   chatTextInput: {
     margin: 5,
     padding: 5,
@@ -213,6 +230,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   allFlatlistsHolder: {
+    padding: 16,
     gap: 10,
     flexDirection: "row",
     overflow: "hidden",
@@ -222,4 +240,4 @@ const styles = StyleSheet.create({
     flex: 1,
     // flexDirection: "row",
   },
-});
+}));

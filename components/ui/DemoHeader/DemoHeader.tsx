@@ -2,6 +2,10 @@ import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import {
+  SelectedPlayerState,
+  useSelectedPlayerStore,
+} from "@/zustand/SelectedPlayerStore";
 
 type Props = {
   headerTitle: string;
@@ -9,7 +13,6 @@ type Props = {
   bottomLabel?: string;
   selectedPlayer?: string;
   onBackPress?: () => void;
-  onClearPlayerPress?: () => void;
 };
 
 const DemoHeader = ({
@@ -18,10 +21,16 @@ const DemoHeader = ({
   bottomLabel,
   selectedPlayer,
   onBackPress,
-  onClearPlayerPress,
 }: Props) => {
   const textPrimary = UnistylesRuntime.getTheme().colors.textPrimary;
   const surfaceBase = UnistylesRuntime.getTheme().colors.surfaceBase;
+
+  const setSelectedPlayer = useSelectedPlayerStore(
+    (state) => state.setSelectedPlayer,
+  );
+  const closePlayer = () => {
+    setSelectedPlayer("");
+  };
 
   return (
     <View style={styles.container}>
@@ -54,7 +63,7 @@ const DemoHeader = ({
             {selectedPlayer}
           </ThemedText>
           <TouchableOpacity
-            onPress={onClearPlayerPress}
+            onPress={closePlayer}
             style={styles.clearPlayerButton}
           >
             <Ionicons name={"close"} size={16} color={surfaceBase} />
