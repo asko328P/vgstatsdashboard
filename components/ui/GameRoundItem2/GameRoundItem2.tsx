@@ -1,5 +1,4 @@
 import {
-  StyleSheet,
   TouchableOpacity,
   View,
   LayoutChangeEvent,
@@ -13,6 +12,7 @@ import { interpolateColor } from "react-native-reanimated";
 import MapImage from "@/components/ui/MapImage/MapImage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
+import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 
 export type GameRound = {
   id: string;
@@ -127,13 +127,13 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
 
 export default GameRoundItem2;
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
   imageHolder: {
     position: "absolute",
     right: 0,
     top: 0,
     height: "100%",
-    width: "30%",
+    width: "40%",
   },
   titleAndDateHolder: {
     flexDirection: "row",
@@ -147,12 +147,14 @@ const styles = StyleSheet.create({
   },
   container: {
     gap: 5,
-    backgroundColor: "#171616",
+    borderWidth: 1,
+    borderColor: theme.colors.borderHairline,
+    backgroundColor: theme.colors.surface1,
     // flexDirection: "row",
     // justifyContent: "space-between",
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 1,
     overflow: "hidden",
     paddingBottom: 50,
   },
-});
+}));
