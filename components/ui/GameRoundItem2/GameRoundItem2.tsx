@@ -136,6 +136,14 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
     return ((summedTeamKills / summedKills) * 1000).toFixed(2);
   }, [summedKills, summedTeamKills]);
 
+  // Date, time and length are separate rows so they can stack on phones.
+  const metaParts = useMemo(() => {
+    return [
+      ...toTimestamp(gameRound?.played_at ?? "").split(" • "),
+      formatDuration(gameRound?.length ?? 0),
+    ].filter(Boolean);
+  }, [gameRound]);
+
   return (
     <TouchableOpacity
       onLayout={onLayout}
@@ -162,10 +170,13 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
             </ThemedText>
           </View>
         </View>
-        <ThemedText
-          style={{ color: UnistylesRuntime.getTheme().colors.textMuted }}
-          type={"log"}
-        >{`${toTimestamp(gameRound?.played_at ?? "")} • ${formatDuration(gameRound?.length ?? 0)}`}</ThemedText>
+        <View style={styles.metaHolder}>
+          {metaParts.map((part) => (
+            <ThemedText key={part} style={styles.meta} type={"log"}>
+              {part}
+            </ThemedText>
+          ))}
+        </View>
       </View>
       <View style={styles.rightItems}>
         <DataHolder label={"KILLS"} value={summedKills} />
@@ -220,7 +231,8 @@ export default GameRoundItem2;
 
 const styles = StyleSheet.create((theme) => ({
   verticalSeparator: {
-    flex: 1,
+    display: { xs: "none", md: "flex" },
+    alignSelf: "stretch",
     borderLeftWidth: StyleSheet.hairlineWidth,
     borderLeftColor: theme.colors.borderStrong,
     marginHorizontal: theme.margins.md,
@@ -275,17 +287,28 @@ const styles = StyleSheet.create((theme) => ({
   },
   leftItems: {
     gap: theme.margins.md,
+    flexShrink: 1,
+  },
+  // Stacked on phones, inline from tablets up.
+  metaHolder: {
+    flexDirection: { xs: "column", md: "row" },
+    gap: { xs: 2, md: theme.margins.md },
+  },
+  meta: {
+    color: theme.colors.textMuted,
   },
   rightItems: {
     flexDirection: "row",
-    gap: theme.margins.xl,
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: { xs: theme.margins.lg, md: theme.margins.xl },
   },
   imageHolder: {
     position: "absolute",
     right: 0,
     top: 0,
     height: "100%",
-    width: "70%",
+    width: { xs: "100%", md: "70%" },
   },
   imageFade: {
     position: "absolute",
@@ -306,10 +329,10 @@ const styles = StyleSheet.create((theme) => ({
     textTransform: "capitalize",
   },
   container: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: { xs: "column", md: "row" },
+    alignItems: { xs: "stretch", md: "center" },
     justifyContent: "space-between",
-    gap: 5,
+    gap: { xs: theme.margins.lg, md: 5 },
     borderWidth: 1,
     borderColor: theme.colors.borderHairline,
     backgroundColor: theme.colors.surface1,
