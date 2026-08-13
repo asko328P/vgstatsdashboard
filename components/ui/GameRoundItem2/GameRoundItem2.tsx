@@ -13,7 +13,11 @@ import MapImage from "@/components/ui/MapImage/MapImage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
-import { formatDuration, toTimestamp } from "@/utils/functions";
+import {
+  formatDuration,
+  formatRoundTitle,
+  toTimestamp,
+} from "@/utils/functions";
 
 type DataHolderProps = {
   label: string;
@@ -83,18 +87,7 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
   );
 
   const formattedTitle = useMemo(() => {
-    if (!gameRound?.id) {
-      return "";
-    }
-    let text = gameRound.id;
-    text = text.replaceAll("_", " ");
-    text = text.substring(20, text.length);
-    text = text.replaceAll("gpm coop", "");
-    text = text.replaceAll("16", "-  Infantry");
-    text = text.replaceAll("32", "-  Alternative");
-    text = text.replaceAll("64", "-  Standard");
-    text = text.replaceAll("128", "-  Large");
-    return text;
+    return formatRoundTitle(gameRound?.id ?? "");
   }, [gameRound]);
 
   const date = useMemo(() => {

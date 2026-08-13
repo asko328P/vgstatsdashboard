@@ -7,6 +7,7 @@ import { interpolateColor } from "react-native-reanimated";
 import MapImage from "@/components/ui/MapImage/MapImage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
+import { formatRoundTitle } from "@/utils/functions";
 
 export type GameRound = {
   id: string;
@@ -23,14 +24,8 @@ const GameRoundItem = ({ gameRound }: Props) => {
 
   const formattedTitle = useMemo(() => {
     let text = gameRound.id;
-    text = text.replaceAll("_", " ");
-    text = text.substring(20, text.length);
-    text = text.replaceAll("gpm coop", "");
-    text = text.replaceAll("16", "-  Infantry");
-    text = text.replaceAll("32", "-  Alternative");
-    text = text.replaceAll("64", "-  Standard");
-    text = text.replaceAll("128", "-  Large");
-    return text;
+
+    return formatRoundTitle(text);
   }, [gameRound]);
 
   const date = useMemo(() => {
@@ -77,9 +72,7 @@ const GameRoundItem = ({ gameRound }: Props) => {
       <ThemedText>
         <ThemedText style={{ color: "#e3e3e3" }}>{"kills"}</ThemedText>
         {"/"}
-        <ThemedText style={{ color: "#cdcdcd" }}>
-          {"teamkills:"}
-        </ThemedText>{" "}
+        <ThemedText style={{ color: "#cdcdcd" }}>{"teamkills:"}</ThemedText>
         <ThemedText style={{ color: "#beefa1" }}>{summedKills}</ThemedText>
         {"/"}
         <ThemedText style={{ color: "#efa6a6" }}>{summedTeamKills}</ThemedText>

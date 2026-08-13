@@ -11,7 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import GameRoundItem, {
   GameRound,
-} from "@/components/ui/GameRoundItem/GameRoundItem";
+} from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import KillItem, { Kill } from "@/components/ui/KillItem/KillItem";
 import ChatItem, { Message } from "@/components/ui/ChatItem/ChatItem";
 import { AntDesign } from "@expo/vector-icons";
@@ -23,6 +23,12 @@ import {
   useSelectedPlayerStore,
 } from "@/zustand/SelectedPlayerStore";
 import AliasChecker from "@/components/ui/AliasChecker/AliasChecker";
+import DemoHeader from "@/components/ui/DemoHeader/DemoHeader";
+import {
+  formatDuration,
+  formatRoundTitle,
+  toTimestamp,
+} from "@/utils/functions";
 
 export type GameRoundPlayer = {
   id: number;
@@ -100,8 +106,27 @@ export default function Page() {
     }
     return messagesCopy.sort((a, b) => a.id - b.id);
   }, [singleGameData?.chat_messages, filterInputValue]);
+
+  const onBackPress = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.dismissAll();
+      router.replace("/");
+    }
+  };
   return (
     <View style={styles.container}>
+      <DemoHeader
+        onBackPress={onBackPress}
+        headerTitle={formatRoundTitle(gameRoundId)
+          .split(" ")
+          .slice(0, -3)
+          .join(" ")}
+        mapType={formatRoundTitle(gameRoundId).split(" ").pop()}
+        bottomLabel={`${toTimestamp(singleGameData?.played_at ?? "")} • ${formatDuration(singleGameData?.length ?? 0)}`}
+        selectedPlayer={selectedPlayer}
+      />
       <View style={styles.topHolder}>
         <TouchableOpacity
           onPress={() => {
@@ -195,7 +220,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 16,
     // flexDirection: "row",
   },
 });

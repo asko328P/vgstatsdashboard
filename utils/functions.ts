@@ -41,6 +41,21 @@ export function toReadableDayMonth(isoString: string) {
   });
 }
 
+// Turns a raw game round id into a readable map name + game mode
+export function formatRoundTitle(roundId: string) {
+  if (!roundId) return "";
+
+  let text = roundId;
+  text = text.replaceAll("_", " ");
+  text = text.substring(20, text.length);
+  text = text.replaceAll("gpm coop", "");
+  text = text.replaceAll("16", "-  Infantry");
+  text = text.replaceAll("32", "-  Alternative");
+  text = text.replaceAll("64", "-  Standard");
+  text = text.replaceAll("128", "-  Large");
+  return text;
+}
+
 // 1320 -> "22 mins", 4320 -> "1 hr 12 mins"
 export function formatDuration(totalSeconds: number) {
   const seconds = Math.max(0, Math.floor(totalSeconds));
