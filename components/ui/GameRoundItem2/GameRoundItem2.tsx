@@ -13,10 +13,12 @@ import MapImage from "@/components/ui/MapImage/MapImage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import { formatDuration, toTimestamp } from "@/utils/functions";
 
 export type GameRound = {
   id: string;
   played_at: string;
+  length: number;
 };
 type Props = {
   gameRound?: GameRound & { game_round_player: GameRoundPlayer[] };
@@ -25,6 +27,8 @@ type Props = {
 };
 const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
   const router = useRouter();
+  // LinearGradient takes plain colors, not a Unistyles style, so read it directly.
+  const surface1 = UnistylesRuntime.getTheme().colors.surface1;
   const setSelectedPlayer = useSelectedPlayerStore(
     (state) => state.setSelectedPlayer,
   );
@@ -91,36 +95,62 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
     >
       <View style={styles.imageHolder}>
         <MapImage style={{ opacity: 0.7 }} gameRound={gameRound} />
+        <LinearGradient
+          colors={[surface1, "transparent"]}
+          start={{ x: 0.0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={{ position: "absolute", height: 500, width: "100%" }}
+        />
       </View>
-      <View style={styles.titleAndDateHolder}>
-        <ThemedText type={"subtitle"} style={styles.title}>
-          {formattedTitle}
-        </ThemedText>
+      <View style={styles.leftItems}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <ThemedText style={{ textTransform: "uppercase" }} type={"heading"}>
+            {formattedTitle.split(" ").slice(0, -3).join(" ")}
+          </ThemedText>
+          <View style={styles.mapType}>
+            <ThemedText type={"cell"}>
+              {formattedTitle.split(" ").pop()}
+            </ThemedText>
+          </View>
+        </View>
         <ThemedText
-          style={styles.date}
-        >{`${date.toLocaleTimeString()} ${date.toLocaleDateString()}`}</ThemedText>
+          style={{ color: UnistylesRuntime.getTheme().colors.textMuted }}
+          type={"log"}
+        >{`${toTimestamp(gameRound?.played_at ?? "")} • ${formatDuration(gameRound?.length ?? 0)}`}</ThemedText>
+      </View>
+      <View style={styles.rightItems}>
+        <ThemedText>{"asdas"}</ThemedText>
       </View>
 
-      <ThemedText>
-        <ThemedText style={{ color: "#e3e3e3" }}>{"kills"}</ThemedText>
-        {"/"}
-        <ThemedText style={{ color: "#cdcdcd" }}>
-          {"teamkills:"}
-        </ThemedText>{" "}
-        <ThemedText style={{ color: "#beefa1" }}>{summedKills}</ThemedText>
-        {"/"}
-        <ThemedText style={{ color: "#efa6a6" }}>{summedTeamKills}</ThemedText>
-        <ThemedText
-          style={{
-            color: interpolateColor(
-              Number(tkkPerMille),
-              [20, 50],
-              ["#d1d1d1", "#fb3d3d"],
-            ),
-          }}
-        >{`   TK/K ‰: ${tkkPerMille}`}</ThemedText>
-      </ThemedText>
-      <ThemedText>{`Number of players: ${gameRound?.game_round_player.length ?? 40 - 40}`}</ThemedText>
+      {/*<View style={styles.titleAndDateHolder}>*/}
+      {/*  <ThemedText type={"heading"} style={styles.title}>*/}
+      {/*    {formattedTitle}*/}
+      {/*  </ThemedText>*/}
+      {/*  <ThemedText*/}
+      {/*    style={styles.date}*/}
+      {/*  >{`${date.toLocaleTimeString()} ${date.toLocaleDateString()}`}</ThemedText>*/}
+      {/*</View>*/}
+
+      {/*<ThemedText>*/}
+      {/*  <ThemedText style={{ color: "#e3e3e3" }}>{"kills"}</ThemedText>*/}
+      {/*  {"/"}*/}
+      {/*  <ThemedText style={{ color: "#cdcdcd" }}>*/}
+      {/*    {"teamkills:"}*/}
+      {/*  </ThemedText>{" "}*/}
+      {/*  <ThemedText style={{ color: "#beefa1" }}>{summedKills}</ThemedText>*/}
+      {/*  {"/"}*/}
+      {/*  <ThemedText style={{ color: "#efa6a6" }}>{summedTeamKills}</ThemedText>*/}
+      {/*  <ThemedText*/}
+      {/*    style={{*/}
+      {/*      color: interpolateColor(*/}
+      {/*        Number(tkkPerMille),*/}
+      {/*        [20, 50],*/}
+      {/*        ["#d1d1d1", "#fb3d3d"],*/}
+      {/*      ),*/}
+      {/*    }}*/}
+      {/*  >{`   TK/K ‰: ${tkkPerMille}`}</ThemedText>*/}
+      {/*</ThemedText>*/}
+      {/*<ThemedText>{`Number of players: ${gameRound?.game_round_player.length ?? 40 - 40}`}</ThemedText>*/}
     </TouchableOpacity>
   );
 };
@@ -128,12 +158,36 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
 export default GameRoundItem2;
 
 const styles = StyleSheet.create((theme) => ({
+  mapType: {
+    textTransform: "uppercase",
+    backgroundColor: theme.colors.surface3,
+    padding: theme.margins.sm,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: theme.colors.borderStrong,
+    paddingHorizontal: theme.margins.md,
+    paddingBottom: 2,
+  },
+  leftItems: {
+    gap: theme.margins.md,
+  },
+  rightItems: {},
   imageHolder: {
     position: "absolute",
     right: 0,
     top: 0,
     height: "100%",
     width: "40%",
+  },
+  imageFade: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: "60%",
+    height: "60%",
   },
   titleAndDateHolder: {
     flexDirection: "row",
@@ -146,6 +200,9 @@ const styles = StyleSheet.create((theme) => ({
     textTransform: "capitalize",
   },
   container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     gap: 5,
     borderWidth: 1,
     borderColor: theme.colors.borderHairline,
@@ -155,6 +212,5 @@ const styles = StyleSheet.create((theme) => ({
     padding: 10,
     borderRadius: 1,
     overflow: "hidden",
-    paddingBottom: 50,
   },
 }));

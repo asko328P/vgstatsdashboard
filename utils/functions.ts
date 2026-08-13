@@ -41,6 +41,39 @@ export function toReadableDayMonth(isoString: string) {
   });
 }
 
+// 1320 -> "22 mins", 4320 -> "1 hr 12 mins"
+export function formatDuration(totalSeconds: number) {
+  const seconds = Math.max(0, Math.floor(totalSeconds));
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(`${hours} ${hours === 1 ? "hr" : "hrs"}`);
+  }
+  if (minutes > 0 || hours === 0) {
+    parts.push(`${minutes} ${minutes === 1 ? "min" : "mins"}`);
+  }
+
+  return parts.join(" ");
+}
+
+// "2026-08-13T07:32:54+00:00" -> "2026-08-13 09:32" in the device's local timezone
+export function toTimestamp(isoString: string) {
+  const date = new Date(isoString);
+
+  if (isNaN(date.getTime())) return "";
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  const time = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+
+  return `${day} • ${time}`;
+}
+
 // "2026-08-12T18:44:28.716251+00:00" -> "3 hours ago"
 export function timeSince(isoString: string) {
   const date = new Date(isoString);

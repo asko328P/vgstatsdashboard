@@ -38,7 +38,7 @@ const AllGameRounds = () => {
     if (!measuredRectangle || !dummyRectangle) return;
     setGameRange([
       0,
-      Math.round(measuredRectangle.height / dummyRectangle.height),
+      Math.floor(measuredRectangle.height / dummyRectangle.height),
     ]);
   }, [measuredRectangle, dummyRectangle]);
 
@@ -78,16 +78,16 @@ const AllGameRounds = () => {
   const previousPaginationHandler = () => {
     let copiedGameRange = gameRange.slice(0);
     let difference = Math.abs(copiedGameRange[1] - copiedGameRange[0]);
-    copiedGameRange[1] = copiedGameRange[0];
-    copiedGameRange[0] = copiedGameRange[0] - difference;
+    copiedGameRange[1] = copiedGameRange[0] - 1;
+    copiedGameRange[0] = copiedGameRange[0] - 1 - difference;
     setGameRange(copiedGameRange);
   };
 
   const nextPaginationHandler = () => {
     let copiedGameRange = gameRange.slice(0);
     let difference = Math.abs(copiedGameRange[1] - copiedGameRange[0]);
-    copiedGameRange[0] = copiedGameRange[1];
-    copiedGameRange[1] = copiedGameRange[1] + difference;
+    copiedGameRange[0] = copiedGameRange[1] + 1;
+    copiedGameRange[1] = copiedGameRange[1] + 1 + difference;
     setGameRange(copiedGameRange);
   };
 
@@ -149,49 +149,6 @@ const AllGameRounds = () => {
         ))}
       </View>
     </View>
-  );
-
-  return (
-    <>
-      <ThemedText>{`Showing games from ${gameRange[0]} to ${gameRange[1]}`}</ThemedText>
-      <FlatList
-        contentContainerStyle={styles.contentContainerStyle}
-        style={{ flex: 1 }}
-        data={gameData}
-        renderItem={({ item }) => <GameRoundItem gameRound={item} />}
-      />
-      <View style={styles.paginationButtonsHolder}>
-        <TouchableOpacity
-          disabled={gameRange[0] === 0}
-          onPress={previousPaginationHandler}
-          style={[
-            styles.paginationTouchable,
-            {
-              opacity: gameRange[0] === 0 ? 0.5 : 1,
-            },
-          ]}
-        >
-          <ThemedText>{"previous page"}</ThemedText>
-          {isLoading && (
-            <View style={styles.activityIndicatorHolder}>
-              <ActivityIndicator />
-            </View>
-          )}
-        </TouchableOpacity>
-        <ThemedText>{`Showing games from ${gameRange[0]} to ${gameRange[1]}`}</ThemedText>
-        <TouchableOpacity
-          onPress={nextPaginationHandler}
-          style={styles.paginationTouchable}
-        >
-          <ThemedText>{"Next page"}</ThemedText>
-          {isLoading && (
-            <View style={styles.activityIndicatorHolder}>
-              <ActivityIndicator />
-            </View>
-          )}
-        </TouchableOpacity>
-      </View>
-    </>
   );
 };
 
