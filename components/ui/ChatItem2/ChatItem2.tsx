@@ -62,6 +62,7 @@ const isCommand = (text: string) => {
 };
 
 const channelLabel = (channel: number) => {
+  if (channel === 0) return "ALL";
   if (channel === 10) return "TEAM 1";
   if (channel === 20) return "TEAM 2";
   if ((channel > 10 && channel < 20) || (channel > 20 && channel < 30)) {
@@ -72,6 +73,7 @@ const channelLabel = (channel: number) => {
 
 const channelColor = (channel: number) => {
   const colors = UnistylesRuntime.getTheme().colors;
+  if (channel === 0) return colors.textSecondary;
   if (channel === 10) return colors.chanTeam1;
   if (channel === 20) return colors.chanTeam2;
   return colors.chanSquad;
@@ -83,6 +85,7 @@ type Props = {
 };
 
 const ChatItem2 = ({ message, onPress }: Props) => {
+  console.log("message", message);
   const setSelectedPlayer = useSelectedPlayerStore(
     (state) => state.setSelectedPlayer,
   );
@@ -142,7 +145,7 @@ const ChatItem2 = ({ message, onPress }: Props) => {
           </View>
         </View>
 
-        <View style={chatRowStyles.messageCell}>
+        <View style={{ flexShrink: 1 }}>
           <ThemedText type={"log"} style={styles.message(isSelected, command)}>
             {message.text}
           </ThemedText>
@@ -156,6 +159,7 @@ export default ChatItem2;
 
 const styles = StyleSheet.create((theme) => ({
   rightSideHolder: {
+    flexShrink: 1,
     gap: theme.margins.sm,
   },
   timeHolder: {
@@ -165,7 +169,7 @@ const styles = StyleSheet.create((theme) => ({
   teamCell: {
     paddingHorizontal: 9,
     borderRadius: 5,
-    paddingTop: 2,
+    paddingVertical: 2,
   },
   channelAndNameHolder: {
     flexDirection: "row",
@@ -173,6 +177,7 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
   },
   message: (isSelected: boolean, command: boolean) => ({
+    flexShrink: 1,
     color: command
       ? theme.colors.accentSelect
       : isSelected

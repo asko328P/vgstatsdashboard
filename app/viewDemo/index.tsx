@@ -119,6 +119,10 @@ export default function Page() {
     return messagesCopy.sort((a, b) => a.id - b.id);
   }, [singleGameData?.chat_messages, filterInputValue]);
 
+  // On wide screens every list is open, so they share the space equally.
+  const isListExpanded = (list: string) =>
+    expandAllLists || expandedList === list;
+
   const onBackPress = () => {
     if (router.canGoBack()) {
       router.back();
@@ -145,12 +149,12 @@ export default function Page() {
           !expandAllLists && { flexDirection: "column" },
         ]}
       >
-        <View style={styles.singleFlatlistHolder}>
+        <View
+          style={styles.singleFlatlistHolder(isListExpanded(LISTS.players))}
+        >
           {singleGameData && (
             <PlayersList
-              isExpanded={
-                expandAllLists ? true : expandedList === LISTS.players
-              }
+              isExpanded={isListExpanded(LISTS.players)}
               onExpandPress={() => {
                 setExpandedList(LISTS.players);
               }}
@@ -175,27 +179,27 @@ export default function Page() {
           {/*  </View>*/}
           {/*)}*/}
         </View>
-        <View style={styles.singleFlatlistHolder}>
+        <View
+          style={styles.singleFlatlistHolder(isListExpanded(LISTS.teamkills))}
+        >
           {singleGameData && (
             <TeamkillList
               onExpandPress={() => {
                 setExpandedList(LISTS.teamkills);
               }}
               kills={singleGameData?.kills.sort((a, b) => a.id - b.id)}
-              isExpanded={
-                expandAllLists ? true : expandedList === LISTS.teamkills
-              }
+              isExpanded={isListExpanded(LISTS.teamkills)}
             />
           )}
         </View>
 
-        <View style={styles.singleFlatlistHolder}>
+        <View style={styles.singleFlatlistHolder(isListExpanded(LISTS.chat))}>
           <ChatList
             onExpandPress={() => {
               setExpandedList(LISTS.chat);
             }}
             messages={filteredMessages}
-            isExpanded={expandAllLists ? true : expandedList === LISTS.chat}
+            isExpanded={isListExpanded(LISTS.chat)}
           />
 
           {/*<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>*/}
@@ -229,11 +233,15 @@ const styles = StyleSheet.create((theme) => ({
     paddingBottom: 400,
     gap: 4,
   },
-  singleFlatlistHolder: {
-    flex: 1,
+  // Collapsed lists shrink to just their toggle; the expanded one takes the rest.
+  singleFlatlistHolder: (isExpanded: boolean) => ({
+    flexGrow: isExpanded ? 1 : 0,
+    flexShrink: isExpanded ? 1 : 0,
+    // 0 when expanded so columns split evenly instead of sizing to their
+    // content; auto when collapsed so the holder hugs its toggle button.
+    flexBasis: isExpanded ? 0 : "auto",
     gap: 10,
-    // padding: 10,
-  },
+  }),
   flatListsHolder: {
     gap: 10,
     flexDirection: "row",
@@ -245,11 +253,11 @@ const styles = StyleSheet.create((theme) => ({
     paddingVertical: 16,
   },
   allFlatlistsHolder: {
+    flex: 1,
     padding: 16,
     gap: 10,
     flexDirection: "row",
     overflow: "hidden",
-    maxHeight: "100%",
   },
   container: {
     flex: 1,
