@@ -19,6 +19,7 @@ import DemoHeader from "@/components/ui/DemoHeader/DemoHeader";
 import {
   formatDuration,
   formatRoundTitle,
+  toReadableDayMonth,
   toTimestamp,
 } from "@/utils/functions";
 import PlayersList from "@/components/ui/PlayersList/PlayersList";
@@ -144,6 +145,16 @@ export default function Page() {
   return (
     <View style={styles.container}>
       <PageHeader />
+      <View style={styles.dateAndSeparator}>
+        <ThemedText type={"label"}>{`Players`}</ThemedText>
+        <View
+          style={{
+            flex: 1,
+            borderTopColor: UnistylesRuntime.getTheme().colors.surface3,
+            borderTopWidth: 1,
+          }}
+        />
+      </View>
       <View style={styles.searchHolder}>
         <TextInput
           value={searchInputValue}
@@ -183,6 +194,11 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create((theme) => ({
+  dateAndSeparator: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.margins.xl,
+  },
   searchHolder: {
     flexDirection: "row",
     alignItems: "center",

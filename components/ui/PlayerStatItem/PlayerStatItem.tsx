@@ -148,7 +148,7 @@ const styles = StyleSheet.create((theme) => ({
   }),
   kd: (value: number) => ({
     color:
-      value > 4
+      value > 5
         ? theme.colors.accentMedic
         : value < 1
           ? theme.colors.accentSelect
