@@ -25,18 +25,40 @@ export const PageButton = ({
   const router = useRouter();
   const path = `/${name.toLowerCase()}`;
   const isActive =
-    currentPath === path || (currentPath === "/" && name === "ROUNDS");
+    currentPath === path ||
+    (currentPath === "/" && name === "ROUNDS") ||
+    (currentPath === "/viewPlayers" && name === "PLAYERS");
 
+  const navigate = () => {
+    if (name === BUTTON_NAMES.rounds && currentPath !== "/") {
+      router.replace("/");
+      return;
+    }
+    if (name === BUTTON_NAMES.players && currentPath !== "/viewPlayers") {
+      router.replace("/viewPlayers");
+      return;
+    }
+    if (name === BUTTON_NAMES.maps && currentPath !== "/viewMaps") {
+      router.replace("/viewMaps");
+      return;
+    }
+  };
   return (
     <TouchableOpacity
       disabled={notAllowed}
-      // onPress={() => router.push(path)}
+      onPress={navigate}
       // @ts-ignore
       style={styles.pageButton(isActive, notAllowed)}
     >
       <ThemedText type={"label"}>{name}</ThemedText>
     </TouchableOpacity>
   );
+};
+
+const BUTTON_NAMES = {
+  players: "PLAYERS",
+  rounds: "ROUNDS",
+  maps: "MAPS",
 };
 
 type Props = {};
@@ -80,9 +102,13 @@ const PageHeader = ({}: Props) => {
           </ThemedText>
         </ThemedText>
         <View style={styles.nav}>
-          <PageButton name={"ROUNDS"} currentPath={currentPath} />
-          <PageButton name={"PLAYERS"} currentPath={currentPath} notAllowed />
-          <PageButton name={"MAPS"} currentPath={currentPath} notAllowed />
+          <PageButton name={BUTTON_NAMES.rounds} currentPath={currentPath} />
+          <PageButton name={BUTTON_NAMES.players} currentPath={currentPath} />
+          <PageButton
+            name={BUTTON_NAMES.maps}
+            currentPath={currentPath}
+            notAllowed
+          />
         </View>
       </View>
       <ThemedText style={styles.text} numberOfLines={1}>
@@ -110,7 +136,7 @@ const styles = StyleSheet.create((theme) => ({
     flexWrap: "wrap",
   },
   pageButton: (isActive: boolean, notAllowed: boolean) => ({
-    cursor: notAllowed ? "not-allowed" : "auto",
+    cursor: notAllowed ? "not-allowed" : "pointer",
     backgroundColor: isActive ? theme.colors.surface3 : theme.colors.surface1,
     borderColor: isActive ? theme.colors.borderStrong : theme.colors.surface1,
     borderWidth: 1,
