@@ -63,7 +63,7 @@ const getChips = (item: PlayerStats) => {
   if (isNew) {
     chips.push({ text: "new", color: colors.chanSquad });
   }
-  if (item.kills > 6000) {
+  if (item.kills > 10000) {
     chips.push({ text: "killer", color: colors.accentKill });
   }
   if (item.revivals > 600) {
@@ -125,7 +125,9 @@ const PlayerStatItem = ({ item }: Props) => {
         <ThemedText>{item.rounds}</ThemedText>
       </View>
       <View style={playerRowStyles.cell}>
-        <ThemedText style={styles.revives}>{item.revivals}</ThemedText>
+        <ThemedText style={styles.revives(item.revivals)}>
+          {item.revivals}
+        </ThemedText>
       </View>
       <View style={playerRowStyles.cell}>
         <ThemedText>{timeSince(item.last_seen)}</ThemedText>
@@ -152,9 +154,9 @@ const styles = StyleSheet.create((theme) => ({
           ? theme.colors.accentSelect
           : theme.colors.textPrimary,
   }),
-  revives: {
-    color: theme.colors.accentMedic,
-  },
+  revives: (value: number) => ({
+    color: value > 30 ? theme.colors.accentMedic : theme.colors.textPrimary,
+  }),
   container: (isSelected: boolean) => ({
     backgroundColor: isSelected
       ? theme.colors.selectBackground

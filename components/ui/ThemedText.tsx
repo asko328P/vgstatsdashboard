@@ -45,7 +45,7 @@ export function ThemedText({
 
 // Custom fonts ship one file per weight, so the weight is selected by picking
 // the matching family rather than by `fontWeight`.
-const fonts = {
+export const fonts = {
   regular: "ChakraPetch_400Regular",
   medium: "ChakraPetch_500Medium",
   semiBold: "ChakraPetch_600SemiBold",
