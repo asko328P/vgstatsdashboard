@@ -3,6 +3,7 @@ interface MyObject {
 }
 
 const obj: MyObject = {
+  operationfalcon: require("@/assets/images/mapImages/operationfalcon.jpg"),
   gaza2: require("@/assets/images/mapImages/gaza2.jpg"),
   saaremaa: require("@/assets/images/mapImages/saaremaa.jpg"),
   goosegreen: require("@/assets/images/mapImages/goosegreen.jpg"),
