@@ -169,7 +169,9 @@ export default function Page() {
 
   const titleRow = (label: string) => (
     <View style={styles.dateAndSeparator}>
-      <ThemedText type={"label"}>{label}</ThemedText>
+      <ThemedText style={{ flexShrink: 1 }} type={"label"}>
+        {label}
+      </ThemedText>
       <View
         style={{
           flex: 1,
@@ -209,6 +211,7 @@ export default function Page() {
       contentContainerStyle={styles.horizontalContent}
     >
       <FlatList
+        pointerEvents={expandAllLists ? "auto" : "none"}
         style={styles.flatlist}
         scrollEnabled={expandAllLists}
         data={searchResults ?? playersData}
@@ -224,9 +227,10 @@ export default function Page() {
     <View style={styles.sidePanel}>
       {upcomingPlayersData.map((item, index) => (
         <View style={styles.upcomingPlayer} key={item.id}>
-          <View style={{ gap: 5 }}>
+          <View style={{ gap: 5, flexShrink: 1 }}>
             <ThemedText>{item.id.slice(1, 3000)}</ThemedText>
             <ThemedText
+              style={{ flexShrink: 1 }}
               type={"micro"}
             >{`FIRST SEEN ${toReadableDate(item.created_at)} · K/D ${(item.kills / item.deaths).toFixed(1)} · ${item.revivals.toFixed(0)} REV`}</ThemedText>
           </View>
@@ -278,6 +282,7 @@ export default function Page() {
 
 const styles = StyleSheet.create((theme) => ({
   upcomingPlayer: {
+    alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "row",
     padding: theme.margins.md,

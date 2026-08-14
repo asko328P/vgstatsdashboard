@@ -21,6 +21,7 @@ export const playerRowStyles = StyleSheet.create((theme) => ({
     flex: 3,
   },
   cell: {
+    paddingRight: 5,
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -122,7 +123,7 @@ const PlayerStatItem = ({ item }: Props) => {
         </ThemedText>
       </View>
       <View style={playerRowStyles.cell}>
-        <ThemedText>{item.rounds}</ThemedText>
+        <ThemedText>{item.kills}</ThemedText>
       </View>
       <View style={playerRowStyles.cell}>
         <ThemedText style={styles.revives(item.revivals)}>
