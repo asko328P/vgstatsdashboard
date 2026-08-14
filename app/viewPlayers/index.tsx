@@ -88,6 +88,9 @@ export default function Page() {
     null,
   );
   const [isSearching, setIsSearching] = useState(false);
+  const [upcomingPlayersData, setUpcomingPlayersData] = useState<PlayerStats[]>(
+    [],
+  );
 
   useEffect(() => {
     const getData = async () => {
@@ -106,6 +109,27 @@ export default function Page() {
         setPlayersData(data);
       }
     };
+    const getUpcomingData = async () => {
+      const dateCutoff = new Date();
+      dateCutoff.setDate(dateCutoff.getDate() - 7);
+      const { data, error } = await supabase
+        .from("players")
+        .select(`*`)
+        .neq("hash", "False")
+        .gte("created_at", dateCutoff.toISOString())
+        .gte("rounds", 10)
+        .not("last_seen", "is", null)
+        .order("rounds", { ascending: false })
+        .limit(3);
+      if (error) {
+        console.log("single game error", error);
+      }
+      if (data) {
+        console.log("player data", data);
+        setUpcomingPlayersData(data);
+      }
+    };
+    getUpcomingData();
     getData();
   }, []);
 
@@ -142,9 +166,9 @@ export default function Page() {
     setSearchResults(data ?? []);
   };
 
-  const titleRow = (
+  const titleRow = (label: string) => (
     <View style={styles.dateAndSeparator}>
-      <ThemedText type={"label"}>{`Players`}</ThemedText>
+      <ThemedText type={"label"}>{label}</ThemedText>
       <View
         style={{
           flex: 1,
@@ -197,10 +221,11 @@ export default function Page() {
 
   const sidePanel = (
     <View style={styles.sidePanel}>
-      <ThemedText type={"label"}>{"Selected player"}</ThemedText>
-      <ThemedText type={"log"} style={styles.sidePanelText}>
-        {selectedPlayer || "Pick a player from the table."}
-      </ThemedText>
+      {upcomingPlayersData.map((item, index) => (
+        <View style={styles.upcomingPlayer} key={item.id}>
+          <ThemedText>{item.id}</ThemedText>
+        </View>
+      ))}
     </View>
   );
 
@@ -210,8 +235,9 @@ export default function Page() {
       <View style={styles.container}>
         <PageHeader />
         <ScrollView contentContainerStyle={styles.pageContent}>
+          {titleRow("Upcoming")}
           {sidePanel}
-          {titleRow}
+          {titleRow("Players")}
           {search}
           {table}
         </ScrollView>
@@ -225,17 +251,26 @@ export default function Page() {
       <PageHeader />
       <View style={styles.columns}>
         <View style={styles.mainColumn}>
-          {titleRow}
+          {titleRow("Players")}
           {search}
           {table}
         </View>
-        <View style={styles.sideColumn}>{sidePanel}</View>
+        <View style={styles.sideColumn}>
+          {titleRow("Upcoming")}
+          {sidePanel}
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
+  upcomingPlayer: {
+    flexDirection: "row",
+    padding: theme.margins.md,
+    borderBottomColor: theme.colors.borderHairline,
+    borderBottomWidth: 1,
+  },
   dateAndSeparator: {
     flexDirection: "row",
     alignItems: "center",
@@ -276,7 +311,7 @@ const styles = StyleSheet.create((theme) => ({
   flatlist: {
     flex: 1,
     minWidth: 600,
-    paddingHorizontal: theme.margins.md,
+    // paddingHorizontal: theme.margins.md,
   },
   // Wide layout: the two columns need a bounded height so the table scrolls
   // inside its own column rather than growing the page.
@@ -294,6 +329,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   sideColumn: {
     flex: 1,
+    gap: theme.margins.md,
   },
   // Phone layout: everything stacks and the page scroll does the work.
   pageContent: {
@@ -307,7 +343,6 @@ const styles = StyleSheet.create((theme) => ({
     borderWidth: 1,
     borderColor: theme.colors.borderHairline,
     borderRadius: 2,
-    padding: theme.margins.lg,
   },
   sidePanelText: {
     color: theme.colors.textMuted,
