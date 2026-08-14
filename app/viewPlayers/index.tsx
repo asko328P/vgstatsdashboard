@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { FlatList, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
@@ -21,6 +21,41 @@ import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import TeamkillList from "@/components/ui/TeamkillList/TeamkillList";
 import ChatList from "@/components/ui/ChatList/ChatList";
 import PageHeader from "@/components/ui/PageHeader/PageHeader";
+import PlayerStatItem, {
+  playerRowStyles,
+} from "@/components/ui/PlayerStatItem/PlayerStatItem";
+import { ThemedText } from "@/components/ui/ThemedText";
+
+export interface PlayerStats {
+  id: string;
+  created_at: string;
+  hash: string;
+  last_seen: string;
+  kills: number;
+  deaths: number;
+  teamkills: number;
+  rounds: number;
+  chat_messages: number;
+  vehicle_destroyeds: number;
+  revivals: number;
+}
+
+const COLUMNS = ["Rounds", "K/D", "Kills", "Revives", "Last seen"];
+
+const ListHeader = () => {
+  return (
+    <View style={[playerRowStyles.row, styles.header]}>
+      <View style={playerRowStyles.nameCell}>
+        <ThemedText type={"micro"}>{"Player"}</ThemedText>
+      </View>
+      {COLUMNS.map((column) => (
+        <View key={column} style={playerRowStyles.cell}>
+          <ThemedText type={"micro"}>{column}</ThemedText>
+        </View>
+      ))}
+    </View>
+  );
+};
 
 export default function Page() {
   const router = useRouter();
@@ -39,6 +74,8 @@ export default function Page() {
     (state: SelectedPlayerState) => state.selectedPlayer,
   );
 
+  const [playersData, setPlayersData] = useState<PlayerStats[]>([]);
+
   useEffect(() => {
     const getData = async () => {
       const { data, error } = await supabase
@@ -53,8 +90,7 @@ export default function Page() {
       }
       if (data) {
         console.log("player data", data);
-        //@ts-ignore
-        // setSingleGameData(data);
+        setPlayersData(data);
       }
     };
     getData();
@@ -63,15 +99,36 @@ export default function Page() {
   return (
     <View style={styles.container}>
       <PageHeader />
-      <View style={styles.horizontalVerticalContainer(expandAllLists)}></View>
+      <View style={styles.horizontalVerticalContainer(expandAllLists)}>
+        <FlatList
+          style={styles.flatlist}
+          data={playersData}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={ListHeader}
+          stickyHeaderIndices={[0]}
+          renderItem={({ item }) => <PlayerStatItem item={item} />}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
+  flatlist: {
+    paddingHorizontal: theme.margins.md,
+  },
+  // Needs a bounded height, otherwise the FlatList grows to fit every row and
+  // never scrolls.
   horizontalVerticalContainer: (isExpanded) => ({
+    flex: 1,
+    minHeight: 0,
     flexDirection: isExpanded ? "row" : "column",
   }),
+  header: {
+    backgroundColor: theme.colors.surface3,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.borderHairline,
+  },
 
   container: {
     flex: 1,

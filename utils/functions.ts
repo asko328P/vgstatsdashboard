@@ -13,9 +13,23 @@ export function formatTime(totalSeconds: number) {
   return `${formattedMinutes}:${formattedSeconds}`;
 }
 
+// Postgres `timestamptz` comes back with an offset ("...+00:00"); a plain
+// `timestamp` comes back without one, and JS would parse that as local time.
+// Treat a missing offset as UTC, which is what the database stores.
+function parseDate(isoString: string) {
+  if (!isoString) return new Date(NaN);
+
+  const hasOffset = /(?:Z|[+-]\d{2}:?\d{2})$/.test(isoString);
+  // Some drivers use a space instead of "T"; JS parsing of that is
+  // implementation-defined, so normalise it.
+  const normalised = isoString.replace(" ", "T");
+
+  return new Date(hasOffset ? normalised : `${normalised}Z`);
+}
+
 // "2026-08-12T18:44:28.716251+00:00" -> "Aug 12, 2026, 2:41 PM" in the device's local timezone
 export function toReadableDate(isoString: string) {
-  const date = new Date(isoString);
+  const date = parseDate(isoString);
 
   if (isNaN(date.getTime())) return "";
 
@@ -31,7 +45,7 @@ export function toReadableDate(isoString: string) {
 
 // "2026-08-12T18:44:28.716251+00:00" -> "Aug 12" in the device's local timezone
 export function toReadableDayMonth(isoString: string) {
-  const date = new Date(isoString);
+  const date = parseDate(isoString);
 
   if (isNaN(date.getTime())) return "";
 
@@ -77,7 +91,7 @@ export function formatDuration(totalSeconds: number) {
 
 // "2026-08-13T07:32:54+00:00" -> "2026-08-13 09:32" in the device's local timezone
 export function toTimestamp(isoString: string) {
-  const date = new Date(isoString);
+  const date = parseDate(isoString);
 
   if (isNaN(date.getTime())) return "";
 
@@ -91,7 +105,7 @@ export function toTimestamp(isoString: string) {
 
 // "2026-08-12T18:44:28.716251+00:00" -> "3 hours ago"
 export function timeSince(isoString: string) {
-  const date = new Date(isoString);
+  const date = parseDate(isoString);
 
   if (isNaN(date.getTime())) return "";
 
