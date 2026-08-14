@@ -1,3 +1,5 @@
+//@ts-nocheck
+//cursor: "not-allowed" works but screams in red
 import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useEffect, useState } from "react";
@@ -13,8 +15,13 @@ import {
 type PageButtonProps = {
   name: string;
   currentPath: string;
+  notAllowed?: boolean;
 };
-export const PageButton = ({ name, currentPath }: PageButtonProps) => {
+export const PageButton = ({
+  name,
+  currentPath,
+  notAllowed = false,
+}: PageButtonProps) => {
   const router = useRouter();
   const path = `/${name.toLowerCase()}`;
   const isActive =
@@ -22,8 +29,10 @@ export const PageButton = ({ name, currentPath }: PageButtonProps) => {
 
   return (
     <TouchableOpacity
+      disabled={notAllowed}
       // onPress={() => router.push(path)}
-      style={styles.pageButton(isActive)}
+      // @ts-ignore
+      style={styles.pageButton(isActive, notAllowed)}
     >
       <ThemedText type={"label"}>{name}</ThemedText>
     </TouchableOpacity>
@@ -72,8 +81,8 @@ const PageHeader = ({}: Props) => {
         </ThemedText>
         <View style={styles.nav}>
           <PageButton name={"ROUNDS"} currentPath={currentPath} />
-          <PageButton name={"PLAYERS"} currentPath={currentPath} />
-          <PageButton name={"MAPS"} currentPath={currentPath} />
+          <PageButton name={"PLAYERS"} currentPath={currentPath} notAllowed />
+          <PageButton name={"MAPS"} currentPath={currentPath} notAllowed />
         </View>
       </View>
       <ThemedText style={styles.text} numberOfLines={1}>
@@ -100,7 +109,8 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  pageButton: (isActive: boolean) => ({
+  pageButton: (isActive: boolean, notAllowed: boolean) => ({
+    cursor: notAllowed ? "not-allowed" : "auto",
     backgroundColor: isActive ? theme.colors.surface3 : theme.colors.surface1,
     borderColor: isActive ? theme.colors.borderStrong : theme.colors.surface1,
     borderWidth: 1,

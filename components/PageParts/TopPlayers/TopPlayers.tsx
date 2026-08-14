@@ -74,7 +74,7 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
       {type === "destroyer" && (
         <FontAwesome6
           name="explosion"
-          style={{ position: "absolute", right: 8, bottom: 24, opacity: 0.2 }}
+          style={{ position: "absolute", right: 8, top: 20, opacity: 0.2 }}
           size={60}
           color={UnistylesRuntime.getTheme().colors.accentVehicle}
         />

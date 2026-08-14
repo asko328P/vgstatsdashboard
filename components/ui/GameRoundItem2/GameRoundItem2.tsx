@@ -51,8 +51,8 @@ export const DataHolder = ({
 
 // A value of 30 should read as a half-full bar, so the track tops out at 60.
 const TEAM_KILL_BAR_MAX = 60;
-const TEAM_KILL_WARN_AT = 20;
-const TEAM_KILL_DANGER_AT = 55;
+const TEAM_KILL_WARN_AT = 40;
+const TEAM_KILL_DANGER_AT = 60;
 
 type TeamKillBarProps = {
   value: number;
