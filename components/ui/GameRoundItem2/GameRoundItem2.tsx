@@ -184,7 +184,11 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
         <View style={styles.verticalSeparator} />
         <DataHolder
           label={"PLAYERS"}
-          value={gameRound?.game_round_player.length ?? 40 - 40}
+          value={
+            gameRound?.game_round_player.length
+              ? gameRound?.game_round_player.length - 42
+              : 0
+          }
         />
       </View>
 

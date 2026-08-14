@@ -57,6 +57,7 @@ const obj: MyObject = {
   fieldsofkassel: require("@/assets/images/mapImages/fieldsofkassel.jpg"),
   merville: require("@/assets/images/mapImages/merville.jpg"),
   operationthunder: require("@/assets/images/mapImages/operationthunder.jpg"),
+  wandashan: require("@/assets/images/mapImages/wandashan.jpg"),
 };
 
 export default obj;

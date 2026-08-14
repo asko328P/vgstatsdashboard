@@ -80,10 +80,9 @@ export default function Page() {
         .maybeSingle()
         .overrideTypes<GameData>();
       if (error) {
-        console.log("error", error);
+        console.log("single game error", error);
       }
       if (data) {
-        console.log("data", data);
         //@ts-ignore
         setSingleGameData(data);
       }
