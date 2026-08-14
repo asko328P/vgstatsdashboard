@@ -3,88 +3,60 @@ interface MyObject {
 }
 
 const obj: MyObject = {
-  gaza2: "https://mapgallery.realitymod.com/images/maps/gaza/tile.jpg",
-  goosegreen:
-    "https://mapgallery.realitymod.com/images/maps/goosegreen/tile.jpg",
-  sbenehoutskirts:
-    "https://mapgallery.realitymod.com/images/maps/sbenehoutskirts/tile.jpg",
-  muttrahcity2:
-    "https://mapgallery.realitymod.com/images/maps/muttrahcity/tile.jpg",
-  kashandesert:
-    "https://mapgallery.realitymod.com/images/maps/kashandesert/tile.jpg",
-  masirah: "https://mapgallery.realitymod.com/images/maps/masirah/tile.jpg",
-  route: "https://mapgallery.realitymod.com/images/maps/routee-106/tile.jpg",
-  albasrah2: "https://mapgallery.realitymod.com/images/maps/albasrah/tile.jpg",
-  bamyan: "https://mapgallery.realitymod.com/images/maps/bamyan/tile.jpg",
-  blackgold: "https://mapgallery.realitymod.com/images/maps/blackgold/tile.jpg",
-  stalingradsummer:
-    "https://mapgallery.realitymod.com/images/maps/stalingradsummer/tile.jpg",
-  beirut: "https://mapgallery.realitymod.com/images/maps/beirut/tile.jpg",
-  fallujahwest:
-    "https://mapgallery.realitymod.com/images/maps/fallujahwest/tile.jpg",
-  shijiavalley:
-    "https://mapgallery.realitymod.com/images/maps/shijiavalley/tile.jpg",
-  roadtodamascus:
-    "https://mapgallery.realitymod.com/images/maps/roadtodamascus-beta/tile.jpg",
-  zakho: "https://mapgallery.realitymod.com/images/maps/zakho-beta/tile.jpg",
-  musaqala:
-    "https://mapgallery.realitymod.com/images/maps/musaqala-beta/tile.jpg",
-  raselmasri2:
-    "https://mapgallery.realitymod.com/images/maps/raselmasri/tile.jpg",
-  khamisiyah:
-    "https://mapgallery.realitymod.com/images/maps/khamisiyah/tile.jpg",
-  operationmarlin:
-    "https://mapgallery.realitymod.com/images/maps/operationmarlin/tile.jpg",
-  adak: "https://mapgallery.realitymod.com/images/maps/adak-beta/tile.jpg",
-  opbarracuda:
-    "https://mapgallery.realitymod.com/images/maps/operationbarracuda/tile.jpg",
-  ramiel: "https://mapgallery.realitymod.com/images/maps/ramiel/tile.jpg",
-  shahadah: "https://mapgallery.realitymod.com/images/maps/shahadah/tile.jpg",
+  gaza2: require("@/assets/images/mapImages/gaza2.jpg"),
+  goosegreen: require("@/assets/images/mapImages/goosegreen.jpg"),
+  sbenehoutskirts: require("@/assets/images/mapImages/sbenehoutskirts.jpg"),
+  muttrahcity2: require("@/assets/images/mapImages/muttrahcity2.jpg"),
+  kashandesert: require("@/assets/images/mapImages/kashandesert.jpg"),
+  masirah: require("@/assets/images/mapImages/masirah.jpg"),
+  route: require("@/assets/images/mapImages/route.jpg"),
+  albasrah2: require("@/assets/images/mapImages/albasrah2.jpg"),
+  bamyan: require("@/assets/images/mapImages/bamyan.jpg"),
+  blackgold: require("@/assets/images/mapImages/blackgold.jpg"),
+  stalingradsummer: require("@/assets/images/mapImages/stalingradsummer.jpg"),
+  beirut: require("@/assets/images/mapImages/beirut.jpg"),
+  fallujahwest: require("@/assets/images/mapImages/fallujahwest.jpg"),
+  shijiavalley: require("@/assets/images/mapImages/shijiavalley.jpg"),
+  roadtodamascus: require("@/assets/images/mapImages/roadtodamascus.jpg"),
+  zakho: require("@/assets/images/mapImages/zakho.jpg"),
+  musaqala: require("@/assets/images/mapImages/musaqala.jpg"),
+  raselmasri2: require("@/assets/images/mapImages/raselmasri2.jpg"),
+  khamisiyah: require("@/assets/images/mapImages/khamisiyah.jpg"),
+  operationmarlin: require("@/assets/images/mapImages/operationmarlin.jpg"),
+  adak: require("@/assets/images/mapImages/adak.jpg"),
+  opbarracuda: require("@/assets/images/mapImages/opbarracuda.jpg"),
+  ramiel: require("@/assets/images/mapImages/ramiel.jpg"),
+  shahadah: require("@/assets/images/mapImages/shahadah.jpg"),
 
-  ulyanovsk: "https://mapgallery.realitymod.com/images/maps/ulyanovsk/tile.jpg",
-  assaultongrozny:
-    "https://mapgallery.realitymod.com/images/maps/assaultongrozny/tile.jpg",
-  silenteagle:
-    "https://mapgallery.realitymod.com/images/maps/silenteagle/tile.jpg",
-  kafarhalab:
-    "https://mapgallery.realitymod.com/images/maps/kafrhalab/tile.jpg",
-  stalingrad:
-    "https://mapgallery.realitymod.com/images/maps/stalingrad/tile.jpg",
-  pavlovskbay:
-    "https://mapgallery.realitymod.com/images/maps/pavlovskbay/tile.jpg",
-  kokan: "https://mapgallery.realitymod.com/images/maps/kokan/tile.jpg",
-  hadespeak: "https://mapgallery.realitymod.com/images/maps/hadespeak/tile.jpg",
-  asadkhal: "https://mapgallery.realitymod.com/images/maps/asadkhal/tile.jpg",
-  karbala: "https://mapgallery.realitymod.com/images/maps/karbala/tile.jpg",
-  operationbobcat:
-    "https://mapgallery.realitymod.com/images/maps/operationbobcat/tile.jpg",
-  burningsands:
-    "https://mapgallery.realitymod.com/images/maps/burningsands/tile.jpg",
-  lashkarvalley:
-    "https://mapgallery.realitymod.com/images/maps/lashkarvalley/tile.jpg",
-  ironridge: "https://mapgallery.realitymod.com/images/maps/ironridge/tile.jpg",
-  vadsocity: "https://mapgallery.realitymod.com/images/maps/vadsocity/tile.jpg",
-  operationbrunswick:
-    "https://mapgallery.realitymod.com/images/maps/operationbrunswick/tile.jpg",
-  vungro: "https://mapgallery.realitymod.com/images/maps/vungro/tile.jpg",
-  grostok: "https://mapgallery.realitymod.com/images/maps/grostok/tile.jpg",
-  tadsae:
-    "https://mapgallery.realitymod.com/images/maps/tadsaeoffensive/tile.jpg",
-  kunarprovince:
-    "https://mapgallery.realitymod.com/images/maps/kunarprovince-beta/tile.jpg",
-  carentan: "https://mapgallery.realitymod.org/images/maps/carentan/tile.jpg",
-  battleofiadrang:
-    "https://mapgallery.realitymod.org/images/maps/battleofiadrang/tile.jpg",
-  yamalia: "https://mapgallery.realitymod.org/images/maps/yamalia/tile.jpg",
-  korengal:
-    "https://mapgallery.realitymod.org/images/maps/korengalvalley/tile.jpg",
-  operationsoulrebel:
-    "https://mapgallery.realitymod.org/images/maps/operationsoulrebel/tile.jpg",
-  nuijamaa: "https://mapgallery.realitymod.org/images/maps/nuijamaa/tile.jpg",
-  fieldsofkassel:
-    "https://mapgallery.realitymod.org/images/maps/fieldsofkassel/tile.jpg",
-  operationthunder:
-    "https://mapgallery.realitymod.com/images/maps/operationthunder-beta/tile.jpg",
+  ulyanovsk: require("@/assets/images/mapImages/ulyanovsk.jpg"),
+  assaultongrozny: require("@/assets/images/mapImages/assaultongrozny.jpg"),
+  silenteagle: require("@/assets/images/mapImages/silenteagle.jpg"),
+  kafarhalab: require("@/assets/images/mapImages/kafarhalab.jpg"),
+  stalingrad: require("@/assets/images/mapImages/stalingrad.jpg"),
+  pavlovskbay: require("@/assets/images/mapImages/pavlovskbay.jpg"),
+  kokan: require("@/assets/images/mapImages/kokan.jpg"),
+  hadespeak: require("@/assets/images/mapImages/hadespeak.jpg"),
+  asadkhal: require("@/assets/images/mapImages/asadkhal.jpg"),
+  karbala: require("@/assets/images/mapImages/karbala.jpg"),
+  operationbobcat: require("@/assets/images/mapImages/operationbobcat.jpg"),
+  burningsands: require("@/assets/images/mapImages/burningsands.jpg"),
+  lashkarvalley: require("@/assets/images/mapImages/lashkarvalley.jpg"),
+  ironridge: require("@/assets/images/mapImages/ironridge.jpg"),
+  vadsocity: require("@/assets/images/mapImages/vadsocity.jpg"),
+  operationbrunswick: require("@/assets/images/mapImages/operationbrunswick.jpg"),
+  vungro: require("@/assets/images/mapImages/vungro.jpg"),
+  grostok: require("@/assets/images/mapImages/grostok.jpg"),
+  tadsae: require("@/assets/images/mapImages/tadsae.jpg"),
+  kunarprovince: require("@/assets/images/mapImages/kunarprovince.jpg"),
+  carentan: require("@/assets/images/mapImages/carentan.jpg"),
+  battleofiadrang: require("@/assets/images/mapImages/battleofiadrang.jpg"),
+  yamalia: require("@/assets/images/mapImages/yamalia.jpg"),
+  korengal: require("@/assets/images/mapImages/korengal.jpg"),
+  operationsoulrebel: require("@/assets/images/mapImages/operationsoulrebel.jpg"),
+  nuijamaa: require("@/assets/images/mapImages/nuijamaa.jpg"),
+  fieldsofkassel: require("@/assets/images/mapImages/fieldsofkassel.jpg"),
+  merville: require("@/assets/images/mapImages/merville.jpg"),
+  operationthunder: require("@/assets/images/mapImages/operationthunder.jpg"),
 };
 
 export default obj;

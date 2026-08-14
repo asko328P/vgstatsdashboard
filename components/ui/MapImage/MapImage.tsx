@@ -37,11 +37,7 @@ const MapImage = ({ gameRound, style }: Props) => {
 
   if (imageUri) {
     return (
-      <Image
-        blurRadius={2}
-        style={[styles.image, style]}
-        source={{ uri: imageUri }}
-      />
+      <Image blurRadius={2} style={[styles.image, style]} source={imageUri} />
     );
   }
   return <View></View>;
