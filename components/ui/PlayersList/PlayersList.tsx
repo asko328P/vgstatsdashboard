@@ -1,4 +1,4 @@
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { FlatList, ScrollView, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { ThemedText } from "@/components/ui/ThemedText";
@@ -69,17 +69,20 @@ const PlayersList = ({
       </TouchableOpacity>
 
       {isExpanded && (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          data={players}
-          keyExtractor={(item) => String(item.id)}
-          ListHeaderComponent={ListHeader}
-          stickyHeaderIndices={[0]}
-          renderItem={({ item }) => (
-            <GameRoundPlayerItem2 item={item} onPress={onPlayerPress} />
-          )}
-        />
+        <ScrollView horizontal={true} contentContainerStyle={{ flex: 1 }}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            style={{ minWidth: 400 }}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            data={players}
+            keyExtractor={(item) => String(item.id)}
+            ListHeaderComponent={ListHeader}
+            stickyHeaderIndices={[0]}
+            renderItem={({ item }) => (
+              <GameRoundPlayerItem2 item={item} onPress={onPlayerPress} />
+            )}
+          />
+        </ScrollView>
       )}
     </View>
   );

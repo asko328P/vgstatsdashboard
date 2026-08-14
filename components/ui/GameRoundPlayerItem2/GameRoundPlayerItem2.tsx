@@ -18,11 +18,12 @@ export const rowStyles = StyleSheet.create((theme) => ({
     paddingVertical: theme.margins.md,
   },
   nameCell: {
-    flex: 1,
-    minWidth: 50,
+    flex: 2,
+    minWidth: 67,
   },
   cell: {
-    flex: 1,
+    flex: 0.5,
+    flexShrink: 1,
     alignItems: "flex-end",
   },
 }));
