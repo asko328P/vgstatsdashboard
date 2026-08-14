@@ -26,8 +26,8 @@ export const PageButton = ({
   const path = `/${name.toLowerCase()}`;
   const isActive =
     currentPath === path ||
-    (currentPath === "/" && name === "ROUNDS") ||
-    (currentPath === "/viewPlayers" && name === "PLAYERS");
+    (currentPath === "/" && name === BUTTON_NAMES.rounds) ||
+    (currentPath === "/viewPlayers" && name === BUTTON_NAMES.players);
 
   const navigate = () => {
     if (name === BUTTON_NAMES.rounds && currentPath !== "/") {
