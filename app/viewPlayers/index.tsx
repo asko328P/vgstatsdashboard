@@ -1,4 +1,4 @@
-import { FlatList, View } from "react-native";
+import { FlatList, ScrollView, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
@@ -100,21 +100,34 @@ export default function Page() {
     <View style={styles.container}>
       <PageHeader />
       <View style={styles.horizontalVerticalContainer(expandAllLists)}>
-        <FlatList
-          style={styles.flatlist}
-          data={playersData}
-          keyExtractor={(item) => item.id}
-          ListHeaderComponent={ListHeader}
-          stickyHeaderIndices={[0]}
-          renderItem={({ item }) => <PlayerStatItem item={item} />}
-        />
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.horizontalContent}
+        >
+          <FlatList
+            style={styles.flatlist}
+            data={playersData}
+            keyExtractor={(item) => item.id}
+            ListHeaderComponent={ListHeader}
+            stickyHeaderIndices={[0]}
+            renderItem={({ item }) => <PlayerStatItem item={item} />}
+          />
+        </ScrollView>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
+  // flexGrow lets the table fill the screen when it is wider than 500px, while
+  // still allowing the content to overflow and scroll on a phone.
+  horizontalContent: {
+    flexGrow: 1,
+  },
   flatlist: {
+    flex: 1,
+    minWidth: 600,
     paddingHorizontal: theme.margins.md,
   },
   // Needs a bounded height, otherwise the FlatList grows to fit every row and

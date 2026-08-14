@@ -1,8 +1,12 @@
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { PlayerStats } from "@/app/viewPlayers";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { adjustColorBrightness, timeSince } from "@/utils/functions";
+import {
+  SelectedPlayerState,
+  useSelectedPlayerStore,
+} from "@/zustand/SelectedPlayerStore";
 
 // Shared by the row and by the list header so both stay aligned.
 export const playerRowStyles = StyleSheet.create((theme) => ({
@@ -84,8 +88,25 @@ const getChips = (item: PlayerStats) => {
 const PlayerStatItem = ({ item }: Props) => {
   const chips = getChips(item);
 
+  const setSelectedPlayer = useSelectedPlayerStore(
+    (state) => state.setSelectedPlayer,
+  );
+  const selectedPlayer = useSelectedPlayerStore(
+    (state: SelectedPlayerState) => state.selectedPlayer,
+  );
+
+  const pressPlayerHandler = () => {
+    setSelectedPlayer(item.id);
+  };
+
   return (
-    <View style={[playerRowStyles.row, styles.container]}>
+    <TouchableOpacity
+      onPress={pressPlayerHandler}
+      style={[
+        playerRowStyles.row,
+        styles.container(selectedPlayer === item.id),
+      ]}
+    >
       <View style={playerRowStyles.nameCell}>
         <ThemedText type={"default"}>{item.id}</ThemedText>
         {chips.map((chip) => (
@@ -109,7 +130,7 @@ const PlayerStatItem = ({ item }: Props) => {
       <View style={playerRowStyles.cell}>
         <ThemedText>{timeSince(item.last_seen)}</ThemedText>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -125,7 +146,7 @@ const styles = StyleSheet.create((theme) => ({
   }),
   kd: (value: number) => ({
     color:
-      value > 3
+      value > 4
         ? theme.colors.accentMedic
         : value < 1
           ? theme.colors.accentSelect
@@ -134,9 +155,13 @@ const styles = StyleSheet.create((theme) => ({
   revives: {
     color: theme.colors.accentMedic,
   },
-  container: {
-    backgroundColor: theme.colors.surface1,
+  container: (isSelected: boolean) => ({
+    backgroundColor: isSelected
+      ? theme.colors.selectBackground
+      : theme.colors.surface1,
+    borderLeftWidth: isSelected ? 3 : 0,
+    borderLeftColor: theme.colors.accentSelect,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: theme.colors.borderHairline,
-  },
+  }),
 }));
