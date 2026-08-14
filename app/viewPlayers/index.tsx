@@ -63,48 +63,16 @@ export default function Page() {
   return (
     <View style={styles.container}>
       <PageHeader />
+      <View style={styles.horizontalVerticalContainer(expandAllLists)}></View>
     </View>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  chatTextInput: {
-    margin: 5,
-    padding: 5,
-    color: "#FFFFFF",
-    backgroundColor: "#424242",
-    borderRadius: 5,
-  },
-  flatlistContainerStyle: {
-    paddingBottom: 400,
-    gap: 4,
-  },
-  // Collapsed lists shrink to just their toggle; the expanded one takes the rest.
-  singleFlatlistHolder: (isExpanded: boolean) => ({
-    flexGrow: isExpanded ? 1 : 0,
-    flexShrink: isExpanded ? 1 : 0,
-    // 0 when expanded so columns split evenly instead of sizing to their
-    // content; auto when collapsed so the holder hugs its toggle button.
-    flexBasis: isExpanded ? 0 : "auto",
-    gap: 10,
+  horizontalVerticalContainer: (isExpanded) => ({
+    flexDirection: isExpanded ? "row" : "column",
   }),
-  flatListsHolder: {
-    gap: 10,
-    flexDirection: "row",
-    backgroundColor: "red",
-  },
-  topHolder: {
-    gap: 10,
-    flexDirection: "row",
-    paddingVertical: 16,
-  },
-  allFlatlistsHolder: {
-    flex: 1,
-    paddingHorizontal: 16,
-    gap: 10,
-    flexDirection: "row",
-    overflow: "hidden",
-  },
+
   container: {
     flex: 1,
     // padding: theme.margins.md,

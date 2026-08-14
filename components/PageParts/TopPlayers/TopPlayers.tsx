@@ -239,10 +239,21 @@ const TopPlayers = () => {
     return `${allPlayersArray[0]?.player_id} ${allPlayersArray[0]?.rounds} rounds`;
   }, [gameData]);
 
+  const daysCovered = useMemo(() => {
+    const first = gameData?.at(0)?.played_at;
+    const last = gameData?.at(-1)?.played_at;
+    if (!first || !last) {
+      return 0;
+    }
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const difference = new Date(last).getTime() - new Date(first).getTime();
+    return Math.max(1, Math.round(Math.abs(difference) / msPerDay));
+  }, [gameData]);
+
   return (
     <View style={styles.container}>
       <View style={styles.dateAndSeparator}>
-        <ThemedText type={"label"}>{"Last 7 days"}</ThemedText>
+        <ThemedText type={"label"}>{`Last ${daysCovered} days`}</ThemedText>
         <View
           style={{
             flex: 1,

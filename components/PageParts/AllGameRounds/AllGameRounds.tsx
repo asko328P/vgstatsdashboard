@@ -59,8 +59,8 @@ const AllGameRounds = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from("game_rounds")
-        .select(`*,game_round_player!inner(*)`)
-        .order("id", {
+        .select(`*,game_round_player(*)`)
+        .order("played_at", {
           ascending: false,
         })
         .range(gameRange[0], gameRange[1])
