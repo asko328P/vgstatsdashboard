@@ -19,6 +19,7 @@ import DemoHeader from "@/components/ui/DemoHeader/DemoHeader";
 import {
   formatDuration,
   formatRoundTitle,
+  toReadableDate,
   toReadableDayMonth,
   toTimestamp,
 } from "@/utils/functions";
@@ -223,7 +224,18 @@ export default function Page() {
     <View style={styles.sidePanel}>
       {upcomingPlayersData.map((item, index) => (
         <View style={styles.upcomingPlayer} key={item.id}>
-          <ThemedText>{item.id}</ThemedText>
+          <View style={{ gap: 5 }}>
+            <ThemedText>{item.id.slice(1, 3000)}</ThemedText>
+            <ThemedText
+              type={"micro"}
+            >{`FIRST SEEN ${toReadableDate(item.created_at)} · K/D ${(item.kills / item.deaths).toFixed(1)} · ${item.revivals.toFixed(0)} REV`}</ThemedText>
+          </View>
+          <View style={{ gap: 0 }}>
+            <ThemedText style={{ textAlign: "right" }}>
+              {item.rounds}
+            </ThemedText>
+            <ThemedText type={"micro"}>{"Rounds"}</ThemedText>
+          </View>
         </View>
       ))}
     </View>
@@ -266,6 +278,7 @@ export default function Page() {
 
 const styles = StyleSheet.create((theme) => ({
   upcomingPlayer: {
+    justifyContent: "space-between",
     flexDirection: "row",
     padding: theme.margins.md,
     borderBottomColor: theme.colors.borderHairline,
@@ -342,7 +355,7 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.surface1,
     borderWidth: 1,
     borderColor: theme.colors.borderHairline,
-    borderRadius: 2,
+    borderRadius: 10,
   },
   sidePanelText: {
     color: theme.colors.textMuted,

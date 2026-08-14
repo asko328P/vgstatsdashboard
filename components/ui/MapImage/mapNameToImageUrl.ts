@@ -4,6 +4,7 @@ interface MyObject {
 
 const obj: MyObject = {
   gaza2: require("@/assets/images/mapImages/gaza2.jpg"),
+  saaremaa: require("@/assets/images/mapImages/saaremaa.jpg"),
   goosegreen: require("@/assets/images/mapImages/goosegreen.jpg"),
   sbenehoutskirts: require("@/assets/images/mapImages/sbenehoutskirts.jpg"),
   muttrahcity2: require("@/assets/images/mapImages/muttrahcity2.jpg"),
