@@ -142,52 +142,94 @@ export default function Page() {
     setSearchResults(data ?? []);
   };
 
+  const titleRow = (
+    <View style={styles.dateAndSeparator}>
+      <ThemedText type={"label"}>{`Players`}</ThemedText>
+      <View
+        style={{
+          flex: 1,
+          borderTopColor: UnistylesRuntime.getTheme().colors.surface3,
+          borderTopWidth: 1,
+        }}
+      />
+    </View>
+  );
+
+  const search = (
+    <View style={styles.searchHolder}>
+      <TextInput
+        value={searchInputValue}
+        onChangeText={setSearchInputValue}
+        onSubmitEditing={searchPlayers}
+        returnKeyType={"search"}
+        placeholder={`Search callsign or alias - try "doc"`}
+        placeholderTextColor={UnistylesRuntime.getTheme().colors.textMuted}
+        style={styles.searchInput}
+      />
+      {!!searchInputValue && (
+        <TouchableOpacity onPress={searchPlayers} style={styles.searchButton}>
+          <ThemedText type={"label"}>
+            {isSearching ? "SEARCHING" : "SEARCH"}
+          </ThemedText>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  // On phones the page itself scrolls, so the list must not scroll separately.
+  const table = (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.horizontalContent}
+    >
+      <FlatList
+        style={styles.flatlist}
+        scrollEnabled={expandAllLists}
+        data={searchResults ?? playersData}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={ListHeader}
+        stickyHeaderIndices={[0]}
+        renderItem={({ item }) => <PlayerStatItem item={item} />}
+      />
+    </ScrollView>
+  );
+
+  const sidePanel = (
+    <View style={styles.sidePanel}>
+      <ThemedText type={"label"}>{"Selected player"}</ThemedText>
+      <ThemedText type={"log"} style={styles.sidePanelText}>
+        {selectedPlayer || "Pick a player from the table."}
+      </ThemedText>
+    </View>
+  );
+
+  // Phones: one column, side panel first, then a table that grows with the page.
+  if (!expandAllLists) {
+    return (
+      <View style={styles.container}>
+        <PageHeader />
+        <ScrollView contentContainerStyle={styles.pageContent}>
+          {sidePanel}
+          {titleRow}
+          {search}
+          {table}
+        </ScrollView>
+      </View>
+    );
+  }
+
+  // Wide: table takes two thirds, side panel the remaining third.
   return (
     <View style={styles.container}>
       <PageHeader />
-      <View style={styles.dateAndSeparator}>
-        <ThemedText type={"label"}>{`Players`}</ThemedText>
-        <View
-          style={{
-            flex: 1,
-            borderTopColor: UnistylesRuntime.getTheme().colors.surface3,
-            borderTopWidth: 1,
-          }}
-        />
-      </View>
-      <View style={styles.searchHolder}>
-        <TextInput
-          value={searchInputValue}
-          onChangeText={setSearchInputValue}
-          onSubmitEditing={searchPlayers}
-          returnKeyType={"search"}
-          placeholder={`Search callsign or alias - try "doc"`}
-          placeholderTextColor={UnistylesRuntime.getTheme().colors.textMuted}
-          style={styles.searchInput}
-        />
-        {searchInputValue && (
-          <TouchableOpacity onPress={searchPlayers} style={styles.searchButton}>
-            <ThemedText type={"label"}>
-              {isSearching ? "SEARCHING" : "SEARCH"}
-            </ThemedText>
-          </TouchableOpacity>
-        )}
-      </View>
-      <View style={styles.horizontalVerticalContainer(expandAllLists)}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.horizontalContent}
-        >
-          <FlatList
-            style={styles.flatlist}
-            data={searchResults ?? playersData}
-            keyExtractor={(item) => item.id}
-            ListHeaderComponent={ListHeader}
-            stickyHeaderIndices={[0]}
-            renderItem={({ item }) => <PlayerStatItem item={item} />}
-          />
-        </ScrollView>
+      <View style={styles.columns}>
+        <View style={styles.mainColumn}>
+          {titleRow}
+          {search}
+          {table}
+        </View>
+        <View style={styles.sideColumn}>{sidePanel}</View>
       </View>
     </View>
   );
@@ -203,7 +245,6 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.margins.md,
-    paddingHorizontal: theme.margins.md,
   },
   searchInput: {
     flex: 1,
@@ -237,13 +278,40 @@ const styles = StyleSheet.create((theme) => ({
     minWidth: 600,
     paddingHorizontal: theme.margins.md,
   },
-  // Needs a bounded height, otherwise the FlatList grows to fit every row and
-  // never scrolls.
-  horizontalVerticalContainer: (isExpanded) => ({
+  // Wide layout: the two columns need a bounded height so the table scrolls
+  // inside its own column rather than growing the page.
+  columns: {
     flex: 1,
     minHeight: 0,
-    flexDirection: isExpanded ? "row" : "column",
-  }),
+    flexDirection: "row",
+    gap: theme.margins.lg,
+    paddingHorizontal: theme.margins.md,
+  },
+  mainColumn: {
+    flex: 2,
+    minHeight: 0,
+    gap: theme.margins.md,
+  },
+  sideColumn: {
+    flex: 1,
+  },
+  // Phone layout: everything stacks and the page scroll does the work.
+  pageContent: {
+    gap: theme.margins.md,
+    paddingHorizontal: theme.margins.md,
+    paddingBottom: theme.margins.xxl,
+  },
+  sidePanel: {
+    gap: theme.margins.sm,
+    backgroundColor: theme.colors.surface1,
+    borderWidth: 1,
+    borderColor: theme.colors.borderHairline,
+    borderRadius: 2,
+    padding: theme.margins.lg,
+  },
+  sidePanelText: {
+    color: theme.colors.textMuted,
+  },
   header: {
     backgroundColor: theme.colors.surface3,
     borderBottomWidth: 1,
