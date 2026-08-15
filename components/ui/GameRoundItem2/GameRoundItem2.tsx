@@ -5,7 +5,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { ThemedText } from "@/components/ui/ThemedText";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { interpolateColor } from "react-native-reanimated";
@@ -64,6 +64,43 @@ export const TeamKillBar = ({ value }: TeamKillBarProps) => {
   return (
     <View style={styles.teamKillBarTrack}>
       <View style={styles.teamKillBarFill(ratio, value)} />
+    </View>
+  );
+};
+
+// Hatching for rounds nobody played. No SVG in the project, so the stripes are
+// rotated views clipped by the overlay.
+const STRIPE_SPACING = 14;
+const STRIPE_WIDTH = 2;
+
+const DiagonalStripes = () => {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout;
+    setSize({ width, height });
+  };
+
+  // Rotated by 45°, a stripe has to be as long as the diagonal, and the row of
+  // them has to start off screen on the left to still cover the bottom corner.
+  const diagonal = size.width + size.height;
+  const count = Math.ceil(diagonal / STRIPE_SPACING);
+
+  return (
+    <View pointerEvents={"none"} onLayout={onLayout} style={styles.stripeLayer}>
+      {Array.from({ length: count }).map((_, index) => (
+        <View
+          key={index}
+          style={[
+            styles.stripe,
+            {
+              height: diagonal,
+              left: index * STRIPE_SPACING - size.height,
+              top: -(diagonal - size.height) / 2,
+            },
+          ]}
+        />
+      ))}
     </View>
   );
 };
@@ -140,6 +177,7 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
 
   return (
     <TouchableOpacity
+      disabled={summedKills === 0}
       onLayout={onLayout}
       onPress={navigateToViewDemo}
       style={[styles.container, style]}
@@ -192,6 +230,8 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
         />
       </View>
 
+      {summedKills === 0 && <DiagonalStripes />}
+
       {/*<View style={styles.titleAndDateHolder}>*/}
       {/*  <ThemedText type={"heading"} style={styles.title}>*/}
       {/*    {formattedTitle}*/}
@@ -228,6 +268,21 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
 export default GameRoundItem2;
 
 const styles = StyleSheet.create((theme) => ({
+  stripeLayer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    overflow: "hidden",
+  },
+  stripe: {
+    position: "absolute",
+    width: STRIPE_WIDTH,
+    backgroundColor: theme.colors.borderStrong,
+    opacity: 0.35,
+    transform: [{ rotate: "45deg" }],
+  },
   verticalSeparator: {
     display: { xs: "none", md: "flex" },
     alignSelf: "stretch",
