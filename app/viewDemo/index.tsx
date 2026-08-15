@@ -226,6 +226,7 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     // padding: theme.margins.md,
     gap: theme.margins.md,
+    paddingBottom: 10,
     // flexDirection: "row",
   },
 }));
