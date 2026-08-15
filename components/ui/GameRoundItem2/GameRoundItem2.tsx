@@ -186,7 +186,7 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
           label={"PLAYERS"}
           value={
             gameRound?.game_round_player.length
-              ? gameRound?.game_round_player.length - 42
+              ? gameRound?.game_round_player.length
               : 0
           }
         />
