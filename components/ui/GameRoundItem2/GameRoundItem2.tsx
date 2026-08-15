@@ -19,6 +19,9 @@ import {
   toTimestamp,
 } from "@/utils/functions";
 
+import { Image } from "expo-image";
+import DiagonalLinesBackground from "@/assets/images/svg/background/DiagonalLinesBackground";
+
 type DataHolderProps = {
   label: string;
   value: string | number;
@@ -80,27 +83,9 @@ const DiagonalStripes = () => {
     const { width, height } = e.nativeEvent.layout;
     setSize({ width, height });
   };
-
-  // Rotated by 45°, a stripe has to be as long as the diagonal, and the row of
-  // them has to start off screen on the left to still cover the bottom corner.
-  const diagonal = size.width + size.height;
-  const count = Math.ceil(diagonal / STRIPE_SPACING);
-
   return (
     <View pointerEvents={"none"} onLayout={onLayout} style={styles.stripeLayer}>
-      {Array.from({ length: count }).map((_, index) => (
-        <View
-          key={index}
-          style={[
-            styles.stripe,
-            {
-              height: diagonal,
-              left: index * STRIPE_SPACING - size.height,
-              top: -(diagonal - size.height) / 2,
-            },
-          ]}
-        />
-      ))}
+      <DiagonalLinesBackground />
     </View>
   );
 };
@@ -275,13 +260,6 @@ const styles = StyleSheet.create((theme) => ({
     top: 0,
     bottom: 0,
     overflow: "hidden",
-  },
-  stripe: {
-    position: "absolute",
-    width: STRIPE_WIDTH,
-    backgroundColor: theme.colors.borderStrong,
-    opacity: 0.35,
-    transform: [{ rotate: "45deg" }],
   },
   verticalSeparator: {
     display: { xs: "none", md: "flex" },
