@@ -129,6 +129,23 @@ export function timeSince(isoString: string) {
   return `${value} ${unit.label}${value === 1 ? "" : "s"} ago`;
 }
 
+// Whole days between a timestamp and today, counted in calendar days rather
+// than elapsed hours — yesterday evening is 1 day ago even if only 2 hours
+// passed. Future dates give a negative number; an unparseable string gives NaN.
+export function daysSince(isoString: string, now: Date = new Date()) {
+  const date = parseDate(isoString);
+
+  if (isNaN(date.getTime())) return NaN;
+
+  // Compare local midnights so a DST shift cannot round the result off by one.
+  const startOfDay = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+
+  const MS_PER_DAY = 86400000;
+
+  return Math.round((startOfDay(now) - startOfDay(date)) / MS_PER_DAY);
+}
+
 export function adjustColorBrightness(hex: string, brighten: number): string {
   // 1. Normalize the hex string (remove '#' and handle 3-digit hex)
   let cleanHex = hex.replace("#", "");

@@ -106,7 +106,6 @@ export default function Page() {
         console.log("single game error", error);
       }
       if (data) {
-        console.log("player data", data);
         setPlayersData(data);
       }
     };
@@ -126,7 +125,6 @@ export default function Page() {
         console.log("single game error", error);
       }
       if (data) {
-        console.log("player data", data);
         setUpcomingPlayersData(data);
       }
     };

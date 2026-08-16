@@ -2,7 +2,7 @@ import { TouchableOpacity, View } from "react-native";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { PlayerStats } from "@/app/viewPlayers";
 import { ThemedText } from "@/components/ui/ThemedText";
-import { adjustColorBrightness, timeSince } from "@/utils/functions";
+import { adjustColorBrightness, daysSince, timeSince } from "@/utils/functions";
 import {
   SelectedPlayerState,
   useSelectedPlayerStore,
@@ -76,7 +76,7 @@ const getChips = (item: PlayerStats) => {
   if (item.teamkills > 200) {
     chips.push({ text: "Saboteur", color: colors.accentWarn });
   }
-  if (item.rounds > 50) {
+  if (item.rounds > 20 && item.rounds / daysSince(item.created_at) > 0.3) {
     chips.push({
       text: "regular",
       color: adjustColorBrightness(colors.surface3, 10),
