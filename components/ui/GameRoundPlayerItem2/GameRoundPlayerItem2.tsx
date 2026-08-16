@@ -17,15 +17,15 @@ export const rowStyles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.margins.md,
     paddingVertical: theme.margins.md,
   },
-  nameCell: {
+  nameCell: (isSelected: boolean = false) => ({
     flex: 2,
     minWidth: 67,
-  },
-  cell: {
+  }),
+  cell: (isSelected: boolean = false) => ({
     flex: 0.5,
     flexShrink: 1,
     alignItems: "flex-end",
-  },
+  }),
 }));
 
 type Props = {
@@ -53,7 +53,7 @@ const GameRoundPlayerItem2 = ({ item, onPress }: Props) => {
         styles.container(selectedPlayer === item.player_id),
       ]}
     >
-      <View style={rowStyles.nameCell}>
+      <View style={rowStyles.nameCell()}>
         <ThemedText
           style={styles.name(selectedPlayer === item.player_id)}
           type={"name"}
@@ -62,19 +62,19 @@ const GameRoundPlayerItem2 = ({ item, onPress }: Props) => {
           {item.player_id}
         </ThemedText>
       </View>
-      <View style={rowStyles.cell}>
+      <View style={rowStyles.cell()}>
         <ThemedText type={"cell"}>{item.score}</ThemedText>
       </View>
-      <View style={rowStyles.cell}>
+      <View style={rowStyles.cell()}>
         <ThemedText type={"cell"}>{item.scoreTW}</ThemedText>
       </View>
-      <View style={rowStyles.cell}>
+      <View style={rowStyles.cell()}>
         <ThemedText type={"cell"}>{item.kills}</ThemedText>
       </View>
-      <View style={rowStyles.cell}>
+      <View style={rowStyles.cell()}>
         <ThemedText type={"cell"}>{item.deaths}</ThemedText>
       </View>
-      <View style={rowStyles.cell}>
+      <View style={rowStyles.cell()}>
         <ThemedText
           type={"cell"}
           style={{

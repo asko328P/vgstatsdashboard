@@ -1,5 +1,5 @@
 import { FlatList, ScrollView, TouchableOpacity, View } from "react-native";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { ThemedText } from "@/components/ui/ThemedText";
 import GameRoundPlayerItem2, {
@@ -19,18 +19,47 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 
-const COLUMNS = ["Score", "Score TW", "Kills", "Deaths", "TKs"];
+const COLUMNS = ["Score", "Score TW", "Kills", "Deaths", "TKs"] as const;
 
-const ListHeader = () => {
+type ListHeaderProps = {
+  sortBy: (typeof COLUMNS)[number] | "Name";
+  onLabelPress: (label: (typeof COLUMNS)[number] | "Name") => void;
+};
+const ListHeader = ({ sortBy, onLabelPress }: ListHeaderProps) => {
+  const selectedColor = UnistylesRuntime.getTheme().colors.textPrimary;
+  const unSelectedColor = UnistylesRuntime.getTheme().colors.textSecondary;
   return (
     <View style={[rowStyles.row, styles.header]}>
-      <View style={rowStyles.nameCell}>
-        <ThemedText type={"micro"}>{"Name"}</ThemedText>
-      </View>
+      <TouchableOpacity
+        onPress={() => {
+          onLabelPress("Name");
+        }}
+        style={[rowStyles.nameCell(sortBy === "Name")]}
+      >
+        <ThemedText
+          style={{ color: sortBy === "Name" ? selectedColor : unSelectedColor }}
+          type={"micro"}
+        >
+          {"Name"}
+        </ThemedText>
+      </TouchableOpacity>
       {COLUMNS.map((column) => (
-        <View key={column} style={rowStyles.cell}>
-          <ThemedText type={"micro"}>{column}</ThemedText>
-        </View>
+        <TouchableOpacity
+          onPress={() => {
+            onLabelPress(column);
+          }}
+          key={column}
+          style={rowStyles.cell(sortBy === column)}
+        >
+          <ThemedText
+            style={{
+              color: sortBy === column ? selectedColor : unSelectedColor,
+            }}
+            type={"micro"}
+          >
+            {column}
+          </ThemedText>
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -57,6 +86,37 @@ const PlayersList = ({
     rt.breakpoint !== "md" &&
     rt.breakpoint !== "lg";
 
+  const [sortBy, setSortBy] = useState<(typeof COLUMNS)[number] | "Name">(
+    "Name",
+  );
+
+  const labelPressHandler = (label: (typeof COLUMNS)[number] | "Name") => {
+    console.log(label);
+    setSortBy(label);
+  };
+
+  const sortedPlayers = useMemo(() => {
+    if (sortBy === "Name") {
+      return players.sort((a, b) => b.id - a.id);
+    }
+    if (sortBy === "Score") {
+      return players.sort((a, b) => b.score - a.score);
+    }
+    if (sortBy === "Score TW") {
+      return players.sort((a, b) => b.scoreTW - a.scoreTW);
+    }
+    if (sortBy === "Kills") {
+      return players.sort((a, b) => b.kills - a.kills);
+    }
+    if (sortBy === "TKs") {
+      return players.sort((a, b) => b.teamkills - a.teamkills);
+    }
+    if (sortBy === "Deaths") {
+      return players.sort((a, b) => b.deaths - a.deaths);
+    }
+    return players;
+  }, [players, sortBy]);
+
   return (
     <Animated.View entering={FadeIn.duration(400)} style={{ flex: 1 }}>
       <TouchableOpacity onPress={onExpandPress} style={styles.toggle}>
@@ -82,12 +142,18 @@ const PlayersList = ({
             showsVerticalScrollIndicator={false}
             style={{ minWidth: 400 }}
             contentContainerStyle={{ paddingBottom: 20 }}
-            data={players}
+            data={sortedPlayers}
             keyExtractor={(item) => String(item.id)}
-            ListHeaderComponent={ListHeader}
+            ListHeaderComponent={
+              <ListHeader sortBy={sortBy} onLabelPress={labelPressHandler} />
+            }
             stickyHeaderIndices={[0]}
             renderItem={({ item }) => (
-              <GameRoundPlayerItem2 item={item} onPress={onPlayerPress} />
+              <GameRoundPlayerItem2
+                key={item.player_id}
+                item={item}
+                onPress={onPlayerPress}
+              />
             )}
           />
         </ScrollView>
