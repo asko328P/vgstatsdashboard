@@ -42,9 +42,16 @@ const LISTS = {
   chat: "CHAT",
 };
 
+type Revive = {
+  id: number;
+  current_time: number;
+  medic_player_id: string;
+  revived_player_id: string;
+};
+
 type GameData = GameRound & { kills: Kill[] } & { chat_messages: Message[] } & {
   game_round_player: GameRoundPlayer[];
-};
+} & { revivals: Revive[] };
 
 export default function Page() {
   const router = useRouter();
@@ -73,7 +80,7 @@ export default function Page() {
         .from("game_rounds")
         .select(
           `
-        *, kills(*), chat_messages(*), game_round_player!inner(*)
+        *, kills(*), chat_messages(*), game_round_player(*), revivals(*)
         `,
         )
         .eq("id", gameRoundId)
