@@ -96,25 +96,25 @@ const PlayersList = ({
   };
 
   const sortedPlayers = useMemo(() => {
-    if (sortBy === "Name") {
-      return players.sort((a, b) => b.id - a.id);
+    const copy = [...players];
+    switch (sortBy) {
+      case "Name":
+        return copy.sort((a, b) =>
+          String(a.player_id).localeCompare(String(b.player_id), undefined),
+        );
+      case "Score":
+        return copy.sort((a, b) => b.score - a.score);
+      case "Score TW":
+        return copy.sort((a, b) => b.scoreTW - a.scoreTW);
+      case "Kills":
+        return copy.sort((a, b) => b.kills - a.kills);
+      case "Deaths":
+        return copy.sort((a, b) => b.deaths - a.deaths);
+      case "TKs":
+        return copy.sort((a, b) => b.teamkills - a.teamkills);
+      default:
+        return copy;
     }
-    if (sortBy === "Score") {
-      return players.sort((a, b) => b.score - a.score);
-    }
-    if (sortBy === "Score TW") {
-      return players.sort((a, b) => b.scoreTW - a.scoreTW);
-    }
-    if (sortBy === "Kills") {
-      return players.sort((a, b) => b.kills - a.kills);
-    }
-    if (sortBy === "TKs") {
-      return players.sort((a, b) => b.teamkills - a.teamkills);
-    }
-    if (sortBy === "Deaths") {
-      return players.sort((a, b) => b.deaths - a.deaths);
-    }
-    return players;
   }, [players, sortBy]);
 
   return (
@@ -143,6 +143,7 @@ const PlayersList = ({
             style={{ minWidth: 400 }}
             contentContainerStyle={{ paddingBottom: 20 }}
             data={sortedPlayers}
+            extraData={sortBy}
             keyExtractor={(item) => String(item.id)}
             ListHeaderComponent={
               <ListHeader sortBy={sortBy} onLabelPress={labelPressHandler} />
