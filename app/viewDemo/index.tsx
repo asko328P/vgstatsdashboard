@@ -73,7 +73,7 @@ export default function Page() {
         .from("game_rounds")
         .select(
           `
-        *, kills!inner(*), chat_messages!inner(*), game_round_player!inner(*)
+        *, kills(*), chat_messages(*), game_round_player!inner(*)
         `,
         )
         .eq("id", gameRoundId)
