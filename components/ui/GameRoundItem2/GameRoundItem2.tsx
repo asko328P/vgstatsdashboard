@@ -339,7 +339,7 @@ const styles = StyleSheet.create((theme) => ({
     right: 0,
     top: 0,
     height: "100%",
-    width: { xs: "100%", md: "70%" },
+    width: { xs: "100%", md: "60%" },
   },
   imageFade: {
     position: "absolute",
@@ -370,6 +370,7 @@ const styles = StyleSheet.create((theme) => ({
     // flexDirection: "row",
     // justifyContent: "space-between",
     padding: 10,
+    paddingVertical: { xs: 10, md: 20 },
     borderRadius: 1,
     overflow: "hidden",
   },

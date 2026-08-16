@@ -12,6 +12,13 @@ import {
   useUnistyles,
 } from "react-native-unistyles";
 import { Feather } from "@expo/vector-icons";
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+  Easing,
+  FadeIn,
+} from "react-native-reanimated";
 
 const ListHeader = () => {
   return (
@@ -73,7 +80,7 @@ const ChatList = ({
   }, [messages, searchInput]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <Animated.View entering={FadeIn.duration(400)} style={{ flex: 1 }}>
       <TouchableOpacity onPress={onExpandPress} style={styles.toggle}>
         <ThemedText type={"label"}>
           {!expandAllLists && !isExpanded && (
@@ -113,7 +120,7 @@ const ChatList = ({
           )}
         />
       )}
-    </View>
+    </Animated.View>
   );
 };
 

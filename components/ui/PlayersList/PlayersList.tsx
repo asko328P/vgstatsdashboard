@@ -11,6 +11,13 @@ import {
   useUnistyles,
 } from "react-native-unistyles";
 import { Feather } from "@expo/vector-icons";
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+  Easing,
+  FadeIn,
+} from "react-native-reanimated";
 
 const COLUMNS = ["Score", "Score TW", "Kills", "Deaths", "TKs"];
 
@@ -51,7 +58,7 @@ const PlayersList = ({
     rt.breakpoint !== "lg";
 
   return (
-    <View style={{ flex: 1 }}>
+    <Animated.View entering={FadeIn.duration(400)} style={{ flex: 1 }}>
       <TouchableOpacity onPress={onExpandPress} style={styles.toggle}>
         <ThemedText type={"label"}>
           {!expandAllLists && !isExpanded && (
@@ -71,6 +78,7 @@ const PlayersList = ({
       {isExpanded && (
         <ScrollView horizontal={true} contentContainerStyle={{ flex: 1 }}>
           <FlatList
+            initialNumToRender={30}
             showsVerticalScrollIndicator={false}
             style={{ minWidth: 400 }}
             contentContainerStyle={{ paddingBottom: 20 }}
@@ -84,7 +92,7 @@ const PlayersList = ({
           />
         </ScrollView>
       )}
-    </View>
+    </Animated.View>
   );
 };
 

@@ -3,6 +3,7 @@ import { Image, ImageStyle } from "expo-image";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import { useMemo } from "react";
 import mapNameToImageUrl from "@/components/ui/MapImage/mapNameToImageUrl";
+import { useUnistyles } from "react-native-unistyles";
 
 type Props = {
   gameRound?: GameRound;
@@ -10,6 +11,13 @@ type Props = {
 };
 
 const MapImage = ({ gameRound, style }: Props) => {
+  const { rt } = useUnistyles();
+  const expandAllLists =
+    rt.breakpoint !== "xs" &&
+    rt.breakpoint !== "sm" &&
+    rt.breakpoint !== "md" &&
+    rt.breakpoint !== "lg";
+
   const imageUri = useMemo(() => {
     if (!gameRound) {
       return "";
@@ -37,7 +45,11 @@ const MapImage = ({ gameRound, style }: Props) => {
 
   if (imageUri) {
     return (
-      <Image blurRadius={1} style={[styles.image, style]} source={imageUri} />
+      <Image
+        blurRadius={expandAllLists ? 2 : 1}
+        style={[styles.image, style]}
+        source={imageUri}
+      />
     );
   }
   return <View></View>;

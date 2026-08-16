@@ -171,13 +171,15 @@ export default function Page() {
         </View>
 
         <View style={styles.singleFlatlistHolder(isListExpanded(LISTS.chat))}>
-          <ChatList
-            onExpandPress={() => {
-              setExpandedList(LISTS.chat);
-            }}
-            messages={filteredMessages}
-            isExpanded={isListExpanded(LISTS.chat)}
-          />
+          {singleGameData && (
+            <ChatList
+              onExpandPress={() => {
+                setExpandedList(LISTS.chat);
+              }}
+              messages={filteredMessages}
+              isExpanded={isListExpanded(LISTS.chat)}
+            />
+          )}
         </View>
       </View>
     </View>
