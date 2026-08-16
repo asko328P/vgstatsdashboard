@@ -150,7 +150,7 @@ const TopPlayers = () => {
     }
     allKillsArray = allKillsArray.sort((a, b) => b.revivals - a.revivals);
 
-    return `${allKillsArray[0]?.player_id} ${allKillsArray[0]?.revivals} kills`;
+    return `${allKillsArray[0]?.player_id ?? " -"} ${allKillsArray[0]?.revivals ?? "0"} kills`;
   }, [gameData]);
 
   const topMedic = useMemo(() => {
@@ -177,7 +177,7 @@ const TopPlayers = () => {
     }
     allMedicsArray = allMedicsArray.sort((a, b) => b.revivals - a.revivals);
 
-    return `${allMedicsArray[0]?.player_id} ${allMedicsArray[0]?.revivals} revives`;
+    return `${allMedicsArray[0]?.player_id ?? " -"} ${allMedicsArray[0]?.revivals ?? "0"} revives`;
   }, [gameData]);
 
   const topDestroyer = useMemo(() => {
@@ -206,7 +206,7 @@ const TopPlayers = () => {
       (a, b) => b.vehicle_destroyeds - a.vehicle_destroyeds,
     );
 
-    return `${allDestructorsArray[0]?.player_id} ${allDestructorsArray[0]?.vehicle_destroyeds} assets`;
+    return `${allDestructorsArray[0]?.player_id ?? " -"} ${allDestructorsArray[0]?.vehicle_destroyeds ?? "0"} assets`;
   }, [gameData]);
 
   const mostRounds = useMemo(() => {
@@ -236,7 +236,7 @@ const TopPlayers = () => {
     }
     allPlayersArray = allPlayersArray.sort((a, b) => b.rounds - a.rounds);
 
-    return `${allPlayersArray[0]?.player_id} ${allPlayersArray[0]?.rounds} rounds`;
+    return `${allPlayersArray[0]?.player_id ?? " -"} ${allPlayersArray[0]?.rounds ?? "-"} rounds`;
   }, [gameData]);
 
   const daysCovered = useMemo(() => {
