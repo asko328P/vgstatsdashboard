@@ -1,3 +1,5 @@
+import { GameRoundPlayer } from "@/app/viewDemo";
+
 export function formatTime(totalSeconds: number) {
   // Ensure the input is treated as a non-negative integer
   const seconds = Math.max(0, Math.floor(totalSeconds));
@@ -202,4 +204,25 @@ export function adjustColorBrightness(hex: string, brighten: number): string {
   };
 
   return `#${toHex(rOut)}${toHex(gOut)}${toHex(bOut)}`;
+}
+
+// Highest scorer of a round by whatever stat is passed in. Bots always outclass
+// humans, so they are never eligible. Returns "" when nobody qualifies.
+export function findTopPlayer(
+  players: GameRoundPlayer[] | undefined,
+  getStat: (player: GameRoundPlayer) => number,
+) {
+  if (!players?.length) {
+    return "";
+  }
+  const best = players
+    .filter((player) => !player.player_id.startsWith("[R-BOT]"))
+    .reduce<GameRoundPlayer | undefined>((acc, player) => {
+      return !acc || getStat(player) > getStat(acc) ? player : acc;
+    }, undefined);
+
+  if (!best || getStat(best) <= 0) {
+    return "";
+  }
+  return `${best.player_id}: ${getStat(best)}`;
 }

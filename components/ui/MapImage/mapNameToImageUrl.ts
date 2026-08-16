@@ -29,6 +29,7 @@ const obj: MyObject = {
   kashandesert: require("@/assets/images/mapImages/kashandesert.jpg"),
   khamisiyah: require("@/assets/images/mapImages/khamisiyah.jpg"),
   kokan: require("@/assets/images/mapImages/kokan.jpg"),
+  korbachoffensive: require("@/assets/images/mapImages/korbachoffensive.jpg"),
   korengal: require("@/assets/images/mapImages/korengal.jpg"),
   krivajavalley: require("@/assets/images/mapImages/krivajavalley.jpg"),
   kunarprovince: require("@/assets/images/mapImages/kunarprovince.jpg"),

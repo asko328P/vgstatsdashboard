@@ -14,6 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import {
+  findTopPlayer,
   formatDuration,
   formatRoundTitle,
   toTimestamp,
@@ -22,17 +23,51 @@ import {
 import { Image } from "expo-image";
 import DiagonalLinesBackground from "@/assets/images/svg/background/DiagonalLinesBackground";
 
+type TopStatHolderProps = {
+  label: string;
+  value: string | number;
+  dotColor?: string;
+};
+
+export const TopStatHolder = ({
+  label,
+  value,
+  dotColor,
+}: TopStatHolderProps) => {
+  return (
+    <View style={styles.topStatHolder}>
+      <ThemedText type={"micro"} style={styles.dataHolderLabel}>
+        {label}
+      </ThemedText>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+        <View
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: 30,
+            backgroundColor: dotColor,
+          }}
+        />
+        <ThemedText type={"cell"}>{value.toString().trim()}</ThemedText>
+      </View>
+    </View>
+  );
+};
+
 type DataHolderProps = {
   label: string;
   value: string | number;
   showBar?: boolean;
   colorValues?: boolean;
+  smallText?: boolean;
 };
+
 export const DataHolder = ({
   label,
   value,
   showBar = false,
   colorValues = false,
+  smallText = false,
 }: DataHolderProps) => {
   return (
     <View style={styles.dataHolder}>
@@ -43,9 +78,9 @@ export const DataHolder = ({
         {showBar && <TeamKillBar value={Number(value)} />}
         <ThemedText
           style={[colorValues && styles.value(Number(value))]}
-          type={"metric"}
+          type={smallText ? "cell" : "metric"}
         >
-          {value}
+          {value.toString().trim()}
         </ThemedText>
       </View>
     </View>
@@ -148,6 +183,21 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
     }, 0);
   }, []);
 
+  // Bots would win most rounds outright, so they never count as the leader.
+  const topKiller = useMemo(() => {
+    return findTopPlayer(
+      gameRound?.game_round_player,
+      (player) => player.kills,
+    );
+  }, [gameRound]);
+
+  const topReviver = useMemo(() => {
+    return findTopPlayer(
+      gameRound?.game_round_player,
+      (player) => player.revivals,
+    );
+  }, [gameRound]);
+
   const tkkPerMille = useMemo(() => {
     return ((summedTeamKills / summedKills) * 1000).toFixed(2);
   }, [summedKills, summedTeamKills]);
@@ -195,7 +245,20 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
           ))}
         </View>
       </View>
+      <View style={styles.middleItems}>
+        <TopStatHolder
+          label={"TOP KILLER"}
+          value={topKiller}
+          dotColor={UnistylesRuntime.getTheme().colors.accentKill}
+        />
+        <TopStatHolder
+          label={"TOP MEDIC"}
+          value={topReviver}
+          dotColor={UnistylesRuntime.getTheme().colors.accentMedic}
+        />
+      </View>
       <View style={styles.rightItems}>
+        <View style={styles.verticalSeparator} />
         <DataHolder label={"KILLS"} value={summedKills} />
         <DataHolder label={"TEAMKILLS"} value={summedTeamKills} />
         <DataHolder
@@ -253,6 +316,11 @@ const GameRoundItem2 = ({ gameRound, onLayout, style }: Props) => {
 export default GameRoundItem2;
 
 const styles = StyleSheet.create((theme) => ({
+  middleItems: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.margins.md,
+  },
   stripeLayer: {
     position: "absolute",
     left: 0,
@@ -305,6 +373,10 @@ const styles = StyleSheet.create((theme) => ({
     borderColor: theme.colors.borderStrong,
     paddingHorizontal: theme.margins.md,
     paddingBottom: 2,
+  },
+  topStatHolder: {
+    gap: theme.margins.sm,
+    alignItems: "flex-start",
   },
   dataHolder: {
     gap: theme.margins.sm,
