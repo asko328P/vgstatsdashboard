@@ -320,6 +320,9 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.margins.md,
+    flexGrow: 0,
+    flexShrink: 0,
+    flexBasis: "auto",
   },
   stripeLayer: {
     position: "absolute",
@@ -374,13 +377,17 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.margins.md,
     paddingBottom: 2,
   },
+  // Constant width per column, so a long nickname or an extra digit does not
+  // shift everything after it.
   topStatHolder: {
     gap: theme.margins.sm,
     alignItems: "flex-start",
+    width: { xs: "auto", md: 150 },
   },
   dataHolder: {
     gap: theme.margins.sm,
     alignItems: "flex-end",
+    minWidth: { xs: 0, md: 60 },
   },
   // No color override — a soft shadow keeps the label legible over the map image.
   dataHolderLabel: {
@@ -388,9 +395,16 @@ const styles = StyleSheet.create((theme) => ({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
+  // The three blocks form fixed columns so they align across cards: the title
+  // block absorbs all slack, the stat blocks keep a constant width whatever
+  // their content. flexBasis is per breakpoint because the container stacks on
+  // phones, where a basis of 0 would collapse the height instead of the width.
   leftItems: {
     gap: theme.margins.md,
+    flexGrow: { xs: 0, md: 1 },
     flexShrink: 1,
+    flexBasis: { xs: "auto", md: 0 },
+    minWidth: { xs: 0, md: 200 },
   },
   // Stacked on phones, inline from tablets up.
   metaHolder: {
@@ -404,6 +418,9 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
+    justifyContent: "flex-end",
+    flexGrow: 0,
+    flexShrink: 0,
     gap: { xs: theme.margins.lg, md: theme.margins.xl },
   },
   imageHolder: {
