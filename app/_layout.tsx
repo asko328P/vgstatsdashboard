@@ -13,8 +13,10 @@ import {
 } from "@expo-google-fonts/jetbrains-mono";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
+import { View } from "react-native";
 import "react-native-reanimated";
-import { UnistylesRuntime } from "react-native-unistyles";
+import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import WipRibbon from "@/components/ui/WipRibbon/WipRibbon";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,16 +43,25 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        contentStyle: {
-          backgroundColor: UnistylesRuntime.getTheme().colors.surfaceBase,
-        },
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="/viewDemo" options={{ headerShown: false }} />
-    </Stack>
+    <View style={styles.root}>
+      <Stack
+        screenOptions={{
+          contentStyle: {
+            backgroundColor: UnistylesRuntime.getTheme().colors.surfaceBase,
+          },
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="/viewDemo" options={{ headerShown: false }} />
+      </Stack>
+      <WipRibbon />
+    </View>
   );
 }
+
+const styles = StyleSheet.create(() => ({
+  root: {
+    flex: 1,
+  },
+}));

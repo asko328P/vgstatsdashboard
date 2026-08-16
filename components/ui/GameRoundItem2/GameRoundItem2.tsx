@@ -34,6 +34,7 @@ export const TopStatHolder = ({
   value,
   dotColor,
 }: TopStatHolderProps) => {
+  if (!value) return;
   return (
     <View style={styles.topStatHolder}>
       <ThemedText type={"micro"} style={styles.dataHolderLabel}>
@@ -382,7 +383,7 @@ const styles = StyleSheet.create((theme) => ({
   topStatHolder: {
     gap: theme.margins.sm,
     alignItems: "flex-start",
-    width: { xs: "auto", md: 150 },
+    width: { xs: "auto", md: 170 },
   },
   dataHolder: {
     gap: theme.margins.sm,

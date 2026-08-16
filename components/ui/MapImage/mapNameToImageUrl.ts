@@ -5,6 +5,7 @@ interface MyObject {
 const obj: MyObject = {
   adak: require("@/assets/images/mapImages/adak.jpg"),
   albasrah2: require("@/assets/images/mapImages/albasrah2.jpg"),
+  assaultonmestia: require("@/assets/images/mapImages/assaultonmestia.jpg"),
   asadkhal: require("@/assets/images/mapImages/asadkhal.jpg"),
   assaultongrozny: require("@/assets/images/mapImages/assaultongrozny.jpg"),
   bamyan: require("@/assets/images/mapImages/bamyan.jpg"),
@@ -46,6 +47,7 @@ const obj: MyObject = {
   operationmarlin: require("@/assets/images/mapImages/operationmarlin.jpg"),
   operationsoulrebel: require("@/assets/images/mapImages/operationsoulrebel.jpg"),
   operationthunder: require("@/assets/images/mapImages/operationthunder.jpg"),
+  outpost: require("@/assets/images/mapImages/outpost.jpg"),
   pavlovskbay: require("@/assets/images/mapImages/pavlovskbay.jpg"),
   ramiel: require("@/assets/images/mapImages/ramiel.jpg"),
   raselmasri2: require("@/assets/images/mapImages/raselmasri2.jpg"),
