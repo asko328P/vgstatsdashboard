@@ -14,6 +14,7 @@ const obj: MyObject = {
   blackgold: require("@/assets/images/mapImages/blackgold.jpg"),
   burningsands: require("@/assets/images/mapImages/burningsands.jpg"),
   carentan: require("@/assets/images/mapImages/carentan.jpg"),
+  donbas: require("@/assets/images/mapImages/donbas.jpg"),
   dovre: require("@/assets/images/mapImages/dovre.jpg"),
   dragonfly: require("@/assets/images/mapImages/dragonfly.jpg"),
   fallujahwest: require("@/assets/images/mapImages/fallujahwest.jpg"),
