@@ -1,3 +1,8 @@
+// Must be the first import: StyleSheet.configure has to run before any
+// StyleSheet.create in the component tree below (incl. static web rendering,
+// which enters through this file rather than index.ts).
+import "@/unistyles/unistyles";
+
 import {
   ChakraPetch_400Regular,
   ChakraPetch_500Medium,
