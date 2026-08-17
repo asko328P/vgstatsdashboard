@@ -21,6 +21,18 @@ import Animated, {
 
 const COLUMNS = ["Score", "Score TW", "Kills", "Deaths", "TKs"] as const;
 
+// Alphabetical, except clan members — whose names start with "=" — who are
+// grouped at the top and alphabetised among themselves.
+const compareNames = (a: string, b: string) => {
+  const aIsClan = a.startsWith("=");
+  const bIsClan = b.startsWith("=");
+
+  if (aIsClan !== bIsClan) {
+    return aIsClan ? -1 : 1;
+  }
+  return a.localeCompare(b, undefined);
+};
+
 type ListHeaderProps = {
   sortBy: (typeof COLUMNS)[number] | "Name";
   onLabelPress: (label: (typeof COLUMNS)[number] | "Name") => void;
@@ -100,7 +112,7 @@ const PlayersList = ({
     switch (sortBy) {
       case "Name":
         return copy.sort((a, b) =>
-          String(a.player_id).localeCompare(String(b.player_id), undefined),
+          compareNames(String(a.player_id), String(b.player_id)),
         );
       case "Score":
         return copy.sort((a, b) => b.score - a.score);
