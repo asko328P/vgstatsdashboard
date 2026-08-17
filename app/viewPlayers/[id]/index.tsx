@@ -5,12 +5,23 @@ import { supabase } from "@/utils/supabase";
 import { PlayerStats } from "@/app/viewPlayers";
 import PageHeader from "@/components/ui/PageHeader/PageHeader";
 import { ThemedText } from "@/components/ui/ThemedText";
-import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import {
+  StyleSheet,
+  UnistylesRuntime,
+  useUnistyles,
+} from "react-native-unistyles";
 import ViewPlayerHeader from "@/components/ui/ViewPlayerHeader/ViewPlayerHeader";
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+
+  const { rt } = useUnistyles();
+  const expandAllLists =
+    rt.breakpoint !== "xs" &&
+    rt.breakpoint !== "sm" &&
+    rt.breakpoint !== "md" &&
+    rt.breakpoint !== "lg";
 
   const [playerData, setPlayerData] = useState<PlayerStats | null>(null);
 
@@ -70,10 +81,7 @@ export default function Page() {
         onBackPress={onBackPress}
       />
 
-      <ScrollView contentContainerStyle={styles.pageContent}>
-        {titleRow("Player")}
-        <ThemedText type={"name"}>{playerData?.id ?? id}</ThemedText>
-      </ScrollView>
+      <ScrollView contentContainerStyle={styles.pageContent}></ScrollView>
     </View>
   );
 }

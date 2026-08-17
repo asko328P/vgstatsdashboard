@@ -1,6 +1,6 @@
 import { FlatList, TextInput, TouchableOpacity, View } from "react-native";
 import { useMemo, useState } from "react";
-import { ThemedText } from "@/components/ui/ThemedText";
+import { fonts, ThemedText } from "@/components/ui/ThemedText";
 import { Message } from "@/components/ui/ChatItem/ChatItem";
 import ChatItem2, {
   chatRowStyles,
@@ -147,6 +147,9 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.textMuted,
   },
   searchInput: {
+    // TextInput does not inherit from ThemedText, so set the face explicitly.
+    fontFamily: fonts.mono,
+    fontSize: 14,
     color: theme.colors.textPrimary,
     backgroundColor: theme.colors.surface2,
     borderWidth: 1,
