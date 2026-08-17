@@ -1,6 +1,6 @@
 import { ScrollView, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { PlayerStats } from "@/app/viewPlayers";
 import PageHeader from "@/components/ui/PageHeader/PageHeader";
@@ -11,6 +11,7 @@ import {
   useUnistyles,
 } from "react-native-unistyles";
 import ViewPlayerHeader from "@/components/ui/ViewPlayerHeader/ViewPlayerHeader";
+import PlayerOverview from "@/components/ui/PlayerOverview/PlayerOverview";
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -73,6 +74,48 @@ export default function Page() {
     </View>
   );
 
+  // `flex` is what splits a desktop row into thirds; on phones the cells stack
+  // and size to their content instead.
+  type SectionProps = {
+    label: string;
+    flex?: number;
+    children?: ReactNode;
+  };
+  const Section = ({ label, flex, children }: SectionProps) => (
+    <View key={label} style={styles.cell(flex)}>
+      {titleRow(label)}
+      {children}
+    </View>
+  );
+
+  // Phones: one column, all four sections stacked.
+  if (!expandAllLists) {
+    return (
+      <View style={styles.container}>
+        <ViewPlayerHeader
+          headerTitle={id}
+          player={playerData}
+          onBackPress={onBackPress}
+        />
+
+        <ScrollView contentContainerStyle={styles.pageContent}>
+          <Section label={"Overview"}>
+            <PlayerOverview
+              callsign={playerData?.id ?? id}
+              createdAt={playerData?.created_at}
+              lastSeenAt={playerData?.last_seen}
+              favWeapon={"COMING SOON"}
+            />
+          </Section>
+          <Section label={"Combat"}></Section>
+          <Section label={"Activity"}></Section>
+          <Section label={"Rounds"}></Section>
+        </ScrollView>
+      </View>
+    );
+  }
+
+  // Wide: two rows of two, the left cell taking a third and the right two thirds.
   return (
     <View style={styles.container}>
       <ViewPlayerHeader
@@ -81,7 +124,24 @@ export default function Page() {
         onBackPress={onBackPress}
       />
 
-      <ScrollView contentContainerStyle={styles.pageContent}></ScrollView>
+      <ScrollView contentContainerStyle={styles.pageContent}>
+        <View style={styles.row}>
+          <Section label={"Overview"} flex={1}>
+            <PlayerOverview
+              callsign={playerData?.id ?? id}
+              createdAt={playerData?.created_at}
+              lastSeenAt={playerData?.last_seen}
+              favWeapon={"(COMING SOON)"}
+              favClass={"(COMING SOON)"}
+            />
+          </Section>
+          <Section label={"Combat"} flex={2}></Section>
+        </View>
+        <View style={styles.row}>
+          <Section label={"Activity"} flex={1}></Section>
+          <Section label={"Rounds"} flex={2}></Section>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -96,6 +156,22 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.margins.md,
     paddingHorizontal: theme.margins.md,
     paddingBottom: theme.margins.xxl,
+  },
+  row: {
+    flexDirection: "row",
+    gap: theme.margins.lg,
+  },
+  cell: (flex?: number) => ({
+    flex,
+    gap: theme.margins.md,
+  }),
+  panel: {
+    flex: 1,
+    minHeight: 200,
+    backgroundColor: theme.colors.surface1,
+    borderWidth: 1,
+    borderColor: theme.colors.borderHairline,
+    borderRadius: 10,
   },
   container: {
     flex: 1,
