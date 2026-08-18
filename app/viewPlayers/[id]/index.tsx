@@ -19,6 +19,10 @@ import StatCard from "@/components/ui/StatCard/StatCard";
 import RevivesOverView from "@/components/ui/RevivesOverView/RevivesOverView";
 import RoundsOverview from "@/components/ui/RoundsOverview/RoundsOverview";
 
+// How many rounds the table starts with and grows by, and where it stops.
+const ROUNDS_PAGE_SIZE = 10;
+const MAX_ROUNDS_IN_LIST = 50;
+
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -39,6 +43,14 @@ export default function Page() {
   const [roundsData, setRoundsData] = useState<
     (GameRoundPlayer & { game_rounds: GameRound })[] | null
   >(null);
+
+  // The table pages independently of the charts above it, so it gets its own
+  // rows and its own row count.
+  const [roundsListData, setRoundsListData] = useState<
+    (GameRoundPlayer & { game_rounds: GameRound })[] | null
+  >(null);
+  const [numberOfItemsForList, setNumberOfItemsForList] =
+    useState(ROUNDS_PAGE_SIZE);
 
   useEffect(() => {
     const getData = async () => {
@@ -76,6 +88,46 @@ export default function Page() {
       getData();
     }
   }, [id]);
+
+  // Refetches with a bigger limit each time the button below the table is
+  // pressed. Newest first, so growing the limit adds older rounds to the bottom.
+  useEffect(() => {
+    const getRoundsForList = async () => {
+      const { data, error } = await supabase
+        .from("game_round_player")
+        .select("*, game_rounds(*)")
+        .eq("player_id", id)
+        .order("played_at", {
+          referencedTable: "game_rounds",
+          ascending: false,
+        })
+        .limit(numberOfItemsForList);
+
+      if (error) {
+        console.log("player rounds list error", error);
+      }
+      if (data) {
+        // @ts-ignore
+        setRoundsListData(data);
+      }
+    };
+
+    if (id) {
+      getRoundsForList();
+    }
+  }, [id, numberOfItemsForList]);
+
+  const onShowMorePress = () => {
+    setNumberOfItemsForList((current) =>
+      Math.min(current + ROUNDS_PAGE_SIZE, MAX_ROUNDS_IN_LIST),
+    );
+  };
+
+  // Hidden at the cap, and also once a fetch comes back short — that means the
+  // player has no more rounds and pressing again would change nothing.
+  const canShowMoreRounds =
+    numberOfItemsForList < MAX_ROUNDS_IN_LIST &&
+    (roundsListData?.length ?? 0) >= numberOfItemsForList;
 
   const onBackPress = () => {
     if (router.canGoBack()) {
@@ -164,7 +216,14 @@ export default function Page() {
             {roundsData && <RevivesOverView gameRounds={roundsData} />}
           </Section>
           <Section label={"Rounds"}>
-            {roundsData && <RoundsOverview gameRounds={roundsData} />}
+            {roundsListData && (
+              <RoundsOverview
+                gameRounds={roundsListData}
+                onShowMorePress={
+                  canShowMoreRounds ? onShowMorePress : undefined
+                }
+              />
+            )}
           </Section>
         </ScrollView>
       </View>
@@ -201,7 +260,14 @@ export default function Page() {
             {roundsData && <RevivesOverView gameRounds={roundsData} />}
           </Section>
           <Section label={"Rounds"} flex={2}>
-            {roundsData && <RoundsOverview gameRounds={roundsData} />}
+            {roundsListData && (
+              <RoundsOverview
+                gameRounds={roundsListData}
+                onShowMorePress={
+                  canShowMoreRounds ? onShowMorePress : undefined
+                }
+              />
+            )}
           </Section>
         </View>
       </View>

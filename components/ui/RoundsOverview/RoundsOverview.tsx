@@ -38,6 +38,8 @@ const COLUMNS = ["Kills", "Deaths", "Revives", "TKs"];
 
 type Props = {
   gameRounds: (GameRoundPlayer & { game_rounds: GameRound })[];
+  // Omitted once there is nothing left to load, which also hides the footer.
+  onShowMorePress?: () => void;
 };
 
 type PlayerGameRoundProps = {
@@ -117,7 +119,15 @@ const PlayerGameRound = ({ item }: PlayerGameRoundProps) => {
   );
 };
 
-const RoundsOverview = ({ gameRounds }: Props) => {
+const ShowMore = ({ onPress }: { onPress: () => void }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.showMore}>
+      <ThemedText type={"label"}>{"SHOW MORE"}</ThemedText>
+    </TouchableOpacity>
+  );
+};
+
+const RoundsOverview = ({ gameRounds, onShowMorePress }: Props) => {
   return (
     <View style={styles.container}>
       <ScrollView
@@ -131,6 +141,9 @@ const RoundsOverview = ({ gameRounds }: Props) => {
           keyExtractor={(item) => item.game_round_id}
           ListHeaderComponent={ListHeader}
           stickyHeaderIndices={[0]}
+          ListFooterComponent={
+            onShowMorePress ? <ShowMore onPress={onShowMorePress} /> : null
+          }
           renderItem={({ item }) => <PlayerGameRound item={item} />}
         />
       </ScrollView>
@@ -143,6 +156,16 @@ export default RoundsOverview;
 const styles = StyleSheet.create((theme) => ({
   scroll: {
     flex: 1,
+  },
+  showMore: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.colors.surface2,
+    borderWidth: 1,
+    borderColor: theme.colors.borderStrong,
+    borderRadius: 4,
+    marginTop: theme.margins.md,
+    paddingVertical: theme.margins.md,
   },
   // `flex` does nothing on a content container — `flexGrow` is what lets the
   // table fill a screen wider than its 600px floor instead of stopping there.
