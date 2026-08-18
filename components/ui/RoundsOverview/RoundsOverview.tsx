@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, View } from "react-native";
+import { FlatList, ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
@@ -8,6 +8,7 @@ import {
   toReadableDate,
   toReadableDayMonth,
 } from "@/utils/functions";
+import { useRouter } from "expo-router";
 
 // Shared by the row and by the list header so the columns can never drift apart.
 export const roundRowStyles = StyleSheet.create((theme) => ({
@@ -62,8 +63,18 @@ const ListHeader = () => {
 };
 
 const PlayerGameRound = ({ item }: PlayerGameRoundProps) => {
+  const router = useRouter();
+  const navigateToRound = () => {
+    router.push({
+      pathname: "/viewDemo",
+      params: { gameRoundId: item.game_round_id },
+    });
+  };
   return (
-    <View style={[roundRowStyles.row, styles.playerGameRoundHolder]}>
+    <TouchableOpacity
+      onPress={navigateToRound}
+      style={[roundRowStyles.row, styles.playerGameRoundHolder]}
+    >
       <View style={roundRowStyles.roundCell}>
         <ThemedText
           type={"name"}
@@ -102,7 +113,7 @@ const PlayerGameRound = ({ item }: PlayerGameRoundProps) => {
           {item.teamkills}
         </ThemedText>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -154,6 +165,7 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.margins.md,
   },
   playerGameRoundHolder: {
+    paddingRight: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: theme.colors.borderHairline,
   },
@@ -175,17 +187,14 @@ const styles = StyleSheet.create((theme) => ({
           ? theme.colors.accentWarn
           : theme.colors.textPrimary,
   }),
-
-  // The page scrolls vertically, so nothing above gives this a bounded height —
-  // without a floor the flexing list has no room to resolve into.
   container: {
     flex: 1,
-    minHeight: 300,
     backgroundColor: theme.colors.surface1,
     borderWidth: 1,
     borderColor: theme.colors.borderHairline,
     borderRadius: 2,
     padding: { xs: theme.margins.lg, md: theme.margins.xl },
+    paddingRight: 0,
     paddingBottom: { xs: theme.margins.sm },
     gap: theme.margins.xl,
   },

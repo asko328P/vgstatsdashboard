@@ -180,7 +180,7 @@ export default function Page() {
         onBackPress={onBackPress}
       />
 
-      <ScrollView contentContainerStyle={styles.pageContent}>
+      <View style={styles.wideContent}>
         <View style={styles.row}>
           <Section label={"Overview"} flex={1}>
             <PlayerOverview
@@ -196,7 +196,7 @@ export default function Page() {
             {roundsData && <KDOverview gameRounds={roundsData} />}
           </Section>
         </View>
-        <View style={styles.row}>
+        <View style={[styles.row, styles.growRow]}>
           <Section label={"Medic Activity"} flex={1}>
             {roundsData && <RevivesOverView gameRounds={roundsData} />}
           </Section>
@@ -204,7 +204,7 @@ export default function Page() {
             {roundsData && <RoundsOverview gameRounds={roundsData} />}
           </Section>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -215,23 +215,45 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     gap: theme.margins.xl,
   },
+  // Phones only — this is a ScrollView content container, so it must stay
+  // content-sized or the page would never scroll.
   pageContent: {
     gap: theme.margins.md,
     paddingHorizontal: theme.margins.md,
     paddingBottom: theme.margins.xxl,
+  },
+  // Wide only: capped by the window, which is what gives the rounds table
+  // something to overflow and therefore something to scroll.
+  wideContent: {
+    flex: 1,
+    minHeight: 0,
+    gap: theme.margins.md,
+    paddingHorizontal: theme.margins.md,
+    paddingBottom: theme.margins.md,
   },
   row: {
     flexWrap: "wrap",
     flexDirection: "row",
     gap: theme.margins.lg,
   },
+  // The bottom row takes whatever the top row leaves. `nowrap` is required, not
+  // cosmetic: a wrapping container sizes its line to the content and its cells
+  // never stretch to the bounded height, so the table would overflow the window.
+  growRow: {
+    flex: 1,
+    minHeight: 0,
+    flexWrap: "nowrap",
+    alignItems: "stretch",
+  },
   statsRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: theme.margins.md,
   },
+
   cell: (flex?: number) => ({
     flex,
+    minHeight: 0,
     gap: theme.margins.md,
   }),
   panel: {
