@@ -201,30 +201,51 @@ export default function Page() {
     </View>
   );
 
-  // On phones the page itself scrolls, so the list must not scroll separately.
+  const players = searchResults ?? playersData;
+
   const table = (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.horizontalContent}
     >
-      <FlatList
-        pointerEvents={expandAllLists ? "auto" : "none"}
-        style={styles.flatlist}
-        scrollEnabled={expandAllLists}
-        data={searchResults ?? playersData}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={ListHeader}
-        stickyHeaderIndices={[0]}
-        renderItem={({ item }) => <PlayerStatItem item={item} />}
-      />
+      {expandAllLists ? (
+        <FlatList
+          style={styles.flatlist}
+          data={players}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={ListHeader}
+          stickyHeaderIndices={[0]}
+          renderItem={({ item }) => <PlayerStatItem item={item} />}
+        />
+      ) : (
+        // Phones: no vertical scroll container of its own. The rows lay out
+        // inline so the block is as tall as its content and the page — the only
+        // scroller on screen — does the scrolling, with taps still reaching rows.
+        <View style={styles.flatlist}>
+          <ListHeader />
+          {players.map((item) => (
+            <PlayerStatItem key={item.id} item={item} />
+          ))}
+        </View>
+      )}
     </ScrollView>
   );
+
+  // Same destination as a table row, so the two behave alike.
+  const pressPlayerHandler = (playerId: string) => {
+    setSelectedPlayer(playerId);
+    router.push(`/viewPlayers/${playerId}`);
+  };
 
   const sidePanel = (
     <View style={styles.sidePanel}>
       {upcomingPlayersData.map((item, index) => (
-        <View style={styles.upcomingPlayer} key={item.id}>
+        <TouchableOpacity
+          onPress={() => pressPlayerHandler(item.id)}
+          style={styles.upcomingPlayer}
+          key={item.id}
+        >
           <View style={{ gap: 5, flexShrink: 1 }}>
             <ThemedText>{item.id.slice(1, 3000)}</ThemedText>
             <ThemedText
@@ -238,7 +259,7 @@ export default function Page() {
             </ThemedText>
             <ThemedText type={"micro"}>{"Rounds"}</ThemedText>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
