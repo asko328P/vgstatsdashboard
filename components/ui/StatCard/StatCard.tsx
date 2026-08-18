@@ -43,8 +43,12 @@ export default StatCard;
 const styles = StyleSheet.create((theme) => ({
   // `color` tints the cap and the dot; everything else stays neutral so the
   // number is what the eye lands on.
+  // A basis with a floor rather than `flex: 1`, so a row of cards wraps onto the
+  // next line instead of shrinking every card into a sliver.
   container: (color?: string) => ({
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: 150,
+    minWidth: 150,
     justifyContent: "space-between",
     gap: theme.margins.xl,
     backgroundColor: theme.colors.surface1,

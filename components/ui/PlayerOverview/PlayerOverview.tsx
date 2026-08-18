@@ -111,6 +111,7 @@ export default PlayerOverview;
 
 const styles = StyleSheet.create((theme) => ({
   container: {
+    flex: 1,
     backgroundColor: theme.colors.surface1,
     borderWidth: 1,
     borderColor: theme.colors.borderHairline,

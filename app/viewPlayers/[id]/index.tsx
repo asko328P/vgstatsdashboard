@@ -113,6 +113,32 @@ export default function Page() {
     </View>
   );
 
+  // The cards carry their own width floor, so the row only has to allow wrapping.
+  const stats = playerData && (
+    <View style={styles.statsRow}>
+      <StatCard
+        title={"lifetime k/d"}
+        value={(playerData.kills / playerData.deaths).toFixed(2)}
+      />
+      <StatCard title={"Rounds played"} value={playerData.rounds} />
+      <StatCard
+        title={"Revives"}
+        value={playerData.revivals}
+        color={accentMedic}
+      />
+      <StatCard
+        title={"Teamkills"}
+        value={playerData.teamkills}
+        color={accentWarn}
+      />
+      <StatCard
+        title={"Kills"}
+        value={playerData.kills}
+        color={accentKill}
+      />
+    </View>
+  );
+
   // Phones: one column, all four sections stacked.
   if (!expandAllLists) {
     return (
@@ -133,30 +159,7 @@ export default function Page() {
             />
           </Section>
           <Section label={"Combat"}>
-            {playerData && (
-              <View style={styles.row}>
-                <StatCard
-                  title={"lifetime k/d"}
-                  value={(playerData?.kills / playerData?.deaths).toFixed(2)}
-                />
-                <StatCard title={"Rounds played"} value={playerData.rounds} />
-                <StatCard
-                  title={"Revives"}
-                  value={playerData.revivals}
-                  color={accentMedic}
-                />
-                <StatCard
-                  title={"Teamkills"}
-                  value={playerData.teamkills}
-                  color={accentWarn}
-                />
-                <StatCard
-                  title={"Kills"}
-                  value={playerData.kills}
-                  color={accentKill}
-                />
-              </View>
-            )}
+            {stats}
             {roundsData && <KDOverview gameRounds={roundsData} />}
           </Section>
           <Section label={"Activity"}></Section>
@@ -187,30 +190,7 @@ export default function Page() {
             />
           </Section>
           <Section label={"Combat"} flex={2}>
-            {playerData && (
-              <View style={styles.row}>
-                <StatCard
-                  title={"lifetime k/d"}
-                  value={(playerData?.kills / playerData?.deaths).toFixed(2)}
-                />
-                <StatCard title={"Rounds played"} value={playerData.rounds} />
-                <StatCard
-                  title={"Revives"}
-                  value={playerData.revivals}
-                  color={accentMedic}
-                />
-                <StatCard
-                  title={"Teamkills"}
-                  value={playerData.teamkills}
-                  color={accentWarn}
-                />
-                <StatCard
-                  title={"Kills"}
-                  value={playerData.kills}
-                  color={accentKill}
-                />
-              </View>
-            )}
+            {stats}
             {roundsData && <KDOverview gameRounds={roundsData} />}
           </Section>
         </View>
@@ -238,6 +218,11 @@ const styles = StyleSheet.create((theme) => ({
     flexWrap: "wrap",
     flexDirection: "row",
     gap: theme.margins.lg,
+  },
+  statsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: theme.margins.md,
   },
   cell: (flex?: number) => ({
     flex,
