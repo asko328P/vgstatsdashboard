@@ -73,9 +73,8 @@ export default function Page() {
           .from("game_round_player")
           .select("*, game_rounds(*)")
           .eq("player_id", id)
-          .order("played_at", {
-            referencedTable: "game_rounds",
-            ascending: true,
+          .order("game_rounds(played_at)", {
+            ascending: false,
           })
           .limit(10);
 
@@ -97,10 +96,10 @@ export default function Page() {
         .from("game_round_player")
         .select("*, game_rounds(*)")
         .eq("player_id", id)
-        .order("played_at", {
-          referencedTable: "game_rounds",
-          ascending: false,
-        })
+        // Sorts the rows themselves by the round's date. `referencedTable`
+        // would instead sort within each embed — a no-op for a to-one join,
+        // leaving the outer order (and so which rows `limit` keeps) arbitrary.
+        .order("game_rounds(played_at)", { ascending: false })
         .limit(numberOfItemsForList);
 
       if (error) {
