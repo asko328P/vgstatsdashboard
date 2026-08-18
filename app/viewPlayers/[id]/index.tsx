@@ -12,6 +12,9 @@ import {
 } from "react-native-unistyles";
 import ViewPlayerHeader from "@/components/ui/ViewPlayerHeader/ViewPlayerHeader";
 import PlayerOverview from "@/components/ui/PlayerOverview/PlayerOverview";
+import { GameRoundPlayer } from "@/app/viewDemo";
+import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
+import KDOverview from "@/components/ui/KDOverview/KDOverview";
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,9 +29,13 @@ export default function Page() {
 
   const [playerData, setPlayerData] = useState<PlayerStats | null>(null);
 
+  const [roundsData, setRoundsData] = useState<
+    (GameRoundPlayer & { game_rounds: GameRound })[] | null
+  >(null);
+
   useEffect(() => {
     const getData = async () => {
-      const { data, error } = await supabase
+      const { data: player, error } = await supabase
         .from("players")
         .select(`*`)
         .eq("id", id)
@@ -39,9 +46,22 @@ export default function Page() {
       if (error) {
         console.log("single player error", error);
       }
-      if (data) {
+      if (player) {
         // @ts-ignore
-        setPlayerData(data);
+        setPlayerData(player);
+
+        const { data: rounds } = await supabase
+          .from("game_round_player")
+          .select("*, game_rounds(*)")
+          .eq("player_id", id)
+          .order("played_at", {
+            referencedTable: "game_rounds",
+            ascending: true,
+          })
+          .limit(10);
+
+        // @ts-ignore
+        setRoundsData(rounds);
       }
     };
 
@@ -107,7 +127,9 @@ export default function Page() {
               favWeapon={"COMING SOON"}
             />
           </Section>
-          <Section label={"Combat"}></Section>
+          <Section label={"Combat"}>
+            {roundsData && <KDOverview gameRounds={roundsData} />}
+          </Section>
           <Section label={"Activity"}></Section>
           <Section label={"Rounds"}></Section>
         </ScrollView>
@@ -135,7 +157,9 @@ export default function Page() {
               favClass={"(COMING SOON)"}
             />
           </Section>
-          <Section label={"Combat"} flex={2}></Section>
+          <Section label={"Combat"} flex={2}>
+            {roundsData && <KDOverview gameRounds={roundsData} />}
+          </Section>
         </View>
         <View style={styles.row}>
           <Section label={"Activity"} flex={1}></Section>
