@@ -16,6 +16,7 @@ import { GameRoundPlayer } from "@/app/viewDemo";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import KDOverview from "@/components/ui/KDOverview/KDOverview";
 import StatCard from "@/components/ui/StatCard/StatCard";
+import RevivesOverView from "@/components/ui/RevivesOverView/RevivesOverView";
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -131,11 +132,7 @@ export default function Page() {
         value={playerData.teamkills}
         color={accentWarn}
       />
-      <StatCard
-        title={"Kills"}
-        value={playerData.kills}
-        color={accentKill}
-      />
+      <StatCard title={"Kills"} value={playerData.kills} color={accentKill} />
     </View>
   );
 
@@ -162,7 +159,9 @@ export default function Page() {
             {stats}
             {roundsData && <KDOverview gameRounds={roundsData} />}
           </Section>
-          <Section label={"Activity"}></Section>
+          <Section label={"Medic Activity"}>
+            {roundsData && <RevivesOverView gameRounds={roundsData} />}
+          </Section>
           <Section label={"Rounds"}></Section>
         </ScrollView>
       </View>
@@ -195,7 +194,9 @@ export default function Page() {
           </Section>
         </View>
         <View style={styles.row}>
-          <Section label={"Activity"} flex={1}></Section>
+          <Section label={"Medic Activity"} flex={1}>
+            {roundsData && <RevivesOverView gameRounds={roundsData} />}
+          </Section>
           <Section label={"Rounds"} flex={2}></Section>
         </View>
       </ScrollView>
