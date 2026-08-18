@@ -146,7 +146,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   container: {
     // minHeight: 230,
-    flex: 1,
+    // flex: 1,
     backgroundColor: theme.colors.surface1,
     borderWidth: 1,
     borderColor: theme.colors.borderHairline,

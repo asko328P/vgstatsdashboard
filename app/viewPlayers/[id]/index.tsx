@@ -17,6 +17,7 @@ import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import KDOverview from "@/components/ui/KDOverview/KDOverview";
 import StatCard from "@/components/ui/StatCard/StatCard";
 import RevivesOverView from "@/components/ui/RevivesOverView/RevivesOverView";
+import RoundsOverview from "@/components/ui/RoundsOverview/RoundsOverview";
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -162,7 +163,9 @@ export default function Page() {
           <Section label={"Medic Activity"}>
             {roundsData && <RevivesOverView gameRounds={roundsData} />}
           </Section>
-          <Section label={"Rounds"}></Section>
+          <Section label={"Rounds"}>
+            {roundsData && <RoundsOverview gameRounds={roundsData} />}
+          </Section>
         </ScrollView>
       </View>
     );
@@ -197,7 +200,9 @@ export default function Page() {
           <Section label={"Medic Activity"} flex={1}>
             {roundsData && <RevivesOverView gameRounds={roundsData} />}
           </Section>
-          <Section label={"Rounds"} flex={2}></Section>
+          <Section label={"Rounds"} flex={2}>
+            {roundsData && <RoundsOverview gameRounds={roundsData} />}
+          </Section>
         </View>
       </ScrollView>
     </View>
