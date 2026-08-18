@@ -6,6 +6,7 @@ import {
   SelectedPlayerState,
   useSelectedPlayerStore,
 } from "@/zustand/SelectedPlayerStore";
+import { useRouter } from "expo-router";
 
 type Props = {
   headerTitle: string;
@@ -24,6 +25,7 @@ const DemoHeader = ({
   download_link,
   onBackPress,
 }: Props) => {
+  const router = useRouter();
   const textPrimary = UnistylesRuntime.getTheme().colors.textPrimary;
   const surfaceBase = UnistylesRuntime.getTheme().colors.surfaceBase;
 
@@ -32,6 +34,10 @@ const DemoHeader = ({
   );
   const closePlayer = () => {
     setSelectedPlayer("");
+  };
+
+  const onViewPlayerPress = () => {
+    router.push(`/viewPlayers/${selectedPlayer}`);
   };
 
   const onDemoLinkPress = async () => {
@@ -81,6 +87,13 @@ const DemoHeader = ({
           <ThemedText type={"label"} style={{ color: surfaceBase }}>
             {selectedPlayer}
           </ThemedText>
+          <TouchableOpacity
+            onPress={onViewPlayerPress}
+            style={styles.clearPlayerButton}
+          >
+            <Feather name={"chevrons-right"} size={16} color={surfaceBase} />
+          </TouchableOpacity>
+          <View style={styles.playerSeparator} />
           <TouchableOpacity
             onPress={closePlayer}
             style={styles.clearPlayerButton}
@@ -159,6 +172,14 @@ const styles = StyleSheet.create((theme) => ({
   clearPlayerButton: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  // Sits on the gold chip, so it is the dark ink colour knocked back rather
+  // than a border token.
+  playerSeparator: {
+    width: 1,
+    height: 14,
+    opacity: 0.4,
+    backgroundColor: theme.colors.surfaceBase,
   },
   container: {
     backgroundColor: theme.colors.surface1,
