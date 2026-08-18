@@ -15,10 +15,15 @@ import PlayerOverview from "@/components/ui/PlayerOverview/PlayerOverview";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import KDOverview from "@/components/ui/KDOverview/KDOverview";
+import StatCard from "@/components/ui/StatCard/StatCard";
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+
+  const accentMedic = UnistylesRuntime.getTheme().colors.accentMedic;
+  const accentWarn = UnistylesRuntime.getTheme().colors.accentWarn;
+  const accentKill = UnistylesRuntime.getTheme().colors.accentKill;
 
   const { rt } = useUnistyles();
   const expandAllLists =
@@ -128,6 +133,30 @@ export default function Page() {
             />
           </Section>
           <Section label={"Combat"}>
+            {playerData && (
+              <View style={styles.row}>
+                <StatCard
+                  title={"lifetime k/d"}
+                  value={(playerData?.kills / playerData?.deaths).toFixed(2)}
+                />
+                <StatCard title={"Rounds played"} value={playerData.rounds} />
+                <StatCard
+                  title={"Revives"}
+                  value={playerData.revivals}
+                  color={accentMedic}
+                />
+                <StatCard
+                  title={"Teamkills"}
+                  value={playerData.teamkills}
+                  color={accentWarn}
+                />
+                <StatCard
+                  title={"Kills"}
+                  value={playerData.kills}
+                  color={accentKill}
+                />
+              </View>
+            )}
             {roundsData && <KDOverview gameRounds={roundsData} />}
           </Section>
           <Section label={"Activity"}></Section>
@@ -158,6 +187,30 @@ export default function Page() {
             />
           </Section>
           <Section label={"Combat"} flex={2}>
+            {playerData && (
+              <View style={styles.row}>
+                <StatCard
+                  title={"lifetime k/d"}
+                  value={(playerData?.kills / playerData?.deaths).toFixed(2)}
+                />
+                <StatCard title={"Rounds played"} value={playerData.rounds} />
+                <StatCard
+                  title={"Revives"}
+                  value={playerData.revivals}
+                  color={accentMedic}
+                />
+                <StatCard
+                  title={"Teamkills"}
+                  value={playerData.teamkills}
+                  color={accentWarn}
+                />
+                <StatCard
+                  title={"Kills"}
+                  value={playerData.kills}
+                  color={accentKill}
+                />
+              </View>
+            )}
             {roundsData && <KDOverview gameRounds={roundsData} />}
           </Section>
         </View>
@@ -182,6 +235,7 @@ const styles = StyleSheet.create((theme) => ({
     paddingBottom: theme.margins.xxl,
   },
   row: {
+    flexWrap: "wrap",
     flexDirection: "row",
     gap: theme.margins.lg,
   },
