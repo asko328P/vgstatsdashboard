@@ -154,6 +154,7 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.margins.sm,
     alignItems: "center",
     minHeight: 100,
+    maxWidth: 150,
   },
   colorSquare: (color: string) => ({
     backgroundColor: color,
