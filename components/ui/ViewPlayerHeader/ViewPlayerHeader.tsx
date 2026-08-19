@@ -8,6 +8,8 @@ import {
 } from "@/zustand/SelectedPlayerStore";
 import { PlayerStats } from "@/app/viewPlayers";
 import Chip, { getChips } from "@/components/ui/Chip/Chip";
+import { useAuthStore } from "@/zustand/AuthStore";
+import LogoutButton from "@/components/ui/LogoutButton/LogoutButton";
 
 type Props = {
   headerTitle: string;
@@ -18,6 +20,8 @@ type Props = {
 const ViewPlayerHeader = ({ headerTitle, player, onBackPress }: Props) => {
   const textPrimary = UnistylesRuntime.getTheme().colors.textPrimary;
   const surfaceBase = UnistylesRuntime.getTheme().colors.surfaceBase;
+
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   const setSelectedPlayer = useSelectedPlayerStore(
     (state) => state.setSelectedPlayer,
@@ -30,7 +34,7 @@ const ViewPlayerHeader = ({ headerTitle, player, onBackPress }: Props) => {
   const chips = player ? getChips(player) : [];
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container(isLoggedIn)}>
       <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
         <Ionicons name={"chevron-back"} size={24} color={textPrimary} />
       </TouchableOpacity>
@@ -46,6 +50,8 @@ const ViewPlayerHeader = ({ headerTitle, player, onBackPress }: Props) => {
       </View>
 
       <View style={styles.spacer} />
+
+      <LogoutButton />
     </View>
   );
 };
@@ -118,7 +124,7 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
     alignItems: "center",
   },
-  container: {
+  container: (isLoggedIn: boolean) => ({
     backgroundColor: theme.colors.surface1,
     alignItems: "center",
     flexDirection: "row",
@@ -128,5 +134,7 @@ const styles = StyleSheet.create((theme) => ({
     paddingVertical: 15,
     borderBottomColor: "#1d1f22",
     borderBottomWidth: 2,
-  },
+    borderTopColor: isLoggedIn ? theme.colors.accentMedic : "transparent",
+    borderTopWidth: 2,
+  }),
 }));

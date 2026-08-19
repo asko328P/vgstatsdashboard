@@ -7,6 +7,8 @@ import {
   useSelectedPlayerStore,
 } from "@/zustand/SelectedPlayerStore";
 import { useRouter } from "expo-router";
+import { useAuthStore } from "@/zustand/AuthStore";
+import LogoutButton from "@/components/ui/LogoutButton/LogoutButton";
 
 type Props = {
   headerTitle: string;
@@ -28,6 +30,8 @@ const DemoHeader = ({
   const router = useRouter();
   const textPrimary = UnistylesRuntime.getTheme().colors.textPrimary;
   const surfaceBase = UnistylesRuntime.getTheme().colors.surfaceBase;
+
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   const setSelectedPlayer = useSelectedPlayerStore(
     (state) => state.setSelectedPlayer,
@@ -51,7 +55,7 @@ const DemoHeader = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container(isLoggedIn)}>
       <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
         <Ionicons name={"chevron-back"} size={24} color={textPrimary} />
       </TouchableOpacity>
@@ -102,6 +106,8 @@ const DemoHeader = ({
           </TouchableOpacity>
         </View>
       )}
+
+      <LogoutButton />
     </View>
   );
 };
@@ -181,7 +187,7 @@ const styles = StyleSheet.create((theme) => ({
     opacity: 0.4,
     backgroundColor: theme.colors.surfaceBase,
   },
-  container: {
+  container: (isLoggedIn: boolean) => ({
     backgroundColor: theme.colors.surface1,
     alignItems: "center",
     flexDirection: "row",
@@ -191,5 +197,7 @@ const styles = StyleSheet.create((theme) => ({
     paddingVertical: 15,
     borderBottomColor: "#1d1f22",
     borderBottomWidth: 2,
-  },
+    borderTopColor: isLoggedIn ? theme.colors.accentMedic : "transparent",
+    borderTopWidth: 2,
+  }),
 }));
