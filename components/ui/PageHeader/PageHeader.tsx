@@ -138,6 +138,9 @@ const PageHeader = ({}: Props) => {
         </View>
         {!isLoggedIn && (
           <View style={styles.login}>
+            {/* autoComplete / textContentType / nativeID are what make the
+                browser and the OS keychain offer saved emails and passwords —
+                nothing is stored by the app itself. */}
             <TextInput
               value={email}
               onChangeText={setEmail}
@@ -146,6 +149,10 @@ const PageHeader = ({}: Props) => {
               placeholderTextColor={textMuted}
               autoCapitalize={"none"}
               keyboardType={"email-address"}
+              inputMode={"email"}
+              autoComplete={"email"}
+              textContentType={"emailAddress"}
+              nativeID={"header-email"}
               style={styles.input}
             />
             <TextInput
@@ -156,12 +163,17 @@ const PageHeader = ({}: Props) => {
               placeholderTextColor={textMuted}
               autoCapitalize={"none"}
               secureTextEntry
+              autoComplete={"current-password"}
+              textContentType={"password"}
+              nativeID={"header-password"}
               style={styles.input}
             />
           </View>
         )}
         <ThemedText style={styles.text} numberOfLines={1}>
-          {showFullSyncDate ? `Last synced: ${toReadableDate(syncDate)} · ` : ""}
+          {showFullSyncDate
+            ? `Last synced: ${toReadableDate(syncDate)} · `
+            : ""}
           <ThemedText
             style={[{ color: accentMedic }, styles.text]}
           >{`${timeSince(syncDate)}`}</ThemedText>

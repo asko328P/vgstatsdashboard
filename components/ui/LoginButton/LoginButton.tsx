@@ -66,6 +66,10 @@ const LoginButton = ({}: Props) => {
           <TouchableOpacity activeOpacity={1} style={styles.sheet}>
             <ThemedText type={"label"}>{"SIGN IN"}</ThemedText>
 
+            {/* autoComplete / textContentType / nativeID are what make the
+                browser and the OS keychain offer saved emails and passwords —
+                nothing is stored by the app itself. The ids differ from the
+                inline header form so the two never collide in the DOM. */}
             <TextInput
               value={email}
               onChangeText={setEmail}
@@ -74,6 +78,10 @@ const LoginButton = ({}: Props) => {
               placeholderTextColor={textMuted}
               autoCapitalize={"none"}
               keyboardType={"email-address"}
+              inputMode={"email"}
+              autoComplete={"email"}
+              textContentType={"emailAddress"}
+              nativeID={"sheet-email"}
               style={styles.input}
             />
             <TextInput
@@ -84,6 +92,9 @@ const LoginButton = ({}: Props) => {
               placeholderTextColor={textMuted}
               autoCapitalize={"none"}
               secureTextEntry
+              autoComplete={"current-password"}
+              textContentType={"password"}
+              nativeID={"sheet-password"}
               style={styles.input}
             />
 
