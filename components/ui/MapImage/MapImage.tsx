@@ -46,6 +46,7 @@ const MapImage = ({ gameRound, style }: Props) => {
   if (imageUri) {
     return (
       <Image
+        cachePolicy={"disk"}
         blurRadius={expandAllLists ? 2 : 1}
         style={[styles.image, style]}
         source={imageUri}

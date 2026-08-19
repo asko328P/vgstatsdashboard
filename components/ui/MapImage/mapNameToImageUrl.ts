@@ -4,6 +4,7 @@ interface MyObject {
 
 const obj: MyObject = {
   adak: require("@/assets/images/mapImages/adak.jpg"),
+  ascheberg: require("@/assets/images/mapImages/ascheberg.jpg"),
   albasrah2: require("@/assets/images/mapImages/albasrah2.jpg"),
   assaultonmestia: require("@/assets/images/mapImages/assaultonmestia.jpg"),
   asadkhal: require("@/assets/images/mapImages/asadkhal.jpg"),
@@ -18,6 +19,7 @@ const obj: MyObject = {
   dovre: require("@/assets/images/mapImages/dovre.jpg"),
   dragonfly: require("@/assets/images/mapImages/dragonfly.jpg"),
   fallujahwest: require("@/assets/images/mapImages/fallujahwest.jpg"),
+  foolsroad: require("@/assets/images/mapImages/foolsroad.jpg"),
   fieldsofkassel: require("@/assets/images/mapImages/fieldsofkassel.jpg"),
   gaza2: require("@/assets/images/mapImages/gaza2.jpg"),
   goosegreen: require("@/assets/images/mapImages/goosegreen.jpg"),
@@ -55,6 +57,7 @@ const obj: MyObject = {
   roadtodamascus: require("@/assets/images/mapImages/roadtodamascus.jpg"),
   route: require("@/assets/images/mapImages/route.jpg"),
   saaremaa: require("@/assets/images/mapImages/saaremaa.jpg"),
+  sahel: require("@/assets/images/mapImages/sahel.jpg"),
   sbenehoutskirts: require("@/assets/images/mapImages/sbenehoutskirts.jpg"),
   shahadah: require("@/assets/images/mapImages/shahadah.jpg"),
   shijiavalley: require("@/assets/images/mapImages/shijiavalley.jpg"),
