@@ -10,6 +10,7 @@ import { PlayerStats } from "@/app/viewPlayers";
 import Chip, { getChips } from "@/components/ui/Chip/Chip";
 import { useAuthStore } from "@/zustand/AuthStore";
 import LogoutButton from "@/components/ui/LogoutButton/LogoutButton";
+import LoginButton from "@/components/ui/LoginButton/LoginButton";
 
 type Props = {
   headerTitle: string;
@@ -51,6 +52,7 @@ const ViewPlayerHeader = ({ headerTitle, player, onBackPress }: Props) => {
 
       <View style={styles.spacer} />
 
+      <LoginButton />
       <LogoutButton />
     </View>
   );

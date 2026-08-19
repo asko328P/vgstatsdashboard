@@ -8,6 +8,7 @@ import { supabase } from "@/utils/supabase";
 import { timeSince, toReadableDate } from "@/utils/functions";
 import { useAuthStore } from "@/zustand/AuthStore";
 import LogoutButton from "@/components/ui/LogoutButton/LogoutButton";
+import LoginButton from "@/components/ui/LoginButton/LoginButton";
 import {
   StyleSheet,
   UnistylesRuntime,
@@ -132,6 +133,9 @@ const PageHeader = ({}: Props) => {
         </View>
       </View>
       <View style={styles.rightSide}>
+        <View style={styles.loginButton}>
+          <LoginButton />
+        </View>
         {!isLoggedIn && (
           <View style={styles.login}>
             <TextInput
@@ -205,11 +209,16 @@ const styles = StyleSheet.create((theme) => ({
   // Has to be shrinkable itself, otherwise it keeps its full intrinsic width
   // and the inputs inside never run out of room to wrap.
   login: {
+    display: { xs: "none", md: "flex" },
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "flex-end",
     gap: theme.margins.sm,
     flexShrink: 1,
+  },
+  // Phones get the sheet instead — two fields never fit next to the wordmark.
+  loginButton: {
+    display: { xs: "flex", md: "none" },
   },
   input: {
     minWidth: 120,

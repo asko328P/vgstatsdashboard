@@ -9,6 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import { useAuthStore } from "@/zustand/AuthStore";
 import LogoutButton from "@/components/ui/LogoutButton/LogoutButton";
+import LoginButton from "@/components/ui/LoginButton/LoginButton";
 
 type Props = {
   headerTitle: string;
@@ -107,6 +108,7 @@ const DemoHeader = ({
         </View>
       )}
 
+      <LoginButton />
       <LogoutButton />
     </View>
   );
