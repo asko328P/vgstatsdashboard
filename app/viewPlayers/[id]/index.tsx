@@ -18,6 +18,8 @@ import KDOverview from "@/components/ui/KDOverview/KDOverview";
 import StatCard from "@/components/ui/StatCard/StatCard";
 import RevivesOverView from "@/components/ui/RevivesOverView/RevivesOverView";
 import RoundsOverview from "@/components/ui/RoundsOverview/RoundsOverview";
+import ServerLogsOverview from "@/components/ui/ServerLogsOverview/ServerLogsOverview";
+import { useAuthStore } from "@/zustand/AuthStore";
 
 // How many rounds the table starts with and grows by, and where it stops.
 const ROUNDS_PAGE_SIZE = 10;
@@ -37,6 +39,9 @@ export default function Page() {
     rt.breakpoint !== "sm" &&
     rt.breakpoint !== "md" &&
     rt.breakpoint !== "lg";
+
+  // The section wrapper (title row) is hidden too, not just the card inside it.
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   const [playerData, setPlayerData] = useState<PlayerStats | null>(null);
 
@@ -214,6 +219,11 @@ export default function Page() {
           <Section label={"Medic Activity"}>
             {roundsData && <RevivesOverView gameRounds={roundsData} />}
           </Section>
+          {isLoggedIn && playerData?.id && (
+            <Section label={"Server Logs"}>
+              <ServerLogsOverview searchValue={playerData?.id ?? id} />
+            </Section>
+          )}
           <Section label={"Rounds"}>
             {roundsListData && (
               <RoundsOverview
@@ -257,6 +267,11 @@ export default function Page() {
         <View style={[styles.row, styles.growRow]}>
           <Section label={"Medic Activity"} flex={1}>
             {roundsData && <RevivesOverView gameRounds={roundsData} />}
+            {isLoggedIn && playerData?.id && (
+              <Section label={"Server Logs"} flex={1}>
+                <ServerLogsOverview searchValue={playerData?.id ?? id} />
+              </Section>
+            )}
           </Section>
           <Section label={"Rounds"} flex={2}>
             {roundsListData && (
