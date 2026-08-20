@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { Modal, ScrollView, TouchableOpacity, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ReactNode, useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
@@ -20,6 +20,8 @@ import RevivesOverView from "@/components/ui/RevivesOverView/RevivesOverView";
 import RoundsOverview from "@/components/ui/RoundsOverview/RoundsOverview";
 import ServerLogsOverview from "@/components/ui/ServerLogsOverview/ServerLogsOverview";
 import { useAuthStore } from "@/zustand/AuthStore";
+import AliasChecker from "@/components/ui/AliasChecker/AliasChecker";
+import { AntDesign } from "@expo/vector-icons";
 
 // How many rounds the table starts with and grows by, and where it stops.
 const ROUNDS_PAGE_SIZE = 10;
@@ -44,6 +46,9 @@ export default function Page() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   const [playerData, setPlayerData] = useState<PlayerStats | null>(null);
+
+  // Both layouts render the same sheet, so it is keyed off one piece of state.
+  const [isModeratorViewOpen, setIsModeratorViewOpen] = useState(false);
 
   const [roundsData, setRoundsData] = useState<
     (GameRoundPlayer & { game_rounds: GameRound })[] | null
@@ -142,6 +147,37 @@ export default function Page() {
     }
   };
 
+  // Mounted only while open, so the alias lookup refires on each visit rather
+  // than showing a stale list.
+  const moderatorModal = (
+    <Modal
+      visible={isModeratorViewOpen}
+      transparent
+      animationType={"fade"}
+      onRequestClose={() => setIsModeratorViewOpen(false)}
+    >
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => setIsModeratorViewOpen(false)}
+        style={styles.backdrop}
+      >
+        <TouchableOpacity activeOpacity={1} style={styles.sheet}>
+          <TouchableOpacity
+            onPress={() => setIsModeratorViewOpen(false)}
+            style={styles.closeButton}
+          >
+            <AntDesign
+              name={"close"}
+              size={20}
+              color={UnistylesRuntime.getTheme().colors.textPrimary}
+            />
+          </TouchableOpacity>
+          <AliasChecker playerName={playerData?.id ?? id} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+
   const titleRow = (label: string) => (
     <View style={styles.dateAndSeparator}>
       <ThemedText style={{ flexShrink: 1 }} type={"label"}>
@@ -201,7 +237,10 @@ export default function Page() {
           headerTitle={id}
           player={playerData}
           onBackPress={onBackPress}
+          onModeratorViewPress={() => setIsModeratorViewOpen(true)}
         />
+
+        {moderatorModal}
 
         <ScrollView contentContainerStyle={styles.pageContent}>
           <Section label={"Overview"}>
@@ -246,7 +285,10 @@ export default function Page() {
         headerTitle={id}
         player={playerData}
         onBackPress={onBackPress}
+        onModeratorViewPress={() => setIsModeratorViewOpen(true)}
       />
+
+      {moderatorModal}
 
       <View style={styles.wideContent}>
         <View style={styles.row}>
@@ -336,6 +378,26 @@ const styles = StyleSheet.create((theme) => ({
     minHeight: 0,
     gap: theme.margins.md,
   }),
+  backdrop: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: theme.margins.xl,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
+  sheet: {
+    width: "100%",
+    maxWidth: 420,
+    gap: theme.margins.md,
+    backgroundColor: theme.colors.surface1,
+    borderColor: theme.colors.borderStrong,
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: theme.margins.xl,
+  },
+  closeButton: {
+    alignSelf: "flex-end",
+  },
   panel: {
     flex: 1,
     minHeight: 200,

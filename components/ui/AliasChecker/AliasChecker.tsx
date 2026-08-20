@@ -1,16 +1,12 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
-import * as sea from "node:sea";
 import { supabase } from "@/utils/supabase";
 import { ThemedText } from "@/components/ui/ThemedText";
-import { AntDesign } from "@expo/vector-icons";
 
 type Props = {
   playerName: string;
 };
 const AliasChecker = ({ playerName }: Props) => {
-  const [containerIsShown, setContainerIsShown] = useState(false);
-
   const [searchResults, setSearchResults] = useState<{ id: string }[]>([]);
 
   useEffect(() => {
@@ -24,25 +20,8 @@ const AliasChecker = ({ playerName }: Props) => {
     fetchData();
   }, [playerName]);
 
-  useEffect(() => {
-    setContainerIsShown(true);
-  }, [searchResults]);
-
-  if (!containerIsShown) {
-    return;
-  }
-
   return (
     <View style={styles.container}>
-      <View style={{ alignSelf: "flex-end" }}>
-        <TouchableOpacity
-          onPress={() => {
-            setContainerIsShown(false);
-          }}
-        >
-          <AntDesign name="close" size={20} color={"#cdcdcd"} />
-        </TouchableOpacity>
-      </View>
       <View style={styles.topContainer}>
         <ThemedText>{"Viewing aliases for player: "}</ThemedText>
         <ThemedText type={"subtitle"}>{playerName}</ThemedText>

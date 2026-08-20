@@ -16,9 +16,15 @@ type Props = {
   headerTitle: string;
   player?: PlayerStats | null;
   onBackPress?: () => void;
+  onModeratorViewPress?: () => void;
 };
 
-const ViewPlayerHeader = ({ headerTitle, player, onBackPress }: Props) => {
+const ViewPlayerHeader = ({
+  headerTitle,
+  player,
+  onBackPress,
+  onModeratorViewPress,
+}: Props) => {
   const textPrimary = UnistylesRuntime.getTheme().colors.textPrimary;
   const surfaceBase = UnistylesRuntime.getTheme().colors.surfaceBase;
 
@@ -52,6 +58,15 @@ const ViewPlayerHeader = ({ headerTitle, player, onBackPress }: Props) => {
 
       <View style={styles.spacer} />
 
+      {isLoggedIn && (
+        <TouchableOpacity
+          onPress={onModeratorViewPress}
+          style={styles.moderatorButton}
+        >
+          <ThemedText type={"micro"}>{"Moderator View"}</ThemedText>
+        </TouchableOpacity>
+      )}
+
       <LoginButton />
       <LogoutButton />
     </View>
@@ -80,6 +95,16 @@ const styles = StyleSheet.create((theme) => ({
   },
   title: {
     textTransform: "uppercase",
+  },
+  moderatorButton: {
+    backgroundColor: theme.colors.surface3,
+    borderColor: theme.colors.borderStrong,
+    borderWidth: 1,
+    borderRadius: 4,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: theme.margins.md,
+    paddingVertical: theme.margins.sm,
   },
   bottomLabel: {
     color: theme.colors.textMuted,
