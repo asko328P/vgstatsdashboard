@@ -57,7 +57,7 @@ export default function Page() {
   }, [selectedRange]);
 
   const topKiller = useMemo(() => {
-    if (!gameData) return "";
+    if (!gameData) return [];
     const allPlayersKills: {
       [key: string]: number;
     } = {};
@@ -75,16 +75,16 @@ export default function Page() {
     for (const [key, value] of Object.entries(allPlayersKills)) {
       allKillsArray.push({
         player_id: key,
-        revivals: value,
+        kills: value,
       });
     }
-    allKillsArray = allKillsArray.sort((a, b) => b.revivals - a.revivals);
+    allKillsArray = allKillsArray.sort((a, b) => b.kills - a.kills);
 
-    return `${allKillsArray[0]?.player_id ?? " -"} ${allKillsArray[0]?.revivals ?? "0"} kills`;
+    return allKillsArray;
   }, [gameData]);
 
   const topMedic = useMemo(() => {
-    if (!gameData) return "";
+    if (!gameData) return [];
     const allPlayersRevives: {
       [key: string]: number;
     } = {};
@@ -112,7 +112,7 @@ export default function Page() {
   }, [gameData]);
 
   const topDestroyer = useMemo(() => {
-    if (!gameData) return "";
+    if (!gameData) return [];
     const allPlayersDestructions: {
       [key: string]: number;
     } = {};
@@ -137,11 +137,11 @@ export default function Page() {
       (a, b) => b.vehicle_destroyeds - a.vehicle_destroyeds,
     );
 
-    return `${allDestructorsArray[0]?.player_id ?? " -"} ${allDestructorsArray[0]?.vehicle_destroyeds ?? "0"} assets`;
+    return allDestructorsArray;
   }, [gameData]);
 
   const mostRounds = useMemo(() => {
-    if (!gameData) return "";
+    if (!gameData) return [];
     const allPlayersRounds: {
       [key: string]: number;
     } = {};
@@ -167,7 +167,7 @@ export default function Page() {
     }
     allPlayersArray = allPlayersArray.sort((a, b) => b.rounds - a.rounds);
 
-    return `${allPlayersArray[0]?.player_id ?? " -"} ${allPlayersArray[0]?.rounds ?? "-"} rounds`;
+    return allPlayersArray;
   }, [gameData]);
 
   return (
@@ -180,7 +180,7 @@ export default function Page() {
         onBackPress={() => router.back()}
       />
       <View style={styles.leaderBoardsHolder}>
-        {topMedic && (
+        {topMedic.length !== 0 && (
           <LeaderBoardStatHolder
             label={"Best medic"}
             value={`${topMedic.at(0)?.player_id ?? " -"} ${topMedic.at(0)?.revivals ?? "0"} revives`}
@@ -188,6 +188,37 @@ export default function Page() {
             statsArray={topMedic
               .slice(1, 8)
               .map((item) => ({ name: item.player_id, value: item.revivals }))}
+          />
+        )}
+        {topKiller.length !== 0 && (
+          <LeaderBoardStatHolder
+            label={"Most kills"}
+            value={`${topKiller.at(0)?.player_id ?? " -"} ${topKiller.at(0)?.kills ?? "0"} kills`}
+            type={"killer"}
+            statsArray={topKiller
+              .slice(1, 8)
+              .map((item) => ({ name: item.player_id, value: item.kills }))}
+          />
+        )}
+        {topDestroyer.length !== 0 && (
+          <LeaderBoardStatHolder
+            label={"Vehicle destroyer"}
+            value={`${topDestroyer.at(0)?.player_id ?? " -"} ${topDestroyer.at(0)?.vehicle_destroyeds ?? "0"} assets`}
+            type={"destroyer"}
+            statsArray={topDestroyer.slice(1, 8).map((item) => ({
+              name: item.player_id,
+              value: item.vehicle_destroyeds,
+            }))}
+          />
+        )}
+        {mostRounds.length !== 0 && (
+          <LeaderBoardStatHolder
+            label={"Most rounds played"}
+            value={`${mostRounds.at(0)?.player_id ?? " -"} ${mostRounds.at(0)?.rounds ?? "-"} rounds`}
+            type={"player"}
+            statsArray={mostRounds
+              .slice(1, 8)
+              .map((item) => ({ name: item.player_id, value: item.rounds }))}
           />
         )}
       </View>
@@ -199,6 +230,9 @@ const styles = StyleSheet.create((theme) => ({
   leaderBoardsHolder: {
     flexDirection: "row",
     flexWrap: "wrap",
+    alignItems: "flex-start",
+    gap: theme.margins.lg,
+    paddingHorizontal: theme.margins.md,
   },
   container: {
     flex: 1,
