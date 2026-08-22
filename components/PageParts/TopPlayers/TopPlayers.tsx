@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
@@ -12,6 +12,7 @@ import {
 } from "@expo/vector-icons";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { toReadableDate, toReadableDayMonth } from "@/utils/functions";
+import { useRouter } from "expo-router";
 
 type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
 
@@ -104,6 +105,7 @@ const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
 };
 
 const TopPlayers = () => {
+  const router = useRouter();
   const [gameData, setGameData] = useState<GameData[] | null>([]);
 
   useEffect(() => {
@@ -250,8 +252,12 @@ const TopPlayers = () => {
     return Math.max(1, Math.round(Math.abs(difference) / msPerDay));
   }, [gameData]);
 
+  const navigateToLeaderBoards = () => {
+    router.push("/viewLeaderboards");
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity onPress={navigateToLeaderBoards} style={styles.container}>
       <View style={styles.dateAndSeparator}>
         <ThemedText type={"label"}>{`Last ${daysCovered} days`}</ThemedText>
         <View
@@ -282,7 +288,7 @@ const TopPlayers = () => {
           type={"player"}
         />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
