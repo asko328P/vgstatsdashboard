@@ -16,6 +16,7 @@ import {
   JetBrainsMono_600SemiBold,
   JetBrainsMono_700Bold,
 } from "@expo-google-fonts/jetbrains-mono";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
@@ -24,6 +25,18 @@ import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import WipRibbon from "@/components/ui/WipRibbon/WipRibbon";
 
 SplashScreen.preventAutoHideAsync();
+
+// Stats only move when the sync job runs, so a few minutes of staleness costs
+// nothing and switching back to a screen is instant.
+// Created outside the component so it survives re-renders.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+    },
+  },
+});
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -48,20 +61,22 @@ export default function RootLayout() {
   }
 
   return (
-    <View style={styles.root}>
-      <Stack
-        screenOptions={{
-          contentStyle: {
-            backgroundColor: UnistylesRuntime.getTheme().colors.surfaceBase,
-          },
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="/viewDemo" options={{ headerShown: false }} />
-      </Stack>
-      <WipRibbon />
-    </View>
+    <QueryClientProvider client={queryClient}>
+      <View style={styles.root}>
+        <Stack
+          screenOptions={{
+            contentStyle: {
+              backgroundColor: UnistylesRuntime.getTheme().colors.surfaceBase,
+            },
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="/viewDemo" options={{ headerShown: false }} />
+        </Stack>
+        <WipRibbon />
+      </View>
+    </QueryClientProvider>
   );
 }
 
