@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { useMemo } from "react";
 import { FontAwesome6, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
@@ -11,6 +11,7 @@ type Props = {
   value: any;
   type?: "medic" | "killer" | "destroyer" | "player";
   statsArray?: { name: string; value: string | number }[];
+  isFetching?: boolean;
 };
 
 type RowItemProps = {
@@ -43,6 +44,7 @@ const LeaderBoardStatHolder = ({
   value,
   type = "medic",
   statsArray = [],
+  isFetching,
 }: Props) => {
   const valuesArray = value.split(" ");
   const colors = useMemo(() => {
@@ -126,6 +128,13 @@ const LeaderBoardStatHolder = ({
         </ThemedText>
       </View>
 
+      {isFetching && (
+        <ActivityIndicator
+          style={styles.loadingIndicator}
+          color={colors.typeColor}
+        />
+      )}
+
       {statsArray?.length !== 0 && (
         <View style={styles.rowsHolder}>
           {statsArray.map((item, index) => (
@@ -146,6 +155,11 @@ const LeaderBoardStatHolder = ({
 export default LeaderBoardStatHolder;
 
 const styles = StyleSheet.create((theme) => ({
+  loadingIndicator: {
+    position: "absolute",
+    top: theme.margins.md,
+    right: theme.margins.md,
+  },
   topPart: {
     padding: 10,
     paddingTop: 10,

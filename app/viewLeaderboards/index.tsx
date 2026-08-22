@@ -19,6 +19,8 @@ const DAYS_PER_RANGE: { [range: string]: number } = {
   "7D": 7,
 };
 
+const SLICE_RANGE = 15;
+
 const fetchRounds = async (range: string) => {
   const daysBack = DAYS_PER_RANGE[range] ?? 1;
   const rangeStart = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000);
@@ -46,7 +48,7 @@ export default function Page() {
 
   // One cache entry per range: flipping back to a range already looked at is
   // instant and costs no request.
-  const { data: gameData } = useQuery({
+  const { data: gameData, isFetching: gameIsFetching } = useQuery({
     queryKey: ["leaderboardRounds", selectedRange],
     queryFn: () => fetchRounds(selectedRange),
     // Keeps the previous range's cards on screen while the new one loads.
@@ -197,30 +199,33 @@ export default function Page() {
       <View style={styles.leaderBoardsHolder}>
         {topMedic.length !== 0 && (
           <LeaderBoardStatHolder
+            isFetching={gameIsFetching}
             label={"Best medic"}
             value={`${topMedic.at(0)?.player_id ?? " -"} ${topMedic.at(0)?.revivals ?? "0"} revives`}
             type={"medic"}
             statsArray={topMedic
-              .slice(1, 8)
+              .slice(1, SLICE_RANGE)
               .map((item) => ({ name: item.player_id, value: item.revivals }))}
           />
         )}
         {topKiller.length !== 0 && (
           <LeaderBoardStatHolder
+            isFetching={gameIsFetching}
             label={"Most kills"}
             value={`${topKiller.at(0)?.player_id ?? " -"} ${topKiller.at(0)?.kills ?? "0"} kills`}
             type={"killer"}
             statsArray={topKiller
-              .slice(1, 8)
+              .slice(1, SLICE_RANGE)
               .map((item) => ({ name: item.player_id, value: item.kills }))}
           />
         )}
         {topDestroyer.length !== 0 && (
           <LeaderBoardStatHolder
+            isFetching={gameIsFetching}
             label={"Vehicle destroyer"}
             value={`${topDestroyer.at(0)?.player_id ?? " -"} ${topDestroyer.at(0)?.vehicle_destroyeds ?? "0"} assets`}
             type={"destroyer"}
-            statsArray={topDestroyer.slice(1, 8).map((item) => ({
+            statsArray={topDestroyer.slice(1, SLICE_RANGE).map((item) => ({
               name: item.player_id,
               value: item.vehicle_destroyeds,
             }))}
@@ -228,11 +233,12 @@ export default function Page() {
         )}
         {mostRounds.length !== 0 && (
           <LeaderBoardStatHolder
+            isFetching={gameIsFetching}
             label={"Most rounds played"}
             value={`${mostRounds.at(0)?.player_id ?? " -"} ${mostRounds.at(0)?.rounds ?? "-"} rounds`}
             type={"player"}
             statsArray={mostRounds
-              .slice(1, 8)
+              .slice(1, SLICE_RANGE)
               .map((item) => ({ name: item.player_id, value: item.rounds }))}
           />
         )}
