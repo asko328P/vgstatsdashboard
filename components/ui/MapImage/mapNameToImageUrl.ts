@@ -67,6 +67,7 @@ const obj: MyObject = {
   stalingrad: require("@/assets/images/mapImages/stalingrad.jpg"),
   stalingradsummer: require("@/assets/images/mapImages/stalingradsummer.jpg"),
   tadsae: require("@/assets/images/mapImages/tadsae.jpg"),
+  talbisah: require("@/assets/images/mapImages/talbisah.jpg"),
   ulyanovsk: require("@/assets/images/mapImages/ulyanovsk.jpg"),
   vadsocity: require("@/assets/images/mapImages/vadsocity.jpg"),
   vungro: require("@/assets/images/mapImages/vungro.jpg"),
