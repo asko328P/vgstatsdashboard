@@ -10,6 +10,10 @@ import { useRouter } from "expo-router";
 import { useAuthStore } from "@/zustand/AuthStore";
 import LogoutButton from "@/components/ui/LogoutButton/LogoutButton";
 import LoginButton from "@/components/ui/LoginButton/LoginButton";
+import {
+  HEADER_MIN_HEIGHT,
+  HEADER_PADDING_VERTICAL,
+} from "@/unistyles/constants";
 
 type Props = {
   headerTitle: string;
@@ -195,8 +199,9 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: theme.margins.lg,
+    minHeight: HEADER_MIN_HEIGHT,
     paddingHorizontal: { xs: theme.margins.lg, md: 25 },
-    paddingVertical: 15,
+    paddingVertical: HEADER_PADDING_VERTICAL,
     borderBottomColor: "#1d1f22",
     borderBottomWidth: 2,
     borderTopColor: isLoggedIn ? theme.colors.accentMedic : "transparent",

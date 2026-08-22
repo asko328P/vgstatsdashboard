@@ -10,6 +10,10 @@ import { useAuthStore } from "@/zustand/AuthStore";
 import LogoutButton from "@/components/ui/LogoutButton/LogoutButton";
 import LoginButton from "@/components/ui/LoginButton/LoginButton";
 import {
+  HEADER_MIN_HEIGHT,
+  HEADER_PADDING_VERTICAL,
+} from "@/unistyles/constants";
+import {
   StyleSheet,
   UnistylesRuntime,
   useUnistyles,
@@ -250,8 +254,9 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
+    minHeight: HEADER_MIN_HEIGHT,
     paddingHorizontal: 25,
-    paddingVertical: 25,
+    paddingVertical: HEADER_PADDING_VERTICAL,
     borderBottomColor: "#1d1f22",
     borderBottomWidth: 2,
     borderTopColor: isLoggedIn ? theme.colors.accentMedic : "transparent",
