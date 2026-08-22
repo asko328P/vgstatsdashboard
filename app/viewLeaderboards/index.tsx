@@ -73,6 +73,9 @@ export default function Page() {
     let allKillsArray = [];
 
     for (const [key, value] of Object.entries(allPlayersKills)) {
+      if (key.startsWith("[R-BOT]")) {
+        continue;
+      }
       allKillsArray.push({
         player_id: key,
         kills: value,
@@ -100,6 +103,9 @@ export default function Page() {
     let allMedicsArray = [];
 
     for (const [key, value] of Object.entries(allPlayersRevives)) {
+      if (key.startsWith("[R-BOT]")) {
+        continue;
+      }
       allMedicsArray.push({
         player_id: key,
         revivals: value,
@@ -128,6 +134,9 @@ export default function Page() {
     let allDestructorsArray = [];
 
     for (const [key, value] of Object.entries(allPlayersDestructions)) {
+      if (key.startsWith("[R-BOT]")) {
+        continue;
+      }
       allDestructorsArray.push({
         player_id: key,
         vehicle_destroyeds: value,
