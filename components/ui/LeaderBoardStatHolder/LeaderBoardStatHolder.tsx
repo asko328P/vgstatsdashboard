@@ -1,8 +1,10 @@
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { useMemo } from "react";
+import { useRouter } from "expo-router";
 import { FontAwesome6, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { ThemedText } from "@/components/ui/ThemedText";
+import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
 
 type Props = {
   label: string;
@@ -20,10 +22,21 @@ type RowItemProps = {
   value: string | number;
 };
 
-// The runners up under the highlighted player: rank, name, value.
+// The runners up under the highlighted player: rank, name, value. The name is
+// the player id, so the row doubles as a link to that player's page.
 const RowItem = ({ index, name, value }: RowItemProps) => {
+  const router = useRouter();
+  const setSelectedPlayer = useSelectedPlayerStore(
+    (state) => state.setSelectedPlayer,
+  );
+
+  const pressPlayerHandler = () => {
+    setSelectedPlayer(name);
+    router.push(`/viewPlayers/${name}`);
+  };
+
   return (
-    <View style={styles.row}>
+    <TouchableOpacity onPress={pressPlayerHandler} style={styles.row}>
       <View style={styles.indexCell}>
         <ThemedText type={"cell"} style={styles.index}>
           {index}
@@ -35,7 +48,7 @@ const RowItem = ({ index, name, value }: RowItemProps) => {
       <ThemedText type={"cell"} style={styles.rowValue}>
         {value}
       </ThemedText>
-    </View>
+    </TouchableOpacity>
   );
 };
 
