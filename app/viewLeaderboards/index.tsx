@@ -1,13 +1,15 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import LeaderboardsHeader from "@/components/ui/LeaderboardsHeader/LeaderboardsHeader";
 import { supabase } from "@/utils/supabase";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import LeaderBoardStatHolder from "@/components/ui/LeaderBoardStatHolder/LeaderBoardStatHolder";
+import { ThemedText } from "@/components/ui/ThemedText";
+import { toReadableDayMonth } from "@/utils/functions";
 
 type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
 
@@ -187,6 +189,17 @@ export default function Page() {
     }
   };
 
+  const daysCovered = useMemo(() => {
+    const first = gameData?.at(0)?.played_at;
+    const last = gameData?.at(-1)?.played_at;
+    if (!first || !last) {
+      return 0;
+    }
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const difference = new Date(last).getTime() - new Date(first).getTime();
+    return Math.max(1, Math.round(Math.abs(difference) / msPerDay));
+  }, [gameData]);
+
   return (
     <View style={styles.container}>
       <LeaderboardsHeader
@@ -196,7 +209,25 @@ export default function Page() {
         onRangePress={setSelectedRange}
         onBackPress={onBackPress}
       />
-      <View style={styles.leaderBoardsHolder}>
+      <View style={styles.dateAndSeparator}>
+        <ThemedText
+          type={"label"}
+        >{`Last ${daysCovered} ${daysCovered === 1 ? "day" : "days"}`}</ThemedText>
+        <View
+          style={{
+            flex: 1,
+            borderTopColor: UnistylesRuntime.getTheme().colors.surface3,
+            borderTopWidth: 1,
+          }}
+        />
+        {gameData && (
+          <ThemedText
+            style={styles.rounds}
+            type={"log"}
+          >{`${toReadableDayMonth(gameData.at(0)?.played_at!)} - ${toReadableDayMonth(gameData.at(-1)?.played_at!)} · ${gameData.length} rounds`}</ThemedText>
+        )}
+      </View>
+      <ScrollView contentContainerStyle={styles.leaderBoardsHolder}>
         {topMedic.length !== 0 && (
           <LeaderBoardStatHolder
             isFetching={gameIsFetching}
@@ -242,16 +273,26 @@ export default function Page() {
               .map((item) => ({ name: item.player_id, value: item.rounds }))}
           />
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
+  rounds: {
+    color: theme.colors.textMuted,
+  },
+  dateAndSeparator: {
+    paddingHorizontal: theme.margins.md,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.margins.xl,
+  },
   leaderBoardsHolder: {
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-start",
+    paddingBottom: theme.margins.xxl,
     gap: theme.margins.lg,
     paddingHorizontal: theme.margins.md,
   },
