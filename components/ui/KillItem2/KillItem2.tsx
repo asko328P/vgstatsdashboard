@@ -31,14 +31,20 @@ export const killRowStyles = StyleSheet.create((theme) => ({
   },
 }));
 
-const PlayerName = ({ playerId }: { playerId: string }) => {
+const PlayerName = ({
+  playerId,
+  selectedPlayer,
+}: {
+  playerId: string;
+  selectedPlayer?: string;
+}) => {
   const isBot = playerId.startsWith("[R-BOT] ");
 
   return (
     <ThemedText
       type={"name"}
       numberOfLines={1}
-      style={styles.playerName(isBot)}
+      style={styles.playerName(playerId === selectedPlayer)}
     >
       {playerId}
     </ThemedText>
@@ -74,7 +80,10 @@ const KillItem2 = ({ kill, onPress }: Props) => {
       style={[killRowStyles.row, styles.container(isSelected)]}
     >
       <View style={killRowStyles.playerCell}>
-        <PlayerName playerId={kill.killer_player_id} />
+        <PlayerName
+          playerId={kill.killer_player_id}
+          selectedPlayer={selectedPlayer}
+        />
       </View>
       <View style={killRowStyles.weaponCell}>
         <ThemedText type={"cell"} numberOfLines={1} style={styles.weapon}>
@@ -82,7 +91,10 @@ const KillItem2 = ({ kill, onPress }: Props) => {
         </ThemedText>
       </View>
       <View style={killRowStyles.playerCell}>
-        <PlayerName playerId={kill.victim_player_id} />
+        <PlayerName
+          playerId={kill.victim_player_id}
+          selectedPlayer={selectedPlayer}
+        />
       </View>
       <View style={killRowStyles.timeCell}>
         <ThemedText type={"micro"}>{formatTime(kill.current_time)}</ThemedText>
@@ -94,8 +106,8 @@ const KillItem2 = ({ kill, onPress }: Props) => {
 export default KillItem2;
 
 const styles = StyleSheet.create((theme) => ({
-  playerName: (isBot: boolean) => ({
-    color: isBot ? theme.colors.playerBot : theme.colors.playerHuman,
+  playerName: (isSelected: boolean) => ({
+    color: isSelected ? theme.colors.accentSelect : theme.colors.textPrimary,
   }),
   weapon: {
     color: theme.colors.textSecondary,
