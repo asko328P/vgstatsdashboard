@@ -10,6 +10,7 @@ import GameRoundItem2, {
 } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/utils/supabase";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
@@ -19,10 +20,34 @@ const NUMBER_OF_GAMES_TO_SHOW = 10;
 
 type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
 
-const AllGameRounds = () => {
-  const [gameData, setGameData] = useState<GameData[]>([]);
-  const [gameRoundCount, setGameRoundCount] = useState(0);
+const fetchGameRounds = async (from: number, to: number) => {
+  const { data, error } = await supabase
+    .from("game_rounds")
+    .select(`*,game_round_player(*)`)
+    .order("played_at", {
+      ascending: false,
+    })
+    .range(from, to)
+    .overrideTypes<GameData[]>();
 
+  if (error) {
+    throw error;
+  }
+  return data ?? [];
+};
+
+const fetchGameRoundCount = async () => {
+  const { count, error } = await supabase
+    .from("game_rounds")
+    .select("*", { count: "exact", head: true });
+
+  if (error) {
+    throw error;
+  }
+  return count ?? 0;
+};
+
+const AllGameRounds = () => {
   const [measuredRectangle, setMeasuredRectangle] = useState<
     LayoutRectangle | undefined
   >(undefined);
@@ -30,9 +55,23 @@ const AllGameRounds = () => {
     LayoutRectangle | undefined
   >(undefined);
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const [gameRange, setGameRange] = useState<number[]>([]);
+
+  // The range is only known once the list has been measured, hence `enabled`.
+  // Each page is its own cache entry, so paging back is instant.
+  const { data: gameData = [], isFetching: isLoading } = useQuery({
+    queryKey: ["gameRounds", gameRange[0], gameRange[1]],
+    queryFn: () => fetchGameRounds(gameRange[0], gameRange[1]),
+    enabled: gameRange.length !== 0,
+    // Keeps the current page visible while the next one loads, so the list
+    // does not collapse and re-trigger the measurement below.
+    placeholderData: (previous) => previous,
+  });
+
+  const { data: gameRoundCount = 0 } = useQuery({
+    queryKey: ["gameRoundCount"],
+    queryFn: fetchGameRoundCount,
+  });
 
   useEffect(() => {
     if (!measuredRectangle || !dummyRectangle) return;
@@ -50,39 +89,6 @@ const AllGameRounds = () => {
       }
     });
   }, [measuredRectangle, dummyRectangle]);
-
-  useEffect(() => {
-    if (gameRange.length === 0) {
-      return;
-    }
-    const getData = async () => {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("game_rounds")
-        .select(`*,game_round_player(*)`)
-        .order("played_at", {
-          ascending: false,
-        })
-        .range(gameRange[0], gameRange[1])
-        .overrideTypes<GameData[]>();
-      if (data) {
-        setGameData(data);
-      }
-      setIsLoading(false);
-    };
-
-    const getRoundCountData = async () => {
-      const { count, error } = await supabase
-        .from("game_rounds")
-        .select("*", { count: "exact", head: true })
-        .overrideTypes<number>();
-
-      setGameRoundCount(count ?? 0);
-    };
-
-    getData();
-    getRoundCountData();
-  }, [gameRange]);
 
   const previousPaginationHandler = () => {
     let copiedGameRange = gameRange.slice(0);
