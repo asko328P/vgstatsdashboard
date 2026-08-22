@@ -170,6 +170,14 @@ const AllGameRounds = () => {
         {gameData.map((item) => (
           <GameRoundItem2 key={item.id} gameRound={item} />
         ))}
+        <View style={styles.footer}>
+          <ThemedText type={"micro"} style={styles.footerText}>
+            {"Made with <3 for the VG PR community."}
+          </ThemedText>
+          <ThemedText type={"micro"} style={styles.footerText}>
+            {"=EINF= asko_"}
+          </ThemedText>
+        </View>
       </View>
     </View>
   );
@@ -181,6 +189,16 @@ const styles = StyleSheet.create((theme) => ({
   measurerView: {
     flex: 1,
     gap: theme.margins.sm,
+  },
+  footer: {
+    alignItems: "center",
+    gap: 2,
+    paddingTop: 0,
+    paddingBottom: theme.margins.sm,
+  },
+  footerText: {
+    fontSize: 8,
+    color: theme.colors.textMuted,
   },
   rounds: {
     color: theme.colors.textMuted,
