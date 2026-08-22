@@ -176,6 +176,15 @@ export default function Page() {
     return allPlayersArray;
   }, [gameData]);
 
+  const onBackPress = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.dismissAll();
+      router.replace("/");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <LeaderboardsHeader
@@ -183,7 +192,7 @@ export default function Page() {
         possibleRanges={POSSIBLE_RANGES}
         selectedRange={selectedRange}
         onRangePress={setSelectedRange}
-        onBackPress={() => router.back()}
+        onBackPress={onBackPress}
       />
       <View style={styles.leaderBoardsHolder}>
         {topMedic.length !== 0 && (
