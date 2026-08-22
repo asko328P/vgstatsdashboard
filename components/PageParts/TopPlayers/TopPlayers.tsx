@@ -4,105 +4,12 @@ import { supabase } from "@/utils/supabase";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import { GameRoundPlayer } from "@/app/viewDemo";
 import { ThemedText } from "@/components/ui/ThemedText";
-import {
-  FontAwesome,
-  FontAwesome6,
-  Ionicons,
-  SimpleLineIcons,
-} from "@expo/vector-icons";
+import LeaderBoardStatHolder from "@/components/ui/LeaderBoardStatHolder/LeaderBoardStatHolder";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { toReadableDate, toReadableDayMonth } from "@/utils/functions";
 import { useRouter } from "expo-router";
 
 type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
-
-type DataProps = {
-  label: string;
-  value: any;
-  type?: "medic" | "killer" | "destroyer" | "player";
-};
-const DataHolder = ({ label, value, type = "medic" }: DataProps) => {
-  const valuesArray = value.split(" ");
-  const colors = useMemo(() => {
-    switch (type) {
-      case "medic":
-        return {
-          typeColor: UnistylesRuntime.getTheme().colors.accentMedic,
-        };
-      case "destroyer":
-        return {
-          typeColor: UnistylesRuntime.getTheme().colors.accentVehicle,
-        };
-      case "killer":
-        return {
-          typeColor: UnistylesRuntime.getTheme().colors.accentKill,
-        };
-      case "player":
-        return {
-          typeColor: UnistylesRuntime.getTheme().colors.accentSelect,
-        };
-      default:
-        return {
-          typeColor: UnistylesRuntime.getTheme().colors.accentMedic,
-        };
-    }
-  }, [type]);
-  return (
-    <View
-      style={[
-        styles.dataHolder,
-        {
-          borderColor: colors.typeColor,
-        },
-      ]}
-    >
-      {type === "medic" && (
-        <Ionicons
-          style={{ position: "absolute", right: 8, top: 6, opacity: 0.2 }}
-          name="bandage-sharp"
-          size={90}
-          color={UnistylesRuntime.getTheme().colors.accentMedic}
-        />
-      )}
-      {type === "killer" && (
-        <SimpleLineIcons
-          style={{ position: "absolute", right: 8, top: 6, opacity: 0.2 }}
-          name="target"
-          size={90}
-          color={UnistylesRuntime.getTheme().colors.accentKill}
-        />
-      )}
-      {type === "destroyer" && (
-        <FontAwesome6
-          name="explosion"
-          style={{ position: "absolute", right: 8, top: 20, opacity: 0.2 }}
-          size={60}
-          color={UnistylesRuntime.getTheme().colors.accentVehicle}
-        />
-      )}
-      <ThemedText
-        type={"log"}
-        style={{
-          color: colors.typeColor,
-        }}
-      >
-        {`• ${label}`}
-      </ThemedText>
-      <ThemedText type={"name"} style={{ fontSize: 20 }}>
-        {valuesArray.at(1)}
-      </ThemedText>
-      <ThemedText
-        style={{
-          color: colors.typeColor,
-        }}
-        type={"stat"}
-      >
-        {valuesArray.at(2)}
-        <ThemedText type={"label"}>{` ${valuesArray.at(3)}`}</ThemedText>
-      </ThemedText>
-    </View>
-  );
-};
 
 const TopPlayers = () => {
   const router = useRouter();
@@ -275,14 +182,22 @@ const TopPlayers = () => {
         )}
       </View>
       <View style={styles.dataHolderRow}>
-        <DataHolder label={"Best medic"} value={topMedic} type={"medic"} />
-        <DataHolder label={"Most kills"} value={topKiller} type={"killer"} />
-        <DataHolder
+        <LeaderBoardStatHolder
+          label={"Best medic"}
+          value={topMedic}
+          type={"medic"}
+        />
+        <LeaderBoardStatHolder
+          label={"Most kills"}
+          value={topKiller}
+          type={"killer"}
+        />
+        <LeaderBoardStatHolder
           label={"Vehicle destroyer"}
           value={topDestroyer}
           type={"destroyer"}
         />
-        <DataHolder
+        <LeaderBoardStatHolder
           label={"Most rounds played"}
           value={mostRounds}
           type={"player"}
@@ -307,22 +222,6 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 16,
-  },
-  dataHolder: {
-    // Grow to share the row, but never below minWidth — that's what forces a wrap.
-    flexGrow: 1,
-    flexBasis: 220,
-    minWidth: 220,
-    backgroundColor: theme.colors.surface1,
-    justifyContent: "space-around",
-    padding: 10,
-    paddingTop: 10,
-    paddingBottom: 0,
-    // aspectRatio: 1.2,
-    // borderRadius: 10,
-    borderTopWidth: 2,
-    overflow: "hidden",
-    gap: 20,
   },
   container: {
     // padding: 20,
