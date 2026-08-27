@@ -34,6 +34,8 @@ export type GameRoundPlayer = {
   teamkills: number;
   revivals: number;
   vehicle_destroyeds: number;
+  total_time_as_squad_lead: number;
+  squad_name: number;
 };
 
 const LISTS = {
