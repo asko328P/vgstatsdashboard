@@ -18,6 +18,28 @@ type KDItemProps = {
 const accentKill = UnistylesRuntime.getTheme().colors.accentKill;
 const accentDeath = UnistylesRuntime.getTheme().colors.surface3;
 const accentMedic = UnistylesRuntime.getTheme().colors.accentMedic;
+// Kills are a saturated fill, deaths a plain surface — each needs its own
+// readable label color.
+const killLabelColor = UnistylesRuntime.getTheme().colors.textOnAccent;
+const deathLabelColor = UnistylesRuntime.getTheme().colors.textPrimary;
+
+type BarProps = {
+  value: number;
+  maxValue: number;
+  color: string;
+  labelColor: string;
+};
+
+// The count is laid over the foot of the bar, so every bar reads its value on
+// the same baseline no matter how tall it grows.
+const Bar = ({ value, maxValue, color, labelColor }: BarProps) => (
+  <View style={styles.barTrack}>
+    <View style={[styles.bar(value / maxValue), { backgroundColor: color }]} />
+    <ThemedText type={"micro"} style={[styles.barValue, { color: labelColor }]}>
+      {value}
+    </ThemedText>
+  </View>
+);
 
 // Bars are measured against the best round in the set rather than against the
 // other bar in their own pair, so heights stay comparable across the chart.
@@ -41,17 +63,17 @@ const KDItem = ({ gameRound, maxValue }: KDItemProps) => {
       />
       <ThemedText>{kd}</ThemedText>
       <View style={styles.barsHolder}>
-        <View
-          style={[
-            styles.bar(gameRound.kills / maxValue),
-            { backgroundColor: accentKill },
-          ]}
+        <Bar
+          value={gameRound.kills}
+          maxValue={maxValue}
+          color={accentKill}
+          labelColor={killLabelColor}
         />
-        <View
-          style={[
-            styles.bar(gameRound.deaths / maxValue),
-            { backgroundColor: accentDeath },
-          ]}
+        <Bar
+          value={gameRound.deaths}
+          maxValue={maxValue}
+          color={accentDeath}
+          labelColor={deathLabelColor}
         />
       </View>
       <ThemedText style={{ textAlign: "center", minHeight: 30 }} type={"micro"}>
@@ -142,6 +164,20 @@ const styles = StyleSheet.create((theme) => ({
     minHeight: 3,
     width: 30,
   }),
+  // Full height so the bar percentage resolves against the whole chart area.
+  barTrack: {
+    height: "100%",
+    width: 30,
+    justifyContent: "flex-end",
+  },
+  // Laid over the bar rather than stacked above it, so it never steals height.
+  barValue: {
+    position: "absolute",
+    bottom: 3,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+  },
   barsHolder: {
     flex: 1,
     gap: 5,

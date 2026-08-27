@@ -22,6 +22,7 @@ import ServerLogsOverview from "@/components/ui/ServerLogsOverview/ServerLogsOve
 import { useAuthStore } from "@/zustand/AuthStore";
 import AliasChecker from "@/components/ui/AliasChecker/AliasChecker";
 import { AntDesign } from "@expo/vector-icons";
+import { formatKD } from "@/utils/functions";
 
 // How many rounds the table starts with and grows by, and where it stops.
 const ROUNDS_PAGE_SIZE = 10;
@@ -212,7 +213,14 @@ export default function Page() {
     <View style={styles.statsRow}>
       <StatCard
         title={"lifetime k/d"}
-        value={(playerData.kills / playerData.deaths).toFixed(2)}
+        value={formatKD(playerData.kills, playerData.deaths)}
+        subtitle={
+          playerData.deaths
+            ? undefined
+            : playerData.kills
+              ? "no deaths"
+              : "no rounds yet"
+        }
       />
       <StatCard title={"Rounds played"} value={playerData.rounds} />
       <StatCard

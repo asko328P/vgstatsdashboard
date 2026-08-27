@@ -223,6 +223,16 @@ export function adjustColorBrightness(hex: string, brighten: number): string {
   return `#${toHex(rOut)}${toHex(gOut)}${toHex(bOut)}`;
 }
 
+// Dividing by zero deaths gives "Infinity", and 0/0 gives "NaN" — neither is
+// something to put on a card. A player who never died gets "∞"; one who has
+// neither killed nor died has no ratio to show at all, so they get an em dash.
+export function formatKD(kills: number, deaths: number, digits: number = 2) {
+  if (!deaths) {
+    return kills ? "∞" : "—";
+  }
+  return (kills / deaths).toFixed(digits);
+}
+
 // A player counts as the squad leader when they held the role for at least half
 // the round, or for 20 minutes — whichever comes first, so long rounds don't
 // demand an unreachable amount of lead time and short ones still need real

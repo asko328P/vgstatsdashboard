@@ -20,6 +20,8 @@ export const lightTheme = {
     textSecondary: "#414B57",
     textMuted: "#6A7480",
     textDisabled: "#A7B0BA",
+    // Sits on top of a saturated accent fill, so it stays light in both themes.
+    textOnAccent: "#FFFFFF",
     accentKill: "#C62A2F",
     killBackground: "#490303",
     accentMedic: "#1A7F37",
@@ -59,6 +61,7 @@ export const darkTheme = {
     textSecondary: "#9AA5B1",
     textMuted: "#626C78",
     textDisabled: "#3E464F",
+    textOnAccent: "#FFFFFF",
     accentKill: "#E5484D",
     killBackground: "#1a1519",
     accentMedic: "#3FB950",
