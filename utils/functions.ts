@@ -223,6 +223,32 @@ export function adjustColorBrightness(hex: string, brighten: number): string {
   return `#${toHex(rOut)}${toHex(gOut)}${toHex(bOut)}`;
 }
 
+// A player counts as the squad leader when they held the role for at least half
+// the round, or for 20 minutes — whichever comes first, so long rounds don't
+// demand an unreachable amount of lead time and short ones still need real
+// commitment. `roundLength` and the lead time are both in seconds.
+const TWENTY_MINUTES = 20 * 60;
+
+export function isSquadLeader(
+  totalTimeAsSquadLead: number | undefined | null,
+  roundLength: number | undefined | null,
+) {
+  const leadTime = totalTimeAsSquadLead ?? 0;
+
+  if (leadTime <= 0) {
+    return false;
+  }
+  if (leadTime >= TWENTY_MINUTES) {
+    return true;
+  }
+  return !!roundLength && leadTime >= roundLength / 2;
+}
+
+// "alpha" -> "ALPHA"; squads with no name give "".
+export function formatSquadName(squadName: string | undefined | null) {
+  return (squadName ?? "").trim().toUpperCase();
+}
+
 // Highest scorer of a round by whatever stat is passed in. Bots always outclass
 // humans, so they are never eligible. Returns "" when nobody qualifies.
 export function findTopPlayer(

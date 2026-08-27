@@ -35,7 +35,7 @@ export type GameRoundPlayer = {
   revivals: number;
   vehicle_destroyeds: number;
   total_time_as_squad_lead: number;
-  squad_name: number;
+  squad_name: string;
 };
 
 const LISTS = {
@@ -162,6 +162,7 @@ export default function Page() {
               players={singleGameData?.game_round_player
                 .sort((a, b) => a.id - b.id)
                 .filter((item) => !item.player_id.startsWith("[R-BOT]"))}
+              roundLength={singleGameData?.length}
             />
           )}
         </View>

@@ -83,6 +83,8 @@ type Props = {
   isExpanded: boolean;
   onPress?: () => void;
   onExpandPress?: () => void;
+  // Round duration in seconds — decides who counted as a squad leader.
+  roundLength?: number;
 };
 
 const PlayersList = ({
@@ -90,6 +92,7 @@ const PlayersList = ({
   onPlayerPress,
   isExpanded,
   onExpandPress,
+  roundLength,
 }: Props) => {
   const { rt } = useUnistyles();
   const expandAllLists =
@@ -166,6 +169,7 @@ const PlayersList = ({
                 key={item.player_id}
                 item={item}
                 onPress={onPlayerPress}
+                roundLength={roundLength}
               />
             )}
           />
