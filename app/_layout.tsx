@@ -22,7 +22,9 @@ import { useEffect } from "react";
 import { View } from "react-native";
 import "react-native-reanimated";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import MaintenanceScreen from "@/components/ui/MaintenanceScreen/MaintenanceScreen";
 import WipRibbon from "@/components/ui/WipRibbon/WipRibbon";
+import { MAINTENANCE_MODE } from "@/utils/maintenance";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,6 +60,12 @@ export default function RootLayout() {
 
   if (!loaded && !error) {
     return null;
+  }
+
+  // Takeover sits above the router entirely, so no route — deep linked or
+  // not — can reach a screen that queries Supabase while we are down.
+  if (MAINTENANCE_MODE) {
+    return <MaintenanceScreen />;
   }
 
   return (
