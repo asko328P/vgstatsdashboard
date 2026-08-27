@@ -163,8 +163,8 @@ const styles = StyleSheet.create((theme) => ({
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
     borderRadius: 4,
-    paddingHorizontal: theme.margins.lg,
-    paddingVertical: theme.margins.md,
+    paddingHorizontal: theme.margins.md,
+    paddingVertical: theme.margins.sm,
   },
   // A flexing spacer would claim a whole row once the header wraps.
   spacer: {
