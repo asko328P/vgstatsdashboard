@@ -1,39 +1,17 @@
 import { TouchableOpacity, View } from "react-native";
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/utils/supabase";
-import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
-import { GameRoundPlayer } from "@/app/viewDemo";
+import { useMemo } from "react";
 import { ThemedText } from "@/components/ui/ThemedText";
 import LeaderBoardStatHolder from "@/components/ui/LeaderBoardStatHolder/LeaderBoardStatHolder";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
-import { toReadableDate, toReadableDayMonth } from "@/utils/functions";
+import { toReadableDayMonth } from "@/utils/functions";
 import { useRouter } from "expo-router";
-
-type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
+import { useLeaderboardRoundsQuery } from "@/utils/queries";
 
 const TopPlayers = () => {
   const router = useRouter();
-  const [gameData, setGameData] = useState<GameData[] | null>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
-      const now = new Date();
-      const sevenDaysAgo = new Date(now.getTime() - sevenDaysInMs);
-      const { data, error } = await supabase
-        .from("game_rounds")
-        .select(`*, game_round_player!inner(*)`)
-        .order("played_at", {
-          ascending: true,
-        })
-        .gte("played_at", sevenDaysAgo.toISOString())
-        .overrideTypes<GameData[]>();
-
-      setGameData(data);
-    };
-
-    fetchData();
-  }, []);
+  // Same cache entry as the leaderboards screen on its "7D" range.
+  const { data: gameData } = useLeaderboardRoundsQuery("7D");
 
   const topKiller = useMemo(() => {
     if (!gameData) return "";

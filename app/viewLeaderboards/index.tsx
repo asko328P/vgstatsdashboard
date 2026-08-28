@@ -1,61 +1,23 @@
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import LeaderboardsHeader from "@/components/ui/LeaderboardsHeader/LeaderboardsHeader";
-import { supabase } from "@/utils/supabase";
-import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
-import { GameRoundPlayer } from "@/app/viewDemo";
 import LeaderBoardStatHolder from "@/components/ui/LeaderBoardStatHolder/LeaderBoardStatHolder";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { toReadableDayMonth } from "@/utils/functions";
+import { LeaderboardRange, useLeaderboardRoundsQuery } from "@/utils/queries";
 
-type GameData = GameRound & { game_round_player: GameRoundPlayer[] };
-
-const POSSIBLE_RANGES = ["1D", "3D", "7D"];
-
-const DAYS_PER_RANGE: { [range: string]: number } = {
-  "1D": 1,
-  "3D": 3,
-  "7D": 7,
-};
+const POSSIBLE_RANGES: LeaderboardRange[] = ["1D", "3D", "7D"];
 
 const SLICE_RANGE = 15;
 
-const fetchRounds = async (range: string) => {
-  const daysBack = DAYS_PER_RANGE[range] ?? 1;
-  const rangeStart = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000);
-
-  const { data, error } = await supabase
-    .from("game_rounds")
-    .select(`*, game_round_player!inner(*)`)
-    .order("played_at", {
-      ascending: true,
-    })
-    .gte("played_at", rangeStart.toISOString())
-    .overrideTypes<GameData[]>();
-
-  // Thrown rather than logged, so the query lands in an error state instead of
-  // silently rendering empty cards.
-  if (error) {
-    throw error;
-  }
-  return data ?? [];
-};
-
 export default function Page() {
   const router = useRouter();
-  const [selectedRange, setSelectedRange] = useState("1D");
+  const [selectedRange, setSelectedRange] = useState<LeaderboardRange>("1D");
 
-  // One cache entry per range: flipping back to a range already looked at is
-  // instant and costs no request.
-  const { data: gameData, isFetching: gameIsFetching } = useQuery({
-    queryKey: ["leaderboardRounds", selectedRange],
-    queryFn: () => fetchRounds(selectedRange),
-    // Keeps the previous range's cards on screen while the new one loads.
-    placeholderData: (previous) => previous,
-  });
+  const { data: gameData, isFetching: gameIsFetching } =
+    useLeaderboardRoundsQuery(selectedRange);
 
   const topKiller = useMemo(() => {
     if (!gameData) return [];
@@ -206,7 +168,7 @@ export default function Page() {
         headerTitle={"Leaderboards"}
         possibleRanges={POSSIBLE_RANGES}
         selectedRange={selectedRange}
-        onRangePress={setSelectedRange}
+        onRangePress={(range) => setSelectedRange(range as LeaderboardRange)}
         onBackPress={onBackPress}
       />
       <View style={styles.dateAndSeparator}>
