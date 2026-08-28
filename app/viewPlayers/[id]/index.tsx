@@ -12,7 +12,7 @@ import {
 } from "react-native-unistyles";
 import ViewPlayerHeader from "@/components/ui/ViewPlayerHeader/ViewPlayerHeader";
 import PlayerOverview from "@/components/ui/PlayerOverview/PlayerOverview";
-import { GameRoundPlayer } from "@/app/viewDemo";
+import { GameRoundPlayer } from "@/utils/queries";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import KDOverview from "@/components/ui/KDOverview/KDOverview";
 import StatCard from "@/components/ui/StatCard/StatCard";

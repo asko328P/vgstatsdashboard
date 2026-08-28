@@ -7,7 +7,7 @@ import {
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useMemo, useState } from "react";
 import { useRouter } from "expo-router";
-import { GameRoundPlayer } from "@/app/viewDemo";
+import { GameRoundPlayer } from "@/utils/queries";
 import { interpolateColor } from "react-native-reanimated";
 import MapImage from "@/components/ui/MapImage/MapImage";
 import { LinearGradient } from "expo-linear-gradient";

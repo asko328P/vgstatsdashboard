@@ -1,10 +1,6 @@
 import { View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/utils/supabase";
-import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
-import { Kill } from "@/components/ui/KillItem/KillItem";
-import { Message } from "@/components/ui/ChatItem/ChatItem";
+import { useMemo, useState } from "react";
 import {
   SelectedPlayerState,
   useSelectedPlayerStore,
@@ -15,45 +11,17 @@ import {
   formatRoundTitle,
   toTimestamp,
 } from "@/utils/functions";
+import { useSingleGameRoundQuery } from "@/utils/queries";
 import PlayersList from "@/components/ui/PlayersList/PlayersList";
-import { useUnistyles } from "react-native-unistyles";
-import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import TeamkillList from "@/components/ui/TeamkillList/TeamkillList";
 import ChatList from "@/components/ui/ChatList/ChatList";
-
-export type GameRoundPlayer = {
-  id: number;
-  hash: string;
-  created_at: string;
-  game_round_id: string;
-  player_id: string;
-  kills: number;
-  deaths: number;
-  score: number;
-  scoreTW: number;
-  teamkills: number;
-  revivals: number;
-  vehicle_destroyeds: number;
-  total_time_as_squad_lead: number;
-  squad_name: string;
-};
 
 const LISTS = {
   players: "PLAYERS",
   teamkills: "TEAMKILLS",
   chat: "CHAT",
 };
-
-type Revive = {
-  id: number;
-  current_time: number;
-  medic_player_id: string;
-  revived_player_id: string;
-};
-
-type GameData = GameRound & { kills: Kill[] } & { chat_messages: Message[] } & {
-  game_round_player: GameRoundPlayer[];
-} & { revivals: Revive[] };
 
 export default function Page() {
   const router = useRouter();
@@ -72,32 +40,10 @@ export default function Page() {
     (state: SelectedPlayerState) => state.selectedPlayer,
   );
 
-  const [singleGameData, setSingleGameData] = useState<GameData>();
   const [filterInputValue, setFilterInputValue] = useState("");
   const [expandedList, setExpandedList] = useState(LISTS.players);
 
-  useEffect(() => {
-    const getData = async () => {
-      const { data, error } = await supabase
-        .from("game_rounds")
-        .select(
-          `
-        *, kills(*), chat_messages(*), game_round_player(*), revivals(*)
-        `,
-        )
-        .eq("id", gameRoundId)
-        .maybeSingle()
-        .overrideTypes<GameData>();
-      if (error) {
-        console.log("single game error", error);
-      }
-      if (data) {
-        //@ts-ignore
-        setSingleGameData(data);
-      }
-    };
-    getData();
-  }, []);
+  const { data: singleGameData } = useSingleGameRoundQuery(gameRoundId);
 
   const filteredMessages = useMemo(() => {
     if (!singleGameData?.chat_messages) {

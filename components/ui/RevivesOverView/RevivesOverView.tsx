@@ -1,7 +1,7 @@
 import { ScrollView, View } from "react-native";
 import { useMemo } from "react";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
-import { GameRoundPlayer } from "@/app/viewDemo";
+import { GameRoundPlayer } from "@/utils/queries";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
 import { formatRoundTitle } from "@/utils/functions";

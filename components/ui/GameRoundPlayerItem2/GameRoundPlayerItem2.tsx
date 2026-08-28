@@ -1,5 +1,5 @@
 import { TouchableOpacity, View } from "react-native";
-import { GameRoundPlayer } from "@/app/viewDemo";
+import { GameRoundPlayer } from "@/utils/queries";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { interpolateColor } from "react-native-reanimated";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";

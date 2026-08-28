@@ -1,4 +1,4 @@
-import { GameRoundPlayer } from "@/app/viewDemo";
+import { GameRoundPlayer } from "@/utils/queries";
 
 export function formatTime(totalSeconds: number) {
   // Ensure the input is treated as a non-negative integer

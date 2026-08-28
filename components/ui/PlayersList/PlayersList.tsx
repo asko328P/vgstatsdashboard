@@ -1,6 +1,6 @@
 import { FlatList, ScrollView, TouchableOpacity, View } from "react-native";
 import { useMemo, useState } from "react";
-import { GameRoundPlayer } from "@/app/viewDemo";
+import { GameRoundPlayer } from "@/utils/queries";
 import { ThemedText } from "@/components/ui/ThemedText";
 import GameRoundPlayerItem2, {
   rowStyles,

@@ -1,6 +1,6 @@
 import { FlatList, ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { GameRoundPlayer } from "@/app/viewDemo";
+import { GameRoundPlayer } from "@/utils/queries";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import { ThemedText } from "@/components/ui/ThemedText";
 import {
