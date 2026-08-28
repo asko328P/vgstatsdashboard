@@ -155,7 +155,7 @@ const PlayersList = ({
           <FlatList
             initialNumToRender={30}
             showsVerticalScrollIndicator={false}
-            style={{ minWidth: 400 }}
+            style={{ minWidth: 420 }}
             contentContainerStyle={{ paddingBottom: 20 }}
             data={sortedPlayers}
             extraData={sortBy}

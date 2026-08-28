@@ -20,6 +20,10 @@ export const rowStyles = StyleSheet.create((theme) => ({
     paddingVertical: theme.margins.md,
   },
   nameCell: (isSelected: boolean = false) => ({
+    flexDirection: "row",
+    gap: UnistylesRuntime.getTheme().margins.sm,
+    flexWrap: "wrap",
+    alignItems: "center",
     flex: 2,
     minWidth: 67,
   }),
@@ -58,27 +62,21 @@ const GameRoundPlayerItem2 = ({ item, onPress, roundLength }: Props) => {
       style={[rowStyles.row, styles.container(isSelected)]}
     >
       <View style={rowStyles.nameCell()}>
-        <View style={styles.nameRow}>
-          {isLeader && (
-            <Feather
-              name={"chevrons-up"}
-              size={14}
-              color={UnistylesRuntime.getTheme().colors.accentSquadLead}
-            />
-          )}
-          <ThemedText
-            style={styles.name(isSelected, isLeader)}
-            type={"name"}
-            numberOfLines={1}
-          >
-            {item.player_id}
-          </ThemedText>
-        </View>
-        {/*{isLeader && !!squadName && (*/}
-        {/*  <ThemedText type={"micro"} style={styles.squadName} numberOfLines={1}>*/}
-        {/*    {squadName}*/}
-        {/*  </ThemedText>*/}
-        {/*)}*/}
+        {isLeader && (
+          <Feather
+            name={"chevrons-up"}
+            size={14}
+            color={UnistylesRuntime.getTheme().colors.accentSquadLead}
+          />
+        )}
+        <ThemedText
+          style={styles.name(isSelected, isLeader)}
+          type={"name"}
+          numberOfLines={1}
+        >
+          {item.player_id}
+        </ThemedText>
+        <ThemedText type={"micro"}>{`${item.squad_name}`}</ThemedText>
       </View>
       <View style={rowStyles.cell()}>
         <ThemedText type={"cell"}>{item.score}</ThemedText>
