@@ -91,6 +91,19 @@ export function formatDuration(totalSeconds: number) {
   return parts.join(" ");
 }
 
+// 330 -> "05:30", 4230 -> "1:10:30"
+export function formatClockDuration(totalSeconds: number) {
+  const seconds = Math.max(0, Math.floor(totalSeconds));
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  const clock = `${pad(minutes)}:${pad(seconds % 60)}`;
+
+  return hours > 0 ? `${hours}:${clock}` : clock;
+}
+
 // "2026-08-13T07:32:54+00:00" -> "2026-08-13 09:32" in the device's local timezone
 export function toTimestamp(isoString: string) {
   const date = parseDate(isoString);

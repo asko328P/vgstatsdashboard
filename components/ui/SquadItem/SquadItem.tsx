@@ -1,5 +1,5 @@
-import { TouchableOpacity, View } from "react-native";
-import { useMemo } from "react";
+import { Pressable, View } from "react-native";
+import { useMemo, useState } from "react";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { Feather } from "@expo/vector-icons";
@@ -7,7 +7,7 @@ import {
   SelectedPlayerState,
   useSelectedPlayerStore,
 } from "@/zustand/SelectedPlayerStore";
-import { formatSquadName } from "@/utils/functions";
+import { formatClockDuration, formatSquadName } from "@/utils/functions";
 
 export type SquadPlayer = {
   id: string;
@@ -42,6 +42,9 @@ const SquadItem = ({ squadName, players, onPlayerPress }: Props) => {
     return lead && lead.numberOfTicksAsSquadLead > 0 ? lead.id : "";
   }, [players]);
 
+  // Hover only ever fires on web; on touch the tooltip simply never shows.
+  const [hoveredPlayerId, setHoveredPlayerId] = useState("");
+
   const pressPlayerHandler = (playerId: string) => {
     setSelectedPlayer(playerId);
     onPlayerPress?.(playerId);
@@ -61,14 +64,31 @@ const SquadItem = ({ squadName, players, onPlayerPress }: Props) => {
           const isSelected = selectedPlayer === player.id;
           const isSquadLead = squadLeadId === player.id;
 
+          const timeInSquad =
+            player.numberOfTicksAsSquadLead +
+            player.numberOfTicksAsNonSquadLead;
+
           return (
-            <TouchableOpacity
+            <Pressable
               key={player.id}
               onPress={() => {
                 pressPlayerHandler(player.id);
               }}
+              onHoverIn={() => {
+                setHoveredPlayerId(player.id);
+              }}
+              onHoverOut={() => {
+                setHoveredPlayerId("");
+              }}
               style={styles.player(isSelected)}
             >
+              {hoveredPlayerId === player.id && (
+                <View pointerEvents={"none"} style={styles.tooltip}>
+                  <ThemedText type={"micro"} style={styles.tooltipText}>
+                    {formatClockDuration(timeInSquad)}
+                  </ThemedText>
+                </View>
+              )}
               {isSquadLead && (
                 <Feather
                   name={"chevrons-up"}
@@ -83,7 +103,7 @@ const SquadItem = ({ squadName, players, onPlayerPress }: Props) => {
               >
                 {player.id.trim()}
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </View>
@@ -133,6 +153,23 @@ const styles = StyleSheet.create((theme) => ({
       ? theme.colors.selectBackground
       : theme.colors.surface2,
   }),
+  // Sits above the pill it belongs to, out of the row's flow.
+  tooltip: {
+    position: "absolute",
+    bottom: "100%",
+    left: 0,
+    marginBottom: 4,
+    zIndex: 10,
+    paddingHorizontal: theme.margins.sm,
+    paddingVertical: 2,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: theme.colors.borderStrong,
+    backgroundColor: theme.colors.surface3,
+  },
+  tooltipText: {
+    color: theme.colors.textPrimary,
+  },
   playerName: (isSelected: boolean, isSquadLead: boolean) => ({
     color: isSelected
       ? theme.colors.accentSelect
