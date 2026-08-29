@@ -18,6 +18,7 @@ import Animated, {
   Easing,
   FadeIn,
 } from "react-native-reanimated";
+import { AllSquadsObject } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 
 const COLUMNS = ["Score", "Score TW", "Kills", "Deaths", "TKs"] as const;
 
@@ -85,6 +86,7 @@ type Props = {
   onExpandPress?: () => void;
   // Round duration in seconds — decides who counted as a squad leader.
   roundLength?: number;
+  allSquadsObject?: AllSquadsObject;
 };
 
 const PlayersList = ({
@@ -93,6 +95,7 @@ const PlayersList = ({
   isExpanded,
   onExpandPress,
   roundLength,
+  allSquadsObject,
 }: Props) => {
   const { rt } = useUnistyles();
   const expandAllLists =
@@ -104,6 +107,8 @@ const PlayersList = ({
   const [sortBy, setSortBy] = useState<(typeof COLUMNS)[number] | "Name">(
     "Name",
   );
+
+  const [whichList, setWhichList] = useState<"players" | "squads">("players");
 
   const labelPressHandler = (label: (typeof COLUMNS)[number] | "Name") => {
     console.log(label);
@@ -135,16 +140,38 @@ const PlayersList = ({
   return (
     <Animated.View entering={FadeIn.duration(400)} style={{ flex: 1 }}>
       <TouchableOpacity onPress={onExpandPress} style={styles.toggle}>
-        <ThemedText type={"label"}>
-          {!expandAllLists && !isExpanded && (
-            <Feather
-              name={"chevrons-down"}
-              size={15}
-              color={UnistylesRuntime.getTheme().colors.textMuted}
-            />
+        <View style={styles.playersAndSquadsHolder}>
+          <TouchableOpacity
+            hitSlop={7}
+            onPress={() => {
+              setWhichList("players");
+            }}
+            style={[whichList !== "players" && { opacity: 0.3 }]}
+          >
+            <ThemedText type={"label"}>
+              {!expandAllLists && !isExpanded && (
+                <Feather
+                  name={"chevrons-down"}
+                  size={15}
+                  color={UnistylesRuntime.getTheme().colors.textMuted}
+                />
+              )}
+              {"PLAYERS"}
+            </ThemedText>
+          </TouchableOpacity>
+          {allSquadsObject && (
+            <TouchableOpacity
+              hitSlop={7}
+              onPress={() => {
+                setWhichList("squads");
+              }}
+              style={[whichList !== "squads" && { opacity: 0.3 }]}
+            >
+              <ThemedText type={"label"}>{"SQUADS"}</ThemedText>
+            </TouchableOpacity>
           )}
-          {"PLAYERS"}
-        </ThemedText>
+        </View>
+
         <ThemedText type={"cell"} style={styles.count}>
           {players.length}
         </ThemedText>
@@ -152,27 +179,29 @@ const PlayersList = ({
 
       {isExpanded && (
         <ScrollView horizontal={true} contentContainerStyle={{ flex: 1 }}>
-          <FlatList
-            initialNumToRender={30}
-            showsVerticalScrollIndicator={false}
-            style={{ minWidth: 420 }}
-            contentContainerStyle={{ paddingBottom: 20 }}
-            data={sortedPlayers}
-            extraData={sortBy}
-            keyExtractor={(item) => String(item.id)}
-            ListHeaderComponent={
-              <ListHeader sortBy={sortBy} onLabelPress={labelPressHandler} />
-            }
-            stickyHeaderIndices={[0]}
-            renderItem={({ item }) => (
-              <GameRoundPlayerItem2
-                key={item.player_id}
-                item={item}
-                onPress={onPlayerPress}
-                roundLength={roundLength}
-              />
-            )}
-          />
+          {whichList === "players" && (
+            <FlatList
+              initialNumToRender={30}
+              showsVerticalScrollIndicator={false}
+              style={{ minWidth: 420 }}
+              contentContainerStyle={{ paddingBottom: 20 }}
+              data={sortedPlayers}
+              extraData={sortBy}
+              keyExtractor={(item) => String(item.id)}
+              ListHeaderComponent={
+                <ListHeader sortBy={sortBy} onLabelPress={labelPressHandler} />
+              }
+              stickyHeaderIndices={[0]}
+              renderItem={({ item }) => (
+                <GameRoundPlayerItem2
+                  key={item.player_id}
+                  item={item}
+                  onPress={onPlayerPress}
+                  roundLength={roundLength}
+                />
+              )}
+            />
+          )}
         </ScrollView>
       )}
     </Animated.View>
@@ -182,6 +211,10 @@ const PlayersList = ({
 export default PlayersList;
 
 const styles = StyleSheet.create((theme) => ({
+  playersAndSquadsHolder: {
+    flexDirection: "row",
+    gap: theme.margins.md,
+  },
   toggle: {
     flexDirection: "row",
     alignItems: "center",

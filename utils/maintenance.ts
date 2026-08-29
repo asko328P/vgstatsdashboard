@@ -4,7 +4,8 @@
 export const MAINTENANCE_MODE = false;
 
 // Shown under the heading. Keep it short — it sits on one or two lines.
-export const MAINTENANCE_MESSAGE = "The dashboard is temporarily offline";
+export const MAINTENANCE_MESSAGE =
+  "The dashboard is temporarily offline - features are being added";
 
 // Terminal style status lines. Left column is padded with dots in the
 // component, so only the label and its state belong here.

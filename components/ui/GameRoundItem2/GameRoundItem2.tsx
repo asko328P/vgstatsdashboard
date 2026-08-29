@@ -126,11 +126,27 @@ const DiagonalStripes = () => {
   );
 };
 
+type PlayerSquadTicks = {
+  numberOfTicksAsSquadLead: number;
+  numberOfTicksAsNonSquadLead: number;
+};
+
+/** Keyed by player name, e.g. " Dari0us", "=VG= Sphee" */
+type Squad = Record<string, PlayerSquadTicks>;
+
+/** Keyed by squad name, e.g. "Alfa", "MEch ENG INF" — empty {} if the team had no squads */
+type TeamSquads = Record<string, Squad>;
+
+type TeamId = "1" | "2" | "3";
+
+export type AllSquadsObject = Record<TeamId, TeamSquads>;
+
 export type GameRound = {
   id: string;
   played_at: string;
   length: number;
   download_link?: string;
+  all_squads_object?: AllSquadsObject;
 };
 type Props = {
   gameRound?: GameRound & { game_round_player: GameRoundPlayer[] };

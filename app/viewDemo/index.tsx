@@ -101,6 +101,7 @@ export default function Page() {
         >
           {singleGameData && (
             <PlayersList
+              allSquadsObject={singleGameData.all_squads_object}
               isExpanded={isListExpanded(LISTS.players)}
               onExpandPress={() => {
                 setExpandedList(LISTS.players);
