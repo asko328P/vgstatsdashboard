@@ -237,7 +237,7 @@ export function formatKD(kills: number, deaths: number, digits: number = 2) {
 // the round, or for 20 minutes — whichever comes first, so long rounds don't
 // demand an unreachable amount of lead time and short ones still need real
 // commitment. `roundLength` and the lead time are both in seconds.
-const TWENTY_MINUTES = 15 * 60;
+const TWENTY_MINUTES = 20 * 60;
 
 export function isSquadLeader(
   totalTimeAsSquadLead: number | undefined | null,
