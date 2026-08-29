@@ -145,22 +145,31 @@ const PlayersList = ({
       return [];
     }
     return Object.entries(allSquadsObject).flatMap(([teamId, teamSquads]) =>
-      Object.entries(teamSquads ?? {}).map(([squadName, squad]) => ({
-        key: `${teamId}-${squadName}`,
-        squadName,
-        players: Object.entries(squad ?? {})
-          .map<SquadPlayer>(([playerId, ticks]) => ({
-            id: playerId,
-            numberOfTicksAsSquadLead: ticks.numberOfTicksAsSquadLead,
-            numberOfTicksAsNonSquadLead: ticks.numberOfTicksAsNonSquadLead,
-          }))
-          // Squad lead first, then alphabetical like the players list.
-          .sort(
-            (a, b) =>
-              b.numberOfTicksAsSquadLead - a.numberOfTicksAsSquadLead ||
-              compareNames(a.id, b.id),
-          ),
-      })),
+      Object.entries(teamSquads ?? {})
+        .map(([squadName, squad]) => ({
+          key: `${teamId}-${squadName}`,
+          squadName,
+          players: Object.entries(squad ?? {})
+            .map<SquadPlayer>(([playerId, ticks]) => ({
+              id: playerId,
+              numberOfTicksAsSquadLead: ticks.numberOfTicksAsSquadLead,
+              numberOfTicksAsNonSquadLead: ticks.numberOfTicksAsNonSquadLead,
+            }))
+            // Squad lead first, then alphabetical like the players list.
+            .sort(
+              (a, b) =>
+                b.numberOfTicksAsSquadLead - a.numberOfTicksAsSquadLead ||
+                compareNames(a.id, b.id),
+            )
+            //filter if player didn't spend more than 2 minute in the squad
+            .filter(
+              (item) =>
+                item.numberOfTicksAsNonSquadLead +
+                  item.numberOfTicksAsSquadLead >
+                60 * 2,
+            ),
+        }))
+        .filter((item) => item.players.length > 0),
     );
   }, [allSquadsObject]);
 
