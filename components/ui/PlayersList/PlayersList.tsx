@@ -19,6 +19,7 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 import { AllSquadsObject } from "@/components/ui/GameRoundItem2/GameRoundItem2";
+import SquadItem, { SquadPlayer } from "@/components/ui/SquadItem/SquadItem";
 
 const COLUMNS = ["Score", "Score TW", "Kills", "Deaths", "TKs"] as const;
 
@@ -137,6 +138,32 @@ const PlayersList = ({
     }
   }, [players, sortBy]);
 
+  // The squads object nests team -> squad -> player, flattened here into one
+  // row per squad. Teams without squads come through as {} and drop out.
+  const squads = useMemo(() => {
+    if (!allSquadsObject) {
+      return [];
+    }
+    return Object.entries(allSquadsObject).flatMap(([teamId, teamSquads]) =>
+      Object.entries(teamSquads ?? {}).map(([squadName, squad]) => ({
+        key: `${teamId}-${squadName}`,
+        squadName,
+        players: Object.entries(squad ?? {})
+          .map<SquadPlayer>(([playerId, ticks]) => ({
+            id: playerId,
+            numberOfTicksAsSquadLead: ticks.numberOfTicksAsSquadLead,
+            numberOfTicksAsNonSquadLead: ticks.numberOfTicksAsNonSquadLead,
+          }))
+          // Squad lead first, then alphabetical like the players list.
+          .sort(
+            (a, b) =>
+              b.numberOfTicksAsSquadLead - a.numberOfTicksAsSquadLead ||
+              compareNames(a.id, b.id),
+          ),
+      })),
+    );
+  }, [allSquadsObject]);
+
   return (
     <Animated.View entering={FadeIn.duration(400)} style={{ flex: 1 }}>
       <TouchableOpacity onPress={onExpandPress} style={styles.toggle}>
@@ -173,7 +200,7 @@ const PlayersList = ({
         </View>
 
         <ThemedText type={"cell"} style={styles.count}>
-          {players.length}
+          {whichList === "players" ? players.length : squads.length}
         </ThemedText>
       </TouchableOpacity>
 
@@ -198,6 +225,22 @@ const PlayersList = ({
                   item={item}
                   onPress={onPlayerPress}
                   roundLength={roundLength}
+                />
+              )}
+            />
+          )}
+          {whichList === "squads" && (
+            <FlatList
+              initialNumToRender={10}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+              data={squads}
+              keyExtractor={(item) => item.key}
+              renderItem={({ item }) => (
+                <SquadItem
+                  squadName={item.squadName}
+                  players={item.players}
+                  onPlayerPress={onPlayerPress}
                 />
               )}
             />
