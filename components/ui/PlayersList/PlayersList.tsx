@@ -86,7 +86,7 @@ type Props = {
   onPress?: () => void;
   onExpandPress?: () => void;
   // Round duration in seconds — decides who counted as a squad leader.
-  roundLength?: number;
+  roundLength: number;
   allSquadsObject?: AllSquadsObject;
 };
 
@@ -164,6 +164,20 @@ const PlayersList = ({
     );
   }, [allSquadsObject]);
 
+  // Squad members are sorted lead first, so the top of each squad is its lead —
+  // as long as anyone in it actually held the role. Names are trimmed because
+  // the squads object keeps the leading space some player names carry.
+  const squadLeadIds = useMemo(() => {
+    const ids = new Set<string>();
+    squads.forEach((squad) => {
+      const lead = squad.players[0];
+      if (lead && lead.numberOfTicksAsSquadLead > roundLength / 4) {
+        ids.add(lead.id.trim());
+      }
+    });
+    return ids;
+  }, [squads]);
+
   return (
     <Animated.View entering={FadeIn.duration(400)} style={{ flex: 1 }}>
       <TouchableOpacity onPress={onExpandPress} style={styles.toggle}>
@@ -225,6 +239,11 @@ const PlayersList = ({
                   item={item}
                   onPress={onPlayerPress}
                   roundLength={roundLength}
+                  isSquadLead={
+                    allSquadsObject
+                      ? squadLeadIds.has(item.player_id.trim())
+                      : undefined
+                  }
                 />
               )}
             />

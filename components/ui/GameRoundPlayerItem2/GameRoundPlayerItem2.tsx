@@ -38,9 +38,17 @@ type Props = {
   item: GameRoundPlayer;
   onPress?: (playerId: string) => void;
   roundLength?: number;
+  // Set when the squads data says this player led a squad; falls back to the
+  // lead-time heuristic for rounds without it.
+  isSquadLead?: boolean;
 };
 
-const GameRoundPlayerItem2 = ({ item, onPress, roundLength }: Props) => {
+const GameRoundPlayerItem2 = ({
+  item,
+  onPress,
+  roundLength,
+  isSquadLead,
+}: Props) => {
   const setSelectedPlayer = useSelectedPlayerStore(
     (state) => state.setSelectedPlayer,
   );
@@ -49,7 +57,8 @@ const GameRoundPlayerItem2 = ({ item, onPress, roundLength }: Props) => {
   );
 
   const isSelected = selectedPlayer === item.player_id;
-  const isLeader = isSquadLeader(item.total_time_as_squad_lead, roundLength);
+  const isLeader =
+    isSquadLead ?? isSquadLeader(item.total_time_as_squad_lead, roundLength);
   const squadName = formatSquadName(item.squad_name);
 
   const pressPlayerHandler = () => {
@@ -76,7 +85,6 @@ const GameRoundPlayerItem2 = ({ item, onPress, roundLength }: Props) => {
         >
           {item.player_id}
         </ThemedText>
-        <ThemedText type={"micro"}>{`${item.squad_name}`}</ThemedText>
       </View>
       <View style={rowStyles.cell()}>
         <ThemedText type={"cell"}>{item.score}</ThemedText>
