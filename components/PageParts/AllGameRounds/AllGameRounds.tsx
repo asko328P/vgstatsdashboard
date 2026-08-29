@@ -29,19 +29,22 @@ const AllGameRounds = () => {
 
   const { data: gameRoundCount = 0 } = useGameRoundCountQuery();
 
+  const cardGap = UnistylesRuntime.getTheme().margins.sm;
+
   useEffect(() => {
     if (!measuredRectangle || !dummyRectangle) return;
     setGameRange((prevState) => {
       if (prevState.length !== 0) {
         return prevState;
       } else {
-        return [
-          0,
-          Math.max(
-            3,
-            Math.floor(measuredRectangle.height / dummyRectangle.height),
+        const cardsThatFit = Math.max(
+          3,
+          Math.floor(
+            (measuredRectangle.height + cardGap) /
+              (dummyRectangle.height + cardGap),
           ),
-        ];
+        );
+        return [0, cardsThatFit - 1];
       }
     });
   }, [measuredRectangle, dummyRectangle]);
