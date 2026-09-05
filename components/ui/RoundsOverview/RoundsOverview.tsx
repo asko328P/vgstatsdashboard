@@ -3,12 +3,15 @@ import { StyleSheet } from "react-native-unistyles";
 import { GameRoundPlayer } from "@/utils/queries";
 import { GameRound } from "@/components/ui/GameRoundItem2/GameRoundItem2";
 import { ThemedText } from "@/components/ui/ThemedText";
+import PiePercentage from "@/components/ui/PiePercentage/PiePercentage";
 import {
+  formatDuration,
   formatRoundTitle,
   toReadableDate,
   toReadableDayMonth,
 } from "@/utils/functions";
 import { useRouter } from "expo-router";
+import { useMemo } from "react";
 
 // Shared by the row and by the list header so the columns can never drift apart.
 export const roundRowStyles = StyleSheet.create((theme) => ({
@@ -34,7 +37,7 @@ export const roundRowStyles = StyleSheet.create((theme) => ({
   },
 }));
 
-const COLUMNS = ["Kills", "Deaths", "Revives", "TKs"];
+const COLUMNS = ["Kills", "Deaths", "Revives", "TKs", "SL Time"];
 
 type Props = {
   gameRounds: (GameRoundPlayer & { game_rounds: GameRound })[];
@@ -72,6 +75,32 @@ const PlayerGameRound = ({ item }: PlayerGameRoundProps) => {
       params: { gameRoundId: item.game_round_id },
     });
   };
+
+  const percentageAsSquadLead = useMemo(() => {
+    if (!item.game_rounds.all_squads_object) {
+      return null;
+    }
+    let allSquadsObj = item.game_rounds.all_squads_object;
+    let totalTimeAsSl = 0;
+
+    Object.keys(allSquadsObj).forEach((teamId) => {
+      // @ts-ignore
+      const team = allSquadsObj[teamId];
+      Object.keys(team).forEach((squadName) => {
+        const squad = team[squadName];
+        Object.keys(squad).forEach((playerName) => {
+          if (item.player_id === playerName) {
+            let player = squad[playerName];
+            totalTimeAsSl += player.numberOfTicksAsSquadLead;
+          }
+        });
+      });
+    });
+
+    return (totalTimeAsSl / item.game_rounds.length) * 100;
+  }, [item]);
+
+  // const percentageAsSquadLead = item.game_rounds.all_squads_object?.["1"]?.;
   return (
     <TouchableOpacity
       onPress={navigateToRound}
@@ -115,6 +144,13 @@ const PlayerGameRound = ({ item }: PlayerGameRoundProps) => {
           {item.teamkills}
         </ThemedText>
       </View>
+      <View style={roundRowStyles.cell}>
+        {percentageAsSquadLead === null ? (
+          <ThemedText type={"micro"}>{"—"}</ThemedText>
+        ) : (
+          <PiePercentage percentage={percentageAsSquadLead} />
+        )}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -138,6 +174,7 @@ const RoundsOverview = ({ gameRounds, onShowMorePress }: Props) => {
         <FlatList
           style={styles.flatlist}
           data={gameRounds}
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.game_round_id}
           ListHeaderComponent={ListHeader}
           stickyHeaderIndices={[0]}
