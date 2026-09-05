@@ -14,19 +14,52 @@ type Props = {
   headerTitle: string;
   possibleRanges: string[];
   selectedRange: string;
+  possibleModes?: string[];
+  selectedMode?: string;
   breadcrumb?: string;
   infoText?: string;
   onRangePress?: (range: string) => void;
+  onModePress?: (mode: string) => void;
   onBackPress?: () => void;
 };
+
+type PillGroupProps = {
+  options: string[];
+  selected?: string;
+  onPress?: (option: string) => void;
+};
+
+// One segmented control. The header shows two of them — what is measured and
+// over how long — so they share a component rather than drifting apart.
+const PillGroup = ({ options, selected, onPress }: PillGroupProps) => (
+  <View style={styles.pillGroup}>
+    {options.map((option) => {
+      const isSelected = option === selected;
+      return (
+        <TouchableOpacity
+          key={option}
+          onPress={() => onPress?.(option)}
+          style={styles.pill(isSelected)}
+        >
+          <ThemedText type={"label"} style={styles.pillText(isSelected)}>
+            {option}
+          </ThemedText>
+        </TouchableOpacity>
+      );
+    })}
+  </View>
+);
 
 const LeaderboardsHeader = ({
   headerTitle,
   possibleRanges,
   selectedRange,
+  possibleModes,
+  selectedMode,
   breadcrumb,
   infoText,
   onRangePress,
+  onModePress,
   onBackPress,
 }: Props) => {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -57,22 +90,19 @@ const LeaderboardsHeader = ({
         </ThemedText>
       )}
 
-      <View style={styles.ranges}>
-        {possibleRanges.map((range) => {
-          const isSelected = range === selectedRange;
-          return (
-            <TouchableOpacity
-              key={range}
-              onPress={() => onRangePress?.(range)}
-              style={styles.range(isSelected)}
-            >
-              <ThemedText type={"label"} style={styles.rangeText(isSelected)}>
-                {range}
-              </ThemedText>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+      {!!possibleModes?.length && (
+        <PillGroup
+          options={possibleModes}
+          selected={selectedMode}
+          onPress={onModePress}
+        />
+      )}
+
+      <PillGroup
+        options={possibleRanges}
+        selected={selectedRange}
+        onPress={onRangePress}
+      />
 
       <LoginButton />
       <LogoutButton />
@@ -118,7 +148,7 @@ const styles = StyleSheet.create((theme) => ({
   },
   // One bordered group: the buttons inside share its outline rather than each
   // drawing their own.
-  ranges: {
+  pillGroup: {
     flexDirection: "row",
     alignItems: "center",
     gap: theme.margins.sm,
@@ -128,19 +158,15 @@ const styles = StyleSheet.create((theme) => ({
     borderRadius: 4,
     padding: 3,
   },
-  range: (isSelected: boolean) => ({
-    backgroundColor: isSelected
-      ? theme.colors.surface3
-      : theme.colors.surface1,
-    borderColor: isSelected
-      ? theme.colors.borderStrong
-      : theme.colors.surface1,
+  pill: (isSelected: boolean) => ({
+    backgroundColor: isSelected ? theme.colors.surface3 : theme.colors.surface1,
+    borderColor: isSelected ? theme.colors.borderStrong : theme.colors.surface1,
     borderWidth: 1,
     borderRadius: 3,
     paddingHorizontal: theme.margins.lg,
     paddingVertical: theme.margins.sm,
   }),
-  rangeText: (isSelected: boolean) => ({
+  pillText: (isSelected: boolean) => ({
     color: isSelected ? theme.colors.textPrimary : theme.colors.textMuted,
   }),
   container: (isLoggedIn: boolean) => ({

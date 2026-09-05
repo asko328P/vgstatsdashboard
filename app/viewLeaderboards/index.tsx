@@ -10,14 +10,73 @@ import { LeaderboardRange, useLeaderboardRoundsQuery } from "@/utils/queries";
 
 const POSSIBLE_RANGES: LeaderboardRange[] = ["1D", "3D", "7D"];
 
+type LeaderboardMode = "TOTAL" | "PER ROUND";
+
+const POSSIBLE_MODES: LeaderboardMode[] = ["TOTAL", "PER ROUND"];
+
+// A rate board needs a floor on rounds played: one lucky round would otherwise
+// outrank every regular on the server.
+const MIN_ROUNDS_FOR_RATE = 3;
+
 const SLICE_RANGE = 15;
+
+type PlayerStat = { player_id: string; value: number };
+
+// Totals become per round averages when the mode asks for them. Players under
+// the rounds floor drop out of the board entirely rather than ranking on a
+// sample too small to mean anything.
+const applyMode = (
+  entries: PlayerStat[],
+  roundsByPlayer: { [player_id: string]: number },
+  mode: LeaderboardMode,
+) => {
+  if (mode === "TOTAL") {
+    return entries;
+  }
+  return entries
+    .filter(
+      (entry) => (roundsByPlayer[entry.player_id] ?? 0) >= MIN_ROUNDS_FOR_RATE,
+    )
+    .map((entry) => ({
+      ...entry,
+      value: entry.value / (roundsByPlayer[entry.player_id] || 1),
+    }))
+    .sort((a, b) => b.value - a.value);
+};
+
+// Totals are whole; averages need decimals to tell 2.4 apart from 2.35.
+const formatStatValue = (
+  value: number | undefined,
+  mode: LeaderboardMode = "TOTAL",
+) => {
+  if (value === undefined) {
+    return "0";
+  }
+  return mode === "TOTAL" ? String(value) : value.toFixed(2);
+};
+
+const formatUnit = (unit: string, mode: LeaderboardMode) =>
+  mode === "TOTAL" ? unit : `${unit}/round`;
 
 export default function Page() {
   const router = useRouter();
   const [selectedRange, setSelectedRange] = useState<LeaderboardRange>("1D");
+  const [selectedMode, setSelectedMode] = useState<LeaderboardMode>("TOTAL");
 
   const { data: gameData, isFetching: gameIsFetching } =
     useLeaderboardRoundsQuery(selectedRange);
+
+  // Rounds played per player, bots included: it is both its own board and the
+  // divisor every other board uses in "per round" mode.
+  const roundsByPlayer = useMemo(() => {
+    const rounds: { [player_id: string]: number } = {};
+    gameData?.forEach((game) => {
+      game.game_round_player.forEach((player) => {
+        rounds[player.player_id] = (rounds[player.player_id] ?? 0) + 1;
+      });
+    });
+    return rounds;
+  }, [gameData]);
 
   const topKiller = useMemo(() => {
     if (!gameData) return [];
@@ -33,7 +92,7 @@ export default function Page() {
       });
     });
 
-    let allKillsArray = [];
+    let allKillsArray: PlayerStat[] = [];
 
     for (const [key, value] of Object.entries(allPlayersKills)) {
       if (key.startsWith("[R-BOT]")) {
@@ -41,13 +100,13 @@ export default function Page() {
       }
       allKillsArray.push({
         player_id: key,
-        kills: value,
+        value,
       });
     }
-    allKillsArray = allKillsArray.sort((a, b) => b.kills - a.kills);
+    allKillsArray = allKillsArray.sort((a, b) => b.value - a.value);
 
-    return allKillsArray;
-  }, [gameData]);
+    return applyMode(allKillsArray, roundsByPlayer, selectedMode);
+  }, [gameData, roundsByPlayer, selectedMode]);
 
   const topMedic = useMemo(() => {
     if (!gameData) return [];
@@ -63,7 +122,7 @@ export default function Page() {
       });
     });
 
-    let allMedicsArray = [];
+    let allMedicsArray: PlayerStat[] = [];
 
     for (const [key, value] of Object.entries(allPlayersRevives)) {
       if (key.startsWith("[R-BOT]")) {
@@ -71,14 +130,13 @@ export default function Page() {
       }
       allMedicsArray.push({
         player_id: key,
-        revivals: value,
+        value,
       });
     }
-    allMedicsArray = allMedicsArray.sort((a, b) => b.revivals - a.revivals);
+    allMedicsArray = allMedicsArray.sort((a, b) => b.value - a.value);
 
-    return allMedicsArray;
-    // return `${allMedicsArray[0]?.player_id ?? " -"} ${allMedicsArray[0]?.revivals ?? "0"} revives`;
-  }, [gameData]);
+    return applyMode(allMedicsArray, roundsByPlayer, selectedMode);
+  }, [gameData, roundsByPlayer, selectedMode]);
 
   const topDestroyer = useMemo(() => {
     if (!gameData) return [];
@@ -94,7 +152,7 @@ export default function Page() {
       });
     });
 
-    let allDestructorsArray = [];
+    let allDestructorsArray: PlayerStat[] = [];
 
     for (const [key, value] of Object.entries(allPlayersDestructions)) {
       if (key.startsWith("[R-BOT]")) {
@@ -102,45 +160,32 @@ export default function Page() {
       }
       allDestructorsArray.push({
         player_id: key,
-        vehicle_destroyeds: value,
+        value,
       });
     }
-    allDestructorsArray = allDestructorsArray.sort(
-      (a, b) => b.vehicle_destroyeds - a.vehicle_destroyeds,
-    );
+    allDestructorsArray = allDestructorsArray.sort((a, b) => b.value - a.value);
 
-    return allDestructorsArray;
-  }, [gameData]);
+    return applyMode(allDestructorsArray, roundsByPlayer, selectedMode);
+  }, [gameData, roundsByPlayer, selectedMode]);
 
+  // Always a total: every player plays exactly one round per round, so this
+  // board has no per round form.
   const mostRounds = useMemo(() => {
-    if (!gameData) return [];
-    const allPlayersRounds: {
-      [key: string]: number;
-    } = {};
-    gameData.forEach((game) => {
-      game.game_round_player.forEach((player) => {
-        if (!allPlayersRounds[player.player_id]) {
-          allPlayersRounds[player.player_id] = 0;
-        }
-        allPlayersRounds[player.player_id] += 1;
-      });
-    });
+    let allPlayersArray: PlayerStat[] = [];
 
-    let allPlayersArray = [];
-
-    for (const [key, value] of Object.entries(allPlayersRounds)) {
+    for (const [key, value] of Object.entries(roundsByPlayer)) {
       if (key.startsWith("[R-BOT]")) {
         continue;
       }
       allPlayersArray.push({
         player_id: key,
-        rounds: value,
+        value,
       });
     }
-    allPlayersArray = allPlayersArray.sort((a, b) => b.rounds - a.rounds);
+    allPlayersArray = allPlayersArray.sort((a, b) => b.value - a.value);
 
     return allPlayersArray;
-  }, [gameData]);
+  }, [roundsByPlayer]);
 
   const onBackPress = () => {
     if (router.canGoBack()) {
@@ -168,7 +213,15 @@ export default function Page() {
         headerTitle={"Leaderboards"}
         possibleRanges={POSSIBLE_RANGES}
         selectedRange={selectedRange}
+        possibleModes={POSSIBLE_MODES}
+        selectedMode={selectedMode}
+        infoText={
+          selectedMode === "PER ROUND"
+            ? `Min ${MIN_ROUNDS_FOR_RATE} rounds`
+            : undefined
+        }
         onRangePress={(range) => setSelectedRange(range as LeaderboardRange)}
+        onModePress={(mode) => setSelectedMode(mode as LeaderboardMode)}
         onBackPress={onBackPress}
       />
       <View style={styles.dateAndSeparator}>
@@ -196,13 +249,14 @@ export default function Page() {
             label={"Best medic"}
             value={buildStatValue(
               topMedic.at(0)?.player_id ?? "-",
-              topMedic.at(0)?.revivals ?? "0",
-              "revives",
+              formatStatValue(topMedic.at(0)?.value, selectedMode),
+              formatUnit("revives", selectedMode),
             )}
             type={"medic"}
-            statsArray={topMedic
-              .slice(1, SLICE_RANGE)
-              .map((item) => ({ name: item.player_id, value: item.revivals }))}
+            statsArray={topMedic.slice(1, SLICE_RANGE).map((item) => ({
+              name: item.player_id,
+              value: formatStatValue(item.value, selectedMode),
+            }))}
           />
         )}
         {topKiller.length !== 0 && (
@@ -211,13 +265,14 @@ export default function Page() {
             label={"Most kills"}
             value={buildStatValue(
               topKiller.at(0)?.player_id ?? "-",
-              topKiller.at(0)?.kills ?? "0",
-              "kills",
+              formatStatValue(topKiller.at(0)?.value, selectedMode),
+              formatUnit("kills", selectedMode),
             )}
             type={"killer"}
-            statsArray={topKiller
-              .slice(1, SLICE_RANGE)
-              .map((item) => ({ name: item.player_id, value: item.kills }))}
+            statsArray={topKiller.slice(1, SLICE_RANGE).map((item) => ({
+              name: item.player_id,
+              value: formatStatValue(item.value, selectedMode),
+            }))}
           />
         )}
         {topDestroyer.length !== 0 && (
@@ -226,13 +281,13 @@ export default function Page() {
             label={"Vehicle destroyer"}
             value={buildStatValue(
               topDestroyer.at(0)?.player_id ?? "-",
-              topDestroyer.at(0)?.vehicle_destroyeds ?? "0",
-              "assets",
+              formatStatValue(topDestroyer.at(0)?.value, selectedMode),
+              formatUnit("assets", selectedMode),
             )}
             type={"destroyer"}
             statsArray={topDestroyer.slice(1, SLICE_RANGE).map((item) => ({
               name: item.player_id,
-              value: item.vehicle_destroyeds,
+              value: formatStatValue(item.value, selectedMode),
             }))}
           />
         )}
@@ -242,13 +297,13 @@ export default function Page() {
             label={"Most rounds played"}
             value={buildStatValue(
               mostRounds.at(0)?.player_id ?? "-",
-              mostRounds.at(0)?.rounds ?? "-",
+              formatStatValue(mostRounds.at(0)?.value),
               "rounds",
             )}
             type={"player"}
             statsArray={mostRounds
               .slice(1, SLICE_RANGE)
-              .map((item) => ({ name: item.player_id, value: item.rounds }))}
+              .map((item) => ({ name: item.player_id, value: item.value }))}
           />
         )}
       </ScrollView>
