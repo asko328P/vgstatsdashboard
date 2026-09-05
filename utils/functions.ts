@@ -292,3 +292,17 @@ export function findTopPlayer(
   }
   return `${best.player_id}: ${getStat(best)}`;
 }
+
+// The headline of a LeaderBoardStatHolder is passed as one string that the card
+// splits back into name / value / unit. ASCII 31 (unit separator) is the
+// delimiter because a player id can contain anything typeable — spaces very much
+// included — and a nickname with a space would otherwise shift every part along.
+export const STAT_SEPARATOR = "\u001F";
+
+export function buildStatValue(
+  name: string,
+  value: string | number,
+  unit: string,
+) {
+  return [name, value, unit].join(STAT_SEPARATOR);
+}

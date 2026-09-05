@@ -4,13 +4,14 @@ import { useRouter } from "expo-router";
 import { FontAwesome6, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { ThemedText } from "@/components/ui/ThemedText";
+import { STAT_SEPARATOR } from "@/utils/functions";
 import { useSelectedPlayerStore } from "@/zustand/SelectedPlayerStore";
 
 type Props = {
   label: string;
-  // " <player_id> <amount> <unit>" — the player id carries a leading space, so
-  // the parts land on indices 1..3.
-  value: any;
+  // "<player_id><US><amount><US><unit>", built with `buildStatValue`. Split on
+  // the unit separator rather than a space: player ids contain spaces.
+  value: string;
   type?: "medic" | "killer" | "destroyer" | "player";
   statsArray?: { name: string; value: string | number }[];
   isFetching?: boolean;
@@ -59,7 +60,7 @@ const LeaderBoardStatHolder = ({
   statsArray = [],
   isFetching,
 }: Props) => {
-  const valuesArray = value.split(" ");
+  const [topName, topValue, topUnit] = value.split(STAT_SEPARATOR);
   const colors = useMemo(() => {
     switch (type) {
       case "medic":
@@ -128,7 +129,7 @@ const LeaderBoardStatHolder = ({
           {`• ${label}`}
         </ThemedText>
         <ThemedText type={"name"} style={{ fontSize: 20 }}>
-          {valuesArray.at(1)}
+          {topName}
         </ThemedText>
         <ThemedText
           style={{
@@ -136,8 +137,8 @@ const LeaderBoardStatHolder = ({
           }}
           type={"stat"}
         >
-          {valuesArray.at(2)}
-          <ThemedText type={"label"}>{` ${valuesArray.at(3)}`}</ThemedText>
+          {topValue}
+          <ThemedText type={"label"}>{` ${topUnit}`}</ThemedText>
         </ThemedText>
       </View>
 

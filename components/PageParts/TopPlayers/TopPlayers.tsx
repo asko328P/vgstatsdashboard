@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { ThemedText } from "@/components/ui/ThemedText";
 import LeaderBoardStatHolder from "@/components/ui/LeaderBoardStatHolder/LeaderBoardStatHolder";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
-import { toReadableDayMonth } from "@/utils/functions";
+import { buildStatValue, toReadableDayMonth } from "@/utils/functions";
 import { useRouter } from "expo-router";
 import { useLeaderboardRoundsQuery } from "@/utils/queries";
 
@@ -40,7 +40,11 @@ const TopPlayers = () => {
     }
     allKillsArray = allKillsArray.sort((a, b) => b.revivals - a.revivals);
 
-    return `${allKillsArray[0]?.player_id ?? " -"} ${allKillsArray[0]?.revivals ?? "0"} kills`;
+    return buildStatValue(
+      allKillsArray[0]?.player_id ?? "-",
+      allKillsArray[0]?.revivals ?? "0",
+      "kills",
+    );
   }, [gameData]);
 
   const topMedic = useMemo(() => {
@@ -70,7 +74,11 @@ const TopPlayers = () => {
     }
     allMedicsArray = allMedicsArray.sort((a, b) => b.revivals - a.revivals);
 
-    return `${allMedicsArray[0]?.player_id ?? " -"} ${allMedicsArray[0]?.revivals ?? "0"} revives`;
+    return buildStatValue(
+      allMedicsArray[0]?.player_id ?? "-",
+      allMedicsArray[0]?.revivals ?? "0",
+      "revives",
+    );
   }, [gameData]);
 
   const topDestroyer = useMemo(() => {
@@ -102,7 +110,11 @@ const TopPlayers = () => {
       (a, b) => b.vehicle_destroyeds - a.vehicle_destroyeds,
     );
 
-    return `${allDestructorsArray[0]?.player_id ?? " -"} ${allDestructorsArray[0]?.vehicle_destroyeds ?? "0"} assets`;
+    return buildStatValue(
+      allDestructorsArray[0]?.player_id ?? "-",
+      allDestructorsArray[0]?.vehicle_destroyeds ?? "0",
+      "assets",
+    );
   }, [gameData]);
 
   const mostRounds = useMemo(() => {
@@ -132,7 +144,11 @@ const TopPlayers = () => {
     }
     allPlayersArray = allPlayersArray.sort((a, b) => b.rounds - a.rounds);
 
-    return `${allPlayersArray[0]?.player_id ?? " -"} ${allPlayersArray[0]?.rounds ?? "-"} rounds`;
+    return buildStatValue(
+      allPlayersArray[0]?.player_id ?? "-",
+      allPlayersArray[0]?.rounds ?? "-",
+      "rounds",
+    );
   }, [gameData]);
 
   const daysCovered = useMemo(() => {

@@ -5,7 +5,7 @@ import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import LeaderboardsHeader from "@/components/ui/LeaderboardsHeader/LeaderboardsHeader";
 import LeaderBoardStatHolder from "@/components/ui/LeaderBoardStatHolder/LeaderBoardStatHolder";
 import { ThemedText } from "@/components/ui/ThemedText";
-import { toReadableDayMonth } from "@/utils/functions";
+import { buildStatValue, toReadableDayMonth } from "@/utils/functions";
 import { LeaderboardRange, useLeaderboardRoundsQuery } from "@/utils/queries";
 
 const POSSIBLE_RANGES: LeaderboardRange[] = ["1D", "3D", "7D"];
@@ -194,7 +194,11 @@ export default function Page() {
           <LeaderBoardStatHolder
             isFetching={gameIsFetching}
             label={"Best medic"}
-            value={`${topMedic.at(0)?.player_id ?? " -"} ${topMedic.at(0)?.revivals ?? "0"} revives`}
+            value={buildStatValue(
+              topMedic.at(0)?.player_id ?? "-",
+              topMedic.at(0)?.revivals ?? "0",
+              "revives",
+            )}
             type={"medic"}
             statsArray={topMedic
               .slice(1, SLICE_RANGE)
@@ -205,7 +209,11 @@ export default function Page() {
           <LeaderBoardStatHolder
             isFetching={gameIsFetching}
             label={"Most kills"}
-            value={`${topKiller.at(0)?.player_id ?? " -"} ${topKiller.at(0)?.kills ?? "0"} kills`}
+            value={buildStatValue(
+              topKiller.at(0)?.player_id ?? "-",
+              topKiller.at(0)?.kills ?? "0",
+              "kills",
+            )}
             type={"killer"}
             statsArray={topKiller
               .slice(1, SLICE_RANGE)
@@ -216,7 +224,11 @@ export default function Page() {
           <LeaderBoardStatHolder
             isFetching={gameIsFetching}
             label={"Vehicle destroyer"}
-            value={`${topDestroyer.at(0)?.player_id ?? " -"} ${topDestroyer.at(0)?.vehicle_destroyeds ?? "0"} assets`}
+            value={buildStatValue(
+              topDestroyer.at(0)?.player_id ?? "-",
+              topDestroyer.at(0)?.vehicle_destroyeds ?? "0",
+              "assets",
+            )}
             type={"destroyer"}
             statsArray={topDestroyer.slice(1, SLICE_RANGE).map((item) => ({
               name: item.player_id,
@@ -228,7 +240,11 @@ export default function Page() {
           <LeaderBoardStatHolder
             isFetching={gameIsFetching}
             label={"Most rounds played"}
-            value={`${mostRounds.at(0)?.player_id ?? " -"} ${mostRounds.at(0)?.rounds ?? "-"} rounds`}
+            value={buildStatValue(
+              mostRounds.at(0)?.player_id ?? "-",
+              mostRounds.at(0)?.rounds ?? "-",
+              "rounds",
+            )}
             type={"player"}
             statsArray={mostRounds
               .slice(1, SLICE_RANGE)
