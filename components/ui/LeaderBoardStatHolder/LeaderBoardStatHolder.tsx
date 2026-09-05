@@ -17,15 +17,25 @@ type Props = {
   isFetching?: boolean;
 };
 
+// Row values are usually numbers, but the prop allows a formatted string; a
+// value that is not a number simply gets no bar.
+const toBarValue = (value: string | number) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+};
+
 type RowItemProps = {
   index: number;
   name: string;
   value: string | number;
+  // 0..1 of the headline player's total — how far the bar behind the row fills.
+  ratio: number;
+  barColor: string;
 };
 
 // The runners up under the highlighted player: rank, name, value. The name is
 // the player id, so the row doubles as a link to that player's page.
-const RowItem = ({ index, name, value }: RowItemProps) => {
+const RowItem = ({ index, name, value, ratio, barColor }: RowItemProps) => {
   const router = useRouter();
   const setSelectedPlayer = useSelectedPlayerStore(
     (state) => state.setSelectedPlayer,
@@ -38,6 +48,8 @@ const RowItem = ({ index, name, value }: RowItemProps) => {
 
   return (
     <TouchableOpacity onPress={pressPlayerHandler} style={styles.row}>
+      {/* First child, so the text paints over it. */}
+      <View pointerEvents={"none"} style={styles.bar(ratio * 100, barColor)} />
       <View style={styles.indexCell}>
         <ThemedText type={"cell"} style={styles.index}>
           {index}
@@ -61,6 +73,21 @@ const LeaderBoardStatHolder = ({
   isFetching,
 }: Props) => {
   const [topName, topValue, topUnit] = value.split(STAT_SEPARATOR);
+
+  // Bars are measured against the headline player, so the runner up reads as a
+  // fraction of #1 instead of filling the card edge to edge. When the headline
+  // has no usable number ("-" on an empty range) the rows scale among themselves.
+  const barMax = useMemo(() => {
+    const headline = Number(topValue);
+    if (Number.isFinite(headline) && headline > 0) {
+      return headline;
+    }
+    return statsArray.reduce(
+      (max, item) => Math.max(max, toBarValue(item.value)),
+      0,
+    );
+  }, [topValue, statsArray]);
+
   const colors = useMemo(() => {
     switch (type) {
       case "medic":
@@ -158,6 +185,8 @@ const LeaderBoardStatHolder = ({
               index={index + 2}
               name={item.name}
               value={item.value}
+              ratio={barMax > 0 ? toBarValue(item.value) / barMax : 0}
+              barColor={colors.typeColor}
             />
           ))}
         </View>
@@ -184,6 +213,20 @@ const styles = StyleSheet.create((theme) => ({
     borderTopWidth: 1,
     borderTopColor: theme.colors.borderHairline,
   },
+  // Full bleed fill behind a row, sized to that player's share of the leader.
+  // Kept faint enough to sit under the text rather than compete with it, and
+  // quieter than the card's background icon.
+  bar: (widthPercent: number, color: string) => ({
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    height: 3,
+    borderRadius: 5,
+    width: `${Math.max(0, Math.min(100, widthPercent))}%`,
+    backgroundColor: color,
+    opacity: 0.65,
+  }),
   row: {
     flexDirection: "row",
     alignItems: "center",
